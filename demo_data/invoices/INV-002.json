@@ -1,0 +1,25 @@
+{
+  "invoice_id": "INV-002",
+  "contract_id": "C001",
+  "invoice_date": "2025-04-05",
+  "period_start": "2025-04-01",
+  "period_end": "2025-04-30",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Monthly O&M Service Fee — April 2025",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "month",
+      "unit_rate": 12000000,
+      "amount": 12000000
+    }
+  ],
+  "subtotal": 12000000,
+  "gst_rate": 18,
+  "gst_amount": 2160000,
+  "total": 14160000,
+  "status": "Paid",
+  "engineered_gap": "wpi_escalation_not_applied",
+  "expected_gap": 684000
+}

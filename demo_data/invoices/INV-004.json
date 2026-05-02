@@ -1,0 +1,26 @@
+{
+  "invoice_id": "INV-004",
+  "contract_id": "C001",
+  "invoice_date": "2025-06-05",
+  "period_start": "2025-05-01",
+  "period_end": "2025-05-31",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Monthly O&M Service Fee — May 2025",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "month",
+      "unit_rate": 12000000,
+      "amount": 12000000
+    }
+  ],
+  "subtotal": 12000000,
+  "gst_rate": 18,
+  "gst_amount": 2160000,
+  "total": 14160000,
+  "status": "Disputed",
+  "engineered_gap": "ld_not_netted_availability_95.2pct",
+  "expected_gap": 0,
+  "note": "Availability was 95.2% — LD should have been deducted by customer"
+}

@@ -1,8 +1,7 @@
 import { ContractCard } from '@/components/contract/ContractCard'
-import { DropZone } from '@/components/upload/DropZone'
+import { UploadFlow } from '@/components/upload/UploadFlow'
 import { Separator } from '@/components/ui/separator'
 
-// TODO Phase 2: replace with data from Supabase
 const DEMO_CONTRACTS = [
   {
     id: 'demo-1',
@@ -17,15 +16,10 @@ const DEMO_CONTRACTS = [
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-4xl mx-auto py-8 px-4">
       <div>
         <h2 className="text-xl font-semibold text-[--color-wolvio-navy] mb-4">Upload Contract</h2>
-        {/* DropZone is a client component — wrap when wiring up upload logic */}
-        <div className="rounded-xl border-2 border-dashed border-[--color-mid] bg-[--color-off] py-12 px-8 text-center text-[--color-muted-foreground]">
-          <p className="font-medium">Drag &amp; drop contract PDF here</p>
-          <p className="text-sm mt-1">or click to upload</p>
-          <p className="text-xs mt-3 opacity-60">(upload wired in Phase 3)</p>
-        </div>
+        <UploadFlow />
       </div>
 
       <Separator />

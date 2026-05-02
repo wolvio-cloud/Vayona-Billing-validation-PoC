@@ -1,0 +1,34 @@
+{
+  "invoice_id": "INV-006",
+  "contract_id": "C001",
+  "invoice_date": "2025-09-05",
+  "period_start": "2025-08-01",
+  "period_end": "2025-08-31",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Monthly O&M Service Fee — August 2025",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "month",
+      "unit_rate": 12200000,
+      "amount": 12200000
+    },
+    {
+      "item_id": "LI-002",
+      "description": "WPI Escalation Adjustment FY2025",
+      "category": "Escalation",
+      "quantity": 1,
+      "unit": "adjustment",
+      "unit_rate": 200000,
+      "amount": 200000
+    }
+  ],
+  "subtotal": 12400000,
+  "gst_rate": 18,
+  "gst_amount": 2232000,
+  "total": 14632000,
+  "status": "Pending",
+  "engineered_gap": "escalation_wrong_base_month_used",
+  "expected_gap": 147484
+}

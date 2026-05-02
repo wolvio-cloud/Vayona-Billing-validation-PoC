@@ -32,8 +32,10 @@
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pdf-parse": "^1.1.5",
+    "@types/pdfkit": "^0.17.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "pdfkit": "^0.18.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"

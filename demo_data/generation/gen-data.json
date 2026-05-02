@@ -1,0 +1,11 @@
+{
+  "contract_id": "C001",
+  "monthly": [
+    { "month": "2025-01", "kwh": 8450000, "availability_pct": 96.8 },
+    { "month": "2025-04", "kwh": 9350000, "availability_pct": 96.2 },
+    { "month": "2025-05", "kwh": 12800000, "availability_pct": 95.2 },
+    { "month": "2025-06", "kwh": 12850000, "availability_pct": 96.5 },
+    { "month": "2025-07", "kwh": 9780000, "availability_pct": 98.4 },
+    { "month": "2025-08", "kwh": 9010000, "availability_pct": 96.1 }
+  ]
+}
