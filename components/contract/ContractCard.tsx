@@ -14,18 +14,18 @@ interface ContractCardProps {
 
 export function ContractCard({ contractId, displayName, isDemo, annualFee, termYears, counterparty }: ContractCardProps) {
   return (
-    <div className="group flex items-center justify-between p-6 bg-white rounded-[12px] shadow-[0_2px_8px_rgba(10,35,66,0.08)] overflow-hidden relative transition-all duration-300 hover:shadow-[0_8px_24px_rgba(10,35,66,0.12)] hover:-translate-y-1">
+    <div className="group flex items-center justify-between p-6 bg-[--color-wolvio-surface] rounded-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[--color-wolvio-slate] overflow-hidden relative transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:-translate-y-1">
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[--color-wolvio-orange]" />
       
       <div className="space-y-4 pl-4">
         <div className="flex items-center gap-3">
-          <h3 className="font-heading font-bold text-xl text-[--color-wolvio-navy]">{displayName}</h3>
+          <h3 className="font-heading font-bold text-xl text-[--color-wolvio-light]">{displayName}</h3>
         </div>
         
         <div className="flex items-center gap-3">
-          {counterparty && <span className="px-3 py-1 bg-[--color-wolvio-off] text-[--color-wolvio-slate] text-sm font-medium rounded-full">{counterparty}</span>}
-          {annualFee && <span className="px-3 py-1 bg-[--color-wolvio-off] text-[--color-wolvio-slate] text-sm font-medium rounded-full">{formatINRShort(annualFee)}/year</span>}
-          {termYears && <span className="px-3 py-1 bg-[--color-wolvio-off] text-[--color-wolvio-slate] text-sm font-medium rounded-full">{termYears} years</span>}
+          {counterparty && <span className="px-3 py-1 bg-[--color-wolvio-dark] text-[--color-wolvio-mid] border border-[--color-wolvio-slate] text-sm font-medium rounded-full">{counterparty}</span>}
+          {annualFee && <span className="px-3 py-1 bg-[--color-wolvio-dark] text-[--color-wolvio-mid] border border-[--color-wolvio-slate] text-sm font-medium rounded-full">{formatINRShort(annualFee)}/year</span>}
+          {termYears && <span className="px-3 py-1 bg-[--color-wolvio-dark] text-[--color-wolvio-mid] border border-[--color-wolvio-slate] text-sm font-medium rounded-full">{termYears} years</span>}
         </div>
       </div>
       

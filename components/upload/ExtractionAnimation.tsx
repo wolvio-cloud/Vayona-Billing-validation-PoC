@@ -46,7 +46,7 @@ export function ExtractionAnimation({ onComplete }: ExtractionAnimationProps) {
           {STEPS.map((step, i) => (
             <div
               key={i}
-              className={`absolute inset-0 w-full text-lg font-heading font-semibold text-[--color-wolvio-navy] transition-all duration-500 ease-in-out ${
+              className={`absolute inset-0 w-full text-lg font-heading font-semibold text-[--color-wolvio-light] transition-all duration-500 ease-in-out ${
                 i === stepIndex ? 'opacity-100 translate-y-0' : i < stepIndex ? 'opacity-0 -translate-y-4' : 'opacity-0 translate-y-4'
               }`}
             >
@@ -56,13 +56,13 @@ export function ExtractionAnimation({ onComplete }: ExtractionAnimationProps) {
         </div>
         
         <div className="space-y-2">
-          <div className="h-1.5 w-full bg-[--color-wolvio-light] rounded-full overflow-hidden">
+          <div className="h-1.5 w-full bg-[--color-wolvio-slate] rounded-full overflow-hidden">
             <div 
               className="h-full bg-[--color-wolvio-orange] transition-all duration-75 ease-linear rounded-full"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="flex justify-between items-center text-xs font-medium text-[--color-wolvio-slate] px-1 uppercase tracking-wider">
+          <div className="flex justify-between items-center text-xs font-medium text-[--color-wolvio-mid] px-1 uppercase tracking-wider">
             <span>Processing</span>
             <span>Step {stepIndex + 1}/{STEPS.length}</span>
           </div>

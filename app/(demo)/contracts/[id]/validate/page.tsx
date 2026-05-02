@@ -64,16 +64,16 @@ export default async function ValidatePage({
       <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide">
         {ALL_INVOICES.map(inv => {
           const isActive = invoice === inv
-          const dotColor = inv === 'INV-002' ? 'bg-[#DC2626]' : inv === 'INV-004' ? 'bg-[#F59E0B]' : 'bg-[#10B981]'
+          const dotColor = inv === 'INV-002' ? 'bg-[#EF4444]' : inv === 'INV-004' ? 'bg-[#F59E0B]' : 'bg-[#22C55E]'
           return (
             <Link 
               key={inv} 
               href={`/contracts/${id}/validate?invoice=${inv}`} 
-              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold whitespace-nowrap transition-all shadow-sm ${
-                isActive ? 'bg-[--color-wolvio-orange] text-white' : 'bg-white text-[--color-wolvio-navy] border border-[--color-wolvio-light] hover:bg-orange-50 hover:border-orange-200'
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold whitespace-nowrap transition-all shadow-sm border ${
+                isActive ? 'bg-[--color-wolvio-orange] text-white border-[--color-wolvio-orange]' : 'bg-[--color-wolvio-surface] text-[--color-wolvio-light] border-[--color-wolvio-slate] hover:bg-[--color-wolvio-navy]'
               }`}
             >
-              <div className={`w-2.5 h-2.5 rounded-full ${dotColor} ${isActive ? 'ring-2 ring-white/50' : ''}`} />
+              <div className={`w-2.5 h-2.5 rounded-full ${dotColor} ${isActive ? 'ring-2 ring-white/30' : 'ring-1 ring-black/20'}`} />
               {inv}
             </Link>
           )
@@ -83,7 +83,7 @@ export default async function ValidatePage({
       <ValidationReport result={result} />
 
       <div className="pt-20 pb-12 text-center">
-        <p className="italic text-[--color-wolvio-navy] text-xl font-medium tracking-wide">
+        <p className="italic text-[--color-wolvio-mid] text-xl font-medium tracking-wide">
           "Today — how would your team catch this?"
         </p>
       </div>
