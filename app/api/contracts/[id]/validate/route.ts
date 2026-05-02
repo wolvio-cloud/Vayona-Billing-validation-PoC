@@ -55,14 +55,19 @@ export async function POST(
         if (check.verdict === 'MATCH') return { ...check, explanation: 'All amounts match contract terms.' }
         if (check.verdict === 'INSUFFICIENT_DATA') return { ...check, explanation: 'Insufficient data to validate.' }
         try {
+          const systemPrompt = check.verdict === 'OPPORTUNITY'
+            ? 'You are a revenue recovery analyst. You found money that was earned but not claimed. Be enthusiastic but precise. Tell the FC exactly what she can bill and why. You write 2 sentences maximum. No greeting. No sign-off.'
+            : 'You are a CFO briefing your Finance Controller via WhatsApp. You are direct, specific, and action-oriented. You use rupee amounts, not percentages. You name the clause. You tell her exactly what to do. You never say \'it appears\' or \'it seems\' or \'please note\'. You write 2 sentences maximum. No greeting. No sign-off.'
+
           const explanation = await callClaude({
-            systemPrompt: 'You are a financial analyst. Be concise and factual.',
+            systemPrompt,
             userMessage: EXPLANATION_PROMPT_TEMPLATE({
-              check_name: check.check_name,
-              expected_amount: check.expected_amount,
-              actual_amount: check.actual_amount,
-              gap_amount: check.gap_amount ?? check.opportunity_amount,
+              clause_reference: check.clause_reference,
               source_clause: check.source_clause,
+              expected: check.expected_amount,
+              actual: check.actual_amount,
+              gap: check.gap_amount ?? check.opportunity_amount,
+              period: inv.period_start + ' to ' + inv.period_end,
             }),
           })
           return { ...check, explanation }

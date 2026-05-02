@@ -1,6 +1,7 @@
 import { getDemoContractParameters } from '@/lib/demo-data'
 import { ContractHeader } from '@/components/contract/ContractHeader'
 import { ParameterField } from '@/components/contract/ParameterField'
+import { ValidationWarnings } from '@/components/contract/ValidationWarnings'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -24,6 +25,8 @@ export default async function ContractDetailPage({
         termYears={15} 
         counterparty="GreenWind Power" 
       />
+
+      <ValidationWarnings warnings={contract.validation_warnings || []} />
 
       <div className="rounded-xl border border-[--color-border] bg-white overflow-hidden shadow-sm">
         <div className="p-0">

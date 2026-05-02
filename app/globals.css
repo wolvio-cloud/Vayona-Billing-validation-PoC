@@ -36,11 +36,12 @@
   --color-ring: #F26B38;
 
   /* Typography */
-  --font-sans: 'Montserrat', system-ui, sans-serif;
+  --font-heading: 'Montserrat', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Border radius */
-  --radius: 0.5rem;
+  --radius: 0.75rem; /* 12px radius requested */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -57,9 +58,13 @@
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--color-wolvio-off);
+  color: var(--color-wolvio-navy);
   font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
 }
 
 code, pre, .font-mono {

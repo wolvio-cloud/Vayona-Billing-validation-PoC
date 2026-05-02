@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Progress } from '@/components/ui/progress'
 
 const STEPS = [
   { text: 'Reading contract...', duration: 1500 },
@@ -20,7 +19,7 @@ export function ExtractionAnimation({ onComplete }: ExtractionAnimationProps) {
   useEffect(() => {
     let elapsed = 0
     const total = STEPS.reduce((s, st) => s + st.duration, 0)
-    const tick = 50
+    const tick = 20 // Smoother tick
     const interval = setInterval(() => {
       elapsed += tick
       setProgress(Math.min((elapsed / total) * 100, 100))
@@ -40,21 +39,35 @@ export function ExtractionAnimation({ onComplete }: ExtractionAnimationProps) {
   }, [onComplete])
 
   return (
-    <div className="space-y-4 py-6">
-      <div className="text-center space-y-2">
-        <div className="text-sm font-medium text-[--color-wolvio-navy] animate-pulse">
-          {STEPS[stepIndex]?.text}
-        </div>
-        <div className="flex justify-center gap-1">
-          {STEPS.map((_, i) => (
+    <div className="space-y-6 py-10 max-w-md mx-auto w-full">
+      <div className="text-center space-y-4">
+        {/* Smooth fade wrapper */}
+        <div className="h-8 relative overflow-hidden">
+          {STEPS.map((step, i) => (
             <div
               key={i}
-              className={`h-1.5 w-1.5 rounded-full transition-colors ${i <= stepIndex ? 'bg-[--color-wolvio-orange]' : 'bg-[--color-mid]'}`}
-            />
+              className={`absolute inset-0 w-full text-lg font-heading font-semibold text-[--color-wolvio-navy] transition-all duration-500 ease-in-out ${
+                i === stepIndex ? 'opacity-100 translate-y-0' : i < stepIndex ? 'opacity-0 -translate-y-4' : 'opacity-0 translate-y-4'
+              }`}
+            >
+              {step.text}
+            </div>
           ))}
         </div>
+        
+        <div className="space-y-2">
+          <div className="h-1.5 w-full bg-[--color-wolvio-light] rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-[--color-wolvio-orange] transition-all duration-75 ease-linear rounded-full"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="flex justify-between items-center text-xs font-medium text-[--color-wolvio-slate] px-1 uppercase tracking-wider">
+            <span>Processing</span>
+            <span>Step {stepIndex + 1}/{STEPS.length}</span>
+          </div>
+        </div>
       </div>
-      <Progress value={progress} className="h-1.5" />
     </div>
   )
 }

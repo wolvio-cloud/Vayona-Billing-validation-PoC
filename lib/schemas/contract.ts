@@ -2,11 +2,13 @@ import { z } from 'zod'
 
 export const TracedFieldSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
   z.object({
-    value: valueSchema,
+    value: z.union([valueSchema, z.null()]),
     source_clause: z.string().max(200),
     clause_reference: z.string(),
     page_number: z.number().int(),
     confidence: z.enum(['high', 'medium', 'low']),
+    flag: z.string().optional(),
+    suggestion: z.string().optional(),
   })
 
 export const ContractParametersSchema = z.object({
@@ -33,6 +35,7 @@ export const ContractParametersSchema = z.object({
   payment_terms_days: TracedFieldSchema(z.number()),
   late_payment_interest: TracedFieldSchema(z.string()),
   renewal_notice_months: TracedFieldSchema(z.number()),
+  validation_warnings: z.array(z.string()).optional(),
 })
 
 export type ContractParameters = z.infer<typeof ContractParametersSchema>

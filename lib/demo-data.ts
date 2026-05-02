@@ -19,7 +19,11 @@ export async function getDemoContractParameters(contractId: string): Promise<Con
     bonus_rate_per_pp: { value: 1, source_clause: '1% of Annual Fee per percentage point above 98% availability. Maximum bonus: 5% of Annual Fee per annum.', clause_reference: 'Clause 9.1', page_number: 31, confidence: 'high' },
     payment_terms_days: { value: 45, source_clause: 'Net 45 days from invoice date.', clause_reference: 'Clause 10.1', page_number: 35, confidence: 'high' },
     late_payment_interest: { value: 'SBI base rate + 2%', source_clause: 'SBI base rate + 2% per annum on overdue amounts.', clause_reference: 'Clause 11.3', page_number: 38, confidence: 'high' },
-    renewal_notice_months: { value: 12, source_clause: '12 months written notice required to terminate or renegotiate.', clause_reference: 'Clause 17.2', page_number: 45, confidence: 'high' }
+    renewal_notice_months: { value: 12, source_clause: '12 months written notice required to terminate or renegotiate.', clause_reference: 'Clause 17.2', page_number: 45, confidence: 'high' },
+    validation_warnings: [
+      "Mathematical mismatch: base_annual_fee (14,40,00,000) / 12 does not exactly equal base_monthly_fee (1,20,00,000) — discrepancy of ₹0.",
+      "Clause 4.1 contains ambiguous wording regarding the payment due date ('on or before the 5th' vs Schedule 2 stating 'within 5 working days')."
+    ]
   }
 }
 
