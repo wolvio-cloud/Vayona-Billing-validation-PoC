@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import sql from '@/lib/db'
 import { createLogger } from '@/lib/logger'
 
 const logger = createLogger('api/contracts/[id]')
@@ -9,17 +9,11 @@ export async function GET(
 ) {
   const { id } = await ctx.params
   try {
-    const supabase = createServerSupabaseClient()
-    const { data, error } = await supabase
-      .from('contracts')
-      .select('*')
-      .eq('contract_id', id)
-      .single()
-
-    if (error || !data) {
-      return Response.json({ error: 'Contract not found' }, { status: 404 })
-    }
-    return Response.json(data)
+    const [row] = await sql`
+      SELECT * FROM contracts WHERE contract_id = ${id} LIMIT 1
+    `
+    if (!row) return Response.json({ error: 'Contract not found' }, { status: 404 })
+    return Response.json(row)
   } catch (err) {
     logger.error('Failed to fetch contract', { id, err })
     return Response.json({ error: 'Internal server error' }, { status: 500 })

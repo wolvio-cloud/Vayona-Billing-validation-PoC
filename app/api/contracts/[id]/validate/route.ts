@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import sql from '@/lib/db'
 import { runValidation, type GenerationData } from '@/lib/validation/engine'
 import { callClaude } from '@/lib/extraction/claude'
 import { EXPLANATION_PROMPT_TEMPLATE } from '@/lib/extraction/contract-prompt'
@@ -15,56 +15,45 @@ export async function POST(
 ) {
   const { id } = await ctx.params
   const body = await request.json() as { invoice_id: string }
-  const supabase = createServerSupabaseClient()
 
   try {
-    // Fetch contract + invoice + generation data
-    const [contractRes, invoiceRes] = await Promise.all([
-      supabase.from('contracts').select('*').eq('contract_id', id).single(),
-      supabase.from('invoices').select('*').eq('invoice_id', body.invoice_id).single(),
+    const [[contract], [invoice]] = await Promise.all([
+      sql`SELECT * FROM contracts WHERE contract_id = ${id} LIMIT 1`,
+      sql`SELECT * FROM invoices WHERE invoice_id = ${body.invoice_id} LIMIT 1`,
     ])
 
-    if (contractRes.error || !contractRes.data) {
-      return Response.json({ error: 'Contract not found' }, { status: 404 })
-    }
-    if (invoiceRes.error || !invoiceRes.data) {
-      return Response.json({ error: 'Invoice not found' }, { status: 404 })
-    }
-
-    const contract = contractRes.data
-    if (!contract.parameters) {
-      return Response.json({ error: 'Contract not yet extracted' }, { status: 422 })
-    }
+    if (!contract) return Response.json({ error: 'Contract not found' }, { status: 404 })
+    if (!invoice) return Response.json({ error: 'Invoice not found' }, { status: 404 })
+    if (!contract.parameters) return Response.json({ error: 'Contract not yet extracted' }, { status: 422 })
 
     const params = ContractParametersSchema.parse(contract.parameters)
-    const invoice = InvoiceSchema.parse(invoiceRes.data)
+    const inv = InvoiceSchema.parse({ ...invoice, line_items: invoice.line_items ?? [] })
 
-    // Fetch generation data for the invoice period
-    const { data: genData } = await supabase
-      .from('generation_data')
-      .select('*')
-      .eq('contract_id', contract.id)
-      .gte('period_start', invoice.period_start)
-      .lte('period_end', invoice.period_end)
+    const [genRow] = await sql`
+      SELECT
+        SUM(total_kwh) as total_kwh,
+        AVG(availability_pct) as availability_pct
+      FROM generation_data
+      WHERE contract_id = ${contract.id}
+        AND period_start >= ${inv.period_start}
+        AND period_end <= ${inv.period_end}
+    `
 
-    const generation: GenerationData | undefined = genData?.length
+    const generation: GenerationData | undefined = genRow?.total_kwh
       ? {
-          total_kwh: genData.reduce((s: number, r: { total_kwh: number }) => s + r.total_kwh, 0),
-          availability_pct: genData[0].availability_pct,
-          period_start: invoice.period_start,
-          period_end: invoice.period_end,
+          total_kwh: Number(genRow.total_kwh),
+          availability_pct: Number(genRow.availability_pct),
+          period_start: inv.period_start,
+          period_end: inv.period_end,
         }
       : undefined
 
-    // Run checks
-    const rawChecks = runValidation(params, invoice, generation)
+    const rawChecks = runValidation(params, inv, generation)
 
-    // Enrich with Claude explanations
     const checks = await Promise.all(
       rawChecks.map(async (check) => {
-        if (check.verdict === 'MATCH' || check.verdict === 'INSUFFICIENT_DATA') {
-          return { ...check, explanation: check.verdict === 'MATCH' ? 'All amounts match contract terms.' : 'Insufficient data to validate this check.' }
-        }
+        if (check.verdict === 'MATCH') return { ...check, explanation: 'All amounts match contract terms.' }
+        if (check.verdict === 'INSUFFICIENT_DATA') return { ...check, explanation: 'Insufficient data to validate.' }
         try {
           const explanation = await callClaude({
             systemPrompt: 'You are a financial analyst. Be concise and factual.',
@@ -98,15 +87,10 @@ export async function POST(
       verdict: hasGaps ? 'GAPS_FOUND' : hasOpportunities ? 'REVIEW_REQUIRED' : 'CLEAN',
     })
 
-    // Store validation run
-    await supabase.from('validation_runs').insert({
-      contract_id: contract.id,
-      invoice_id: invoiceRes.data.id,
-      checks: result.checks,
-      total_gap_amount: result.total_gap_amount,
-      total_opportunity_amount: result.total_opportunity_amount,
-      verdict: result.verdict,
-    })
+    await sql`
+      INSERT INTO validation_runs (contract_id, invoice_id, checks, total_gap_amount, total_opportunity_amount, verdict)
+      VALUES (${contract.id}, ${invoice.id}, ${sql.json(result.checks)}, ${totalGap}, ${totalOpportunity}, ${result.verdict})
+    `
 
     logger.info('Validation complete', { contractId: id, invoiceId: body.invoice_id, verdict: result.verdict })
     return Response.json(result)
