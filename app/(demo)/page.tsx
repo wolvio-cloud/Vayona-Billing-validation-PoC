@@ -16,7 +16,12 @@ const DEMO_CONTRACTS = [
 
 export default function HomePage() {
   return (
-    <div className="max-w-3xl mx-auto py-16 px-6 flex flex-col gap-12 items-center justify-center min-h-[calc(100vh-80px)]">
+    <div className="max-w-3xl mx-auto py-12 px-6 flex flex-col gap-10 min-h-[calc(100vh-80px)]">
+      <div className="space-y-2 text-center mb-4">
+        <h2 className="font-heading font-extrabold text-3xl text-[--color-wolvio-light]">Welcome back, Finance Team</h2>
+        <p className="text-[--color-wolvio-mid] font-medium">Upload a new contract or select an existing one to validate billing.</p>
+      </div>
+
       <div className="w-full">
         <UploadFlow />
       </div>

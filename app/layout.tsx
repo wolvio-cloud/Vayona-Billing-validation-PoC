@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Montserrat, Inter, JetBrains_Mono } from 'next/font/google'
+import Link from 'next/link'
 import './globals.css'
 import { DemoControlPanel } from '@/components/DemoControlPanel'
 
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full flex flex-col bg-[--color-wolvio-off]">
         <header className="w-full bg-[--color-wolvio-navy] text-white px-8 py-4 flex items-center justify-between shadow-sm">
           <h1 className="font-heading font-semibold text-lg tracking-wide text-[--color-wolvio-light]">Contract Execution Intelligence</h1>
-          <div className="font-heading font-extrabold text-2xl tracking-tighter text-[--color-wolvio-orange]">Wolvio</div>
+          <Link href="/" className="font-heading font-extrabold text-2xl tracking-tighter text-[--color-wolvio-orange] hover:opacity-80 transition-opacity">Wolvio</Link>
         </header>
         <main className="flex-1 w-full">
           {children}

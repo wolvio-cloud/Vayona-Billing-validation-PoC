@@ -63,7 +63,44 @@ export function ValidationReport({ result }: ValidationReportProps) {
 
   if (showAggregate) {
     return (
-      <div className="bg-[--color-wolvio-surface] rounded-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[--color-wolvio-slate] overflow-hidden">
+      <div className="space-y-8 animate-in fade-in duration-500">
+        {/* PATTERN ANALYSIS SECTION */}
+        <div className="bg-[#112A46] rounded-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#F59E0B]/30 overflow-hidden relative">
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#F59E0B]" />
+          <div className="px-6 py-4 border-b border-[#F59E0B]/20 bg-[#F59E0B]/5 flex items-center gap-3">
+            <h3 className="font-heading font-bold text-[#F59E0B] tracking-wider uppercase text-sm">Pattern Analysis</h3>
+          </div>
+          
+          <div className="p-6">
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center justify-between border-b border-[--color-wolvio-slate] pb-2">
+                <span className="font-mono text-[--color-wolvio-light] font-semibold">WPI Escalation</span>
+                <span className="text-[#EF4444] font-medium text-sm flex items-center gap-2">Missing in 3 of 6 invoices <span className="w-2 h-2 rounded-full bg-[#EF4444]" /></span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[--color-wolvio-slate] pb-2">
+                <span className="font-mono text-[--color-wolvio-light] font-semibold">Variable Charge</span>
+                <span className="text-[#EF4444] font-medium text-sm flex items-center gap-2">Missing in 2 of 6 invoices <span className="w-2 h-2 rounded-full bg-[#EF4444]" /></span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[--color-wolvio-slate] pb-2">
+                <span className="font-mono text-[--color-wolvio-light] font-semibold">Base Fee</span>
+                <span className="text-[#22C55E] font-medium text-sm flex items-center gap-2">Correct in 6 of 6 invoices <span className="w-2 h-2 rounded-full bg-[#22C55E]" /></span>
+              </div>
+              <div className="flex items-center justify-between border-b border-[--color-wolvio-slate] pb-2">
+                <span className="font-mono text-[--color-wolvio-light] font-semibold">Performance Bonus</span>
+                <span className="text-[#F59E0B] font-medium text-sm flex items-center gap-2">Claimable in 1 of 6 <span className="w-2 h-2 rounded-full bg-[#F59E0B]" /></span>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-[--color-wolvio-dark] rounded-lg border border-[--color-wolvio-slate]">
+              <p className="text-[15px] font-semibold text-[--color-wolvio-light] leading-relaxed">
+                This is a <span className="text-[#F59E0B]">systematic billing process gap</span>, not a one-off error.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* INVOICE TABLE */}
+        <div className="bg-[--color-wolvio-surface] rounded-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[--color-wolvio-slate] overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-[--color-wolvio-navy] border-b border-[--color-wolvio-slate]">
@@ -127,6 +164,7 @@ export function ValidationReport({ result }: ValidationReportProps) {
         <div className="p-4 bg-[--color-wolvio-surface] border-t border-[--color-wolvio-slate] flex justify-end">
           <Button variant="outline" className="border-[--color-wolvio-slate] text-[--color-wolvio-light] bg-transparent hover:bg-[--color-wolvio-navy] font-semibold">Export CSV</Button>
         </div>
+      </div>
       </div>
     )
   }

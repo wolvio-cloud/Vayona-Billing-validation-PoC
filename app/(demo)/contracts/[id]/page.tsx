@@ -2,6 +2,7 @@ import { getDemoContractParameters } from '@/lib/demo-data'
 import { ContractHeader } from '@/components/contract/ContractHeader'
 import { ParameterField } from '@/components/contract/ParameterField'
 import { ValidationWarnings } from '@/components/contract/ValidationWarnings'
+import { ExtractionQualityScore } from '@/components/contract/ExtractionQualityScore'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -37,6 +38,8 @@ export default async function ContractDetailPage({
       />
 
       <ValidationWarnings warnings={contract.validation_warnings || []} />
+      
+      <ExtractionQualityScore contract={contract} />
 
       <div>
         <SectionHeader title="Commercial Terms" />
