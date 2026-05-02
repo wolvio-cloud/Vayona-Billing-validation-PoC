@@ -6,6 +6,7 @@ import { formatINR } from '@/lib/utils'
 import type { ValidationResult } from '@/lib/schemas/validation'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { generateShareReportHtml } from './generateReport'
 
 interface ValidationReportProps {
   result: ValidationResult
@@ -208,13 +209,34 @@ export function ValidationReport({ result }: ValidationReportProps) {
           </div>
         </div>
 
-        <Button 
-          variant="outline" 
-          className="w-full py-6 border-2 border-[--color-wolvio-slate] bg-transparent text-[--color-wolvio-light] font-bold text-sm hover:bg-[--color-wolvio-surface] hover:text-white"
-          onClick={() => setShowAggregate(true)}
-        >
-          Run All 6 Invoices
-        </Button>
+        <div className="flex flex-col gap-3">
+          <Button 
+            variant="outline" 
+            className="w-full py-6 border-2 border-[--color-wolvio-slate] bg-transparent text-[--color-wolvio-light] font-bold text-sm hover:bg-[--color-wolvio-surface] hover:text-white"
+            onClick={() => setShowAggregate(true)}
+          >
+            Run All 6 Invoices
+          </Button>
+
+          <Button 
+            variant="outline" 
+            className="w-full py-6 border-2 border-[--color-wolvio-orange] bg-[--color-wolvio-orange] text-white font-bold text-sm hover:bg-[#d95a2b] hover:border-[#d95a2b] shadow-[0_4px_12px_rgba(239,68,68,0.2)]"
+            onClick={() => {
+              const html = generateShareReportHtml(result, showAggregate)
+              const blob = new Blob([html], { type: 'text/html' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = `Wolvio_Findings_Report_${new Date().toISOString().split('T')[0]}.html`
+              document.body.appendChild(a)
+              a.click()
+              document.body.removeChild(a)
+              URL.revokeObjectURL(url)
+            }}
+          >
+            Share Report (Offline)
+          </Button>
+        </div>
       </div>
 
       {/* Findings panel */}

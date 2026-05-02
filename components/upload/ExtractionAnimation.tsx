@@ -1,73 +1,131 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
-const STEPS = [
-  { text: 'Reading contract...', duration: 1500 },
-  { text: 'Extracting 47 commercial parameters...', duration: 2000 },
-  { text: 'Building validation model...', duration: 1500 },
-]
+import { Check, Loader2, AlertCircle } from 'lucide-react'
 
 interface ExtractionAnimationProps {
+  contractId?: string | null
   onComplete?: () => void
 }
 
-export function ExtractionAnimation({ onComplete }: ExtractionAnimationProps) {
-  const [stepIndex, setStepIndex] = useState(0)
+export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimationProps) {
+  const [currentStep, setCurrentStep] = useState('Initializing...')
+  const [completedSteps, setCompletedSteps] = useState<string[]>([])
+  const [error, setError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    let elapsed = 0
-    const total = STEPS.reduce((s, st) => s + st.duration, 0)
-    const tick = 20 // Smoother tick
-    const interval = setInterval(() => {
-      elapsed += tick
-      setProgress(Math.min((elapsed / total) * 100, 100))
+    if (!contractId) return
 
-      let cumulative = 0
-      for (let i = 0; i < STEPS.length; i++) {
-        cumulative += STEPS[i].duration
-        if (elapsed < cumulative) { setStepIndex(i); break }
-      }
+    let pollInterval: NodeJS.Timeout
+    let progressInterval: NodeJS.Timeout
 
-      if (elapsed >= total) {
-        clearInterval(interval)
-        setTimeout(() => onComplete?.(), 300)
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/contracts/${contractId}`)
+        if (!res.ok) return
+        const data = await res.json()
+
+        if (data.extraction_status === 'failed') {
+          setError(data.extraction_error || 'Extraction failed')
+          clearInterval(pollInterval)
+          clearInterval(progressInterval)
+          return
+        }
+
+        const step = data.parameters?.current_step
+        if (step && step !== currentStep) {
+          if (!completedSteps.includes(currentStep) && !currentStep.includes('Initializing')) {
+            setCompletedSteps(prev => [...prev, currentStep])
+          }
+          setCurrentStep(step)
+        }
+
+        if (data.extraction_status === 'completed') {
+          setCompletedSteps(prev => [...prev, step])
+          setCurrentStep('Complete — Extraction finalized')
+          setProgress(100)
+          clearInterval(pollInterval)
+          clearInterval(progressInterval)
+          setTimeout(() => onComplete?.(), 1000)
+        }
+      } catch (err) {
+        console.error('Polling failed', err)
       }
-    }, tick)
-    return () => clearInterval(interval)
-  }, [onComplete])
+    }
+
+    pollInterval = setInterval(poll, 1000)
+    
+    // Fake progress bar that slows down as it gets higher
+    progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 95) return prev
+        const increment = (100 - prev) / 40
+        return prev + increment
+      })
+    }, 200)
+
+    return () => {
+      clearInterval(pollInterval)
+      clearInterval(progressInterval)
+    }
+  }, [contractId, currentStep, completedSteps, onComplete])
+
+  if (error) {
+    return (
+      <div className="py-10 text-center space-y-4">
+        <div className="flex justify-center">
+          <div className="p-3 bg-red-500/10 rounded-full">
+            <AlertCircle className="text-[#EF4444]" size={32} />
+          </div>
+        </div>
+        <h3 className="text-lg font-heading font-bold text-[--color-wolvio-light]">Extraction Error</h3>
+        <p className="text-sm text-red-400 max-w-xs mx-auto font-medium leading-relaxed">{error}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="text-sm font-bold text-[--color-wolvio-orange] hover:underline"
+        >
+          Try another file
+        </button>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-6 py-10 max-w-md mx-auto w-full">
-      <div className="text-center space-y-4">
-        {/* Smooth fade wrapper */}
-        <div className="h-8 relative overflow-hidden">
-          {STEPS.map((step, i) => (
-            <div
-              key={i}
-              className={`absolute inset-0 w-full text-lg font-heading font-semibold text-[--color-wolvio-light] transition-all duration-500 ease-in-out ${
-                i === stepIndex ? 'opacity-100 translate-y-0' : i < stepIndex ? 'opacity-0 -translate-y-4' : 'opacity-0 translate-y-4'
-              }`}
-            >
-              {step.text}
+    <div className="space-y-8 py-6 w-full">
+      <div className="space-y-4">
+        {completedSteps.map((step, i) => (
+          <div key={i} className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300">
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#22C55E]/20 flex items-center justify-center">
+              <Check className="text-[#22C55E]" size={12} strokeWidth={3} />
             </div>
-          ))}
-        </div>
+            <span className="text-sm font-medium text-[--color-wolvio-mid]">{step}</span>
+          </div>
+        ))}
         
-        <div className="space-y-2">
-          <div className="h-1.5 w-full bg-[--color-wolvio-slate] rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-[--color-wolvio-orange] transition-all duration-75 ease-linear rounded-full"
-              style={{ width: `${progress}%` }}
-            />
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+            <Loader2 className="text-[--color-wolvio-orange] animate-spin" size={16} />
           </div>
-          <div className="flex justify-between items-center text-xs font-medium text-[--color-wolvio-mid] px-1 uppercase tracking-wider">
-            <span>Processing</span>
-            <span>Step {stepIndex + 1}/{STEPS.length}</span>
-          </div>
+          <span className="text-base font-heading font-bold text-[--color-wolvio-light] animate-pulse">
+            {currentStep}
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <div className="h-1.5 w-full bg-[--color-wolvio-slate] rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-[--color-wolvio-orange] transition-all duration-300 ease-out rounded-full"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="flex justify-between items-center text-[10px] font-bold text-[--color-wolvio-mid] uppercase tracking-widest">
+          <span>AI Processor Active</span>
+          <span>{Math.round(progress)}%</span>
         </div>
       </div>
     </div>
   )
 }
+
