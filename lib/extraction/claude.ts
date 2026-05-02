@@ -1,0 +1,63 @@
+import Anthropic from '@anthropic-ai/sdk'
+import { createLogger } from '@/lib/logger'
+
+const logger = createLogger('claude-extraction')
+const MODEL = 'claude-sonnet-4-5'
+const MAX_TOKENS = 4000
+const COST_PER_INPUT_TOKEN = 0.000003
+const COST_PER_OUTPUT_TOKEN = 0.000015
+const COST_WARN_THRESHOLD = 0.15
+
+function computeCost(inputTokens: number, outputTokens: number): number {
+  return inputTokens * COST_PER_INPUT_TOKEN + outputTokens * COST_PER_OUTPUT_TOKEN
+}
+
+export async function callClaude(params: {
+  systemPrompt: string
+  userMessage: string
+  timeoutMs?: number
+}): Promise<string> {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  const { systemPrompt, userMessage, timeoutMs = 90_000 } = params
+
+  let lastError: unknown
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await Promise.race([
+        client.messages.create({
+          model: MODEL,
+          max_tokens: MAX_TOKENS,
+          temperature: 0,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userMessage }],
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Claude request timed out')), timeoutMs)
+        ),
+      ])
+
+      const { input_tokens, output_tokens } = (response as Anthropic.Message).usage
+      const cost = computeCost(input_tokens, output_tokens)
+      if (cost > COST_WARN_THRESHOLD) {
+        logger.warn(`High extraction cost: $${cost.toFixed(4)}`, { input_tokens, output_tokens })
+      } else {
+        logger.info(`Extraction cost: $${cost.toFixed(4)}`, { input_tokens, output_tokens })
+      }
+
+      const content = (response as Anthropic.Message).content[0]
+      if (content.type !== 'text') throw new Error('Unexpected response type from Claude')
+      return content.text
+    } catch (err: unknown) {
+      lastError = err
+      const isRetryable =
+        err instanceof Anthropic.RateLimitError ||
+        err instanceof Anthropic.InternalServerError ||
+        (err instanceof Anthropic.APIError && err.status >= 500)
+      if (!isRetryable || attempt === 3) break
+      const delay = 1000 * Math.pow(2, attempt - 1)
+      logger.warn(`Claude attempt ${attempt} failed, retrying in ${delay}ms`, err)
+      await new Promise((r) => setTimeout(r, delay))
+    }
+  }
+  throw lastError
+}
