@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
 import './globals.css'
+import { DemoControlPanel } from '@/components/DemoControlPanel'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -16,7 +17,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${montserrat.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[--color-off]">{children}</body>
+      <body className="min-h-full flex flex-col bg-[--color-off]">
+        {children}
+        <DemoControlPanel />
+      </body>
     </html>
   )
 }

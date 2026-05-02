@@ -65,3 +65,8 @@ body {
 code, pre, .font-mono {
   font-family: var(--font-mono);
 }
+
+.confidential-mode .font-mono {
+  filter: blur(4px);
+  user-select: none;
+}
