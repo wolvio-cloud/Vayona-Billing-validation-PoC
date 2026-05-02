@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Wolvio brand palette */
+  --color-wolvio-navy:   #0A2342;
+  --color-wolvio-orange: #F26B38;
+  --color-wolvio-dark:   #061529;
+  --color-wolvio-slate:  #4A5568;
+  --color-wolvio-light:  #E8EDF4;
+  --color-wolvio-mid:    #C5D0E0;
+  --color-wolvio-off:    #F7F8FA;
+  --color-wolvio-green:  #10B981;
+  --color-wolvio-red:    #DC2626;
+  --color-wolvio-amber:  #F59E0B;
+  --color-wolvio-teal:   #0D9488;
+
+  /* shadcn/ui semantic tokens */
+  --color-background: #ffffff;
+  --color-foreground: #0A2342;
+  --color-card: #ffffff;
+  --color-card-foreground: #0A2342;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0A2342;
+  --color-primary: #0A2342;
+  --color-primary-foreground: #F7F8FA;
+  --color-secondary: #E8EDF4;
+  --color-secondary-foreground: #0A2342;
+  --color-muted: #F7F8FA;
+  --color-muted-foreground: #4A5568;
+  --color-accent: #F26B38;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #DC2626;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #C5D0E0;
+  --color-input: #C5D0E0;
+  --color-ring: #F26B38;
+
+  /* Typography */
+  --font-sans: 'Montserrat', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Border radius */
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme inline {
+    --color-background: #061529;
+    --color-foreground: #E8EDF4;
+    --color-card: #0A2342;
+    --color-card-foreground: #E8EDF4;
+    --color-border: #1e3a5f;
+    --color-input: #1e3a5f;
+    --color-muted: #0A2342;
+    --color-muted-foreground: #C5D0E0;
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
