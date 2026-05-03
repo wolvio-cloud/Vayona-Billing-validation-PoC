@@ -1,28 +1,36 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// In a real app, we would verify a JWT or session cookie here.
-// For the PoC, we check for a 'wolvio-auth' cookie.
-export function proxy(request: NextRequest) {
+// This middleware secures the dashboard and handles redirects
+export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isAuthenticated = request.cookies.has('wolvio-auth')
 
-  // Public paths
-  if (pathname === '/login' || pathname === '/welcome' || pathname === '/favicon.ico') {
-    if (isAuthenticated && pathname !== '/welcome') {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
+  // 1. Allow public assets and API routes
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname === '/favicon.ico' ||
+    pathname.includes('.') // static files
+  ) {
     return NextResponse.next()
   }
 
-  // API paths - allow for now
-  if (pathname.startsWith('/api')) {
-    return NextResponse.next()
-  }
-
-  // Protected paths
+  // 2. Handle Authentication
   if (!isAuthenticated) {
-    return NextResponse.redirect(new URL('/welcome', request.url))
+    // If not logged in, only allow /login and /welcome
+    if (pathname !== '/login' && pathname !== '/welcome') {
+      return NextResponse.redirect(new URL('/welcome', request.url))
+    }
+  } else {
+    // If logged in, redirect away from auth pages to dashboard
+    if (pathname === '/login' || pathname === '/welcome') {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+    // If logged in and at root, go to dashboard
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
   }
 
   return NextResponse.next()

@@ -17,7 +17,7 @@ export default async function ContractDetailPage({
   let contract: ContractParameters | null = null
   
   if (id.startsWith('C')) {
-    if (id === 'C001') {
+    if (id === 'C001' || id === 'C002') {
       contract = await getDemoContractParameters(id)
     } else {
       const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`

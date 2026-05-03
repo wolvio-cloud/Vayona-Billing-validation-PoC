@@ -66,10 +66,11 @@ export function ValidationReport({ result }: ValidationReportProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[350px,1fr] gap-12 items-start overflow-visible">
+    <div className="grid grid-cols-1 xl:grid-cols-[380px,1fr] gap-12 items-start overflow-visible">
       {/* Executive Summary Panel */}
-      <div className="lg:sticky lg:top-32 space-y-8 animate-fade-in-up">
-        <div className="glass rounded-[32px] p-8 border-none shadow-[0_32px_64px_-20px_rgba(0,0,0,0.6)] flex flex-col items-center text-center relative overflow-hidden">
+      {/* We use xl:sticky to ensure it only floats on large screens where there is a side column */}
+      <div className="relative xl:sticky xl:top-40 space-y-8 animate-fade-in-up z-20 xl:w-[380px]">
+        <div className="glass rounded-[32px] p-8 border-none shadow-[0_32px_64px_-20px_rgba(0,0,0,0.6)] bg-[#030A14]/95 backdrop-blur-2xl flex flex-col items-center text-center relative overflow-hidden">
           <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[--color-wolvio-orange] to-transparent opacity-50" />
           
           <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[--color-wolvio-mid] mb-8">Executive Audit</h2>
@@ -147,7 +148,6 @@ export function ValidationReport({ result }: ValidationReportProps) {
           <div 
             key={check.check_id}
             className="animate-fade-in-up"
-            style={{ animationDelay: `${300 + idx * 100}ms` }}
           >
             <ValidationLineItem check={check} />
           </div>

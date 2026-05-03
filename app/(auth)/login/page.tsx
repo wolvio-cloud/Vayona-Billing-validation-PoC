@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react'
-import Image from 'next/image'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -14,9 +13,15 @@ export default function LoginPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    
+    // 1. Set the mock authentication cookie that proxy.ts/middleware looks for
+    document.cookie = "wolvio-auth=true; path=/; max-age=3600; SameSite=Lax"
+    
+    // 2. Redirect to the new dedicated dashboard path
+    // We use a small delay to ensure the cookie is processed by the browser
     setTimeout(() => {
-      router.push('/')
-    }, 1200)
+      router.push('/dashboard')
+    }, 100)
   }
 
   return (
@@ -82,7 +87,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer info */}
-        <p className="text-center text-[--color-wolvio-mid]/40 text-[10px] mt-10 font-bold tracking-[0.2em] uppercase">
+        <p className="text-center text-[--color-wolvio-mid]/40 text-[10px] pb-10 mt-10 font-bold tracking-[0.2em] uppercase">
           SECURED BY WOLVIO QUANTUM GUARD • VERSION 2.5.0
         </p>
       </div>

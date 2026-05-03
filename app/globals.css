@@ -33,14 +33,16 @@ body {
   color: var(--color-wolvio-light);
   font-family: var(--font-sans);
   min-height: 100vh;
+  overflow-y: scroll; /* Force scrollbar to prevent layout shift */
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Glassmorphism Utility */
 .glass {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-orange {
