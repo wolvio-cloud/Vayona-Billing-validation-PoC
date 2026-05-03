@@ -17,9 +17,11 @@ function sumByCategory(invoice: Invoice, category: Invoice['line_items'][number]
     .reduce((s, i) => s + i.amount, 0)
 }
 
-function getMonthsDiff(start: string, end: string): number {
+function getMonthsDiff(start: string | undefined, end: string | undefined): number {
+  if (!start || !end) return 1
   const startDate = new Date(start)
   const endDate = new Date(end)
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return 1
   let months = (endDate.getFullYear() - startDate.getFullYear()) * 12
   months -= startDate.getMonth()
   months += endDate.getMonth()
@@ -34,7 +36,7 @@ export function runValidation(
   const checks: Omit<ValidationCheck, 'explanation'>[] = []
 
   // CHECK 1 — Base Fee
-  if (params.base_monthly_fee.value !== null) {
+  if (params.base_monthly_fee?.value != null) {
     const numMonths = getMonthsDiff(invoice.period_start, invoice.period_end)
     const expected = params.base_monthly_fee.value * numMonths
     const actual = sumByCategory(invoice, 'BaseFee')
@@ -132,8 +134,8 @@ export function runValidation(
 
   // CHECK 4 — LD Netting
   if (generation) {
-    const guarantee = params.availability_guarantee_pct.value
-    if (guarantee !== null && generation.availability_pct < guarantee && params.base_annual_fee.value !== null && params.ld_rate_per_pp.value !== null && params.ld_cap_pct.value !== null) {
+    const guarantee = params.availability_guarantee_pct?.value
+    if (guarantee != null && generation.availability_pct < guarantee && params.base_annual_fee?.value != null && params.ld_rate_per_pp?.value != null && params.ld_cap_pct?.value != null) {
       const expectedLD = calcLiquidatedDamages({
         baseAnnualFee: params.base_annual_fee.value!,
         ldRatePerPP: params.ld_rate_per_pp.value!,

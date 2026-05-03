@@ -56,15 +56,22 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
       `Availability hit ${initialGeneration?.availability_pct}% — above the bonus threshold in ${check.clause_reference}.`
   }))
 
-  const result = ValidationResultSchema.parse({
-    contract_id: contractId,
-    invoice_id: currentInvoice.invoice_id,
-    run_at: new Date().toISOString(),
-    checks,
-    total_gap_amount: checks.reduce((s, c) => s + (c.gap_amount ?? 0), 0),
-    total_opportunity_amount: checks.reduce((s, c) => s + (c.opportunity_amount ?? 0), 0),
-    verdict: checks.some(c => c.verdict === 'GAP') ? 'GAPS_FOUND' : checks.some(c => c.verdict === 'OPPORTUNITY') ? 'REVIEW_REQUIRED' : 'CLEAN',
-  })
+  let result = null
+  let parseError: string | null = null
+  try {
+    result = ValidationResultSchema.parse({
+      contract_id: contractId,
+      invoice_id: currentInvoice.invoice_id,
+      run_at: new Date().toISOString(),
+      checks,
+      total_gap_amount: checks.reduce((s, c) => s + (c.gap_amount ?? 0), 0),
+      total_opportunity_amount: checks.reduce((s, c) => s + (c.opportunity_amount ?? 0), 0),
+      verdict: checks.some(c => c.verdict === 'GAP') ? 'GAPS_FOUND' : checks.some(c => c.verdict === 'OPPORTUNITY') ? 'REVIEW_REQUIRED' : 'CLEAN',
+    })
+  } catch (err) {
+    console.error('Validation parse error:', err)
+    parseError = 'Unable to run validation — contract parameters may still be extracting.'
+  }
 
   return (
     <div className="space-y-12 pb-32 animate-fade-in-up">
@@ -111,9 +118,30 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
         </div>
       </div>
 
-      <div className="animate-fade-in-up animation-delay-200">
-        <ValidationReport result={result} />
-      </div>
+      {/* Error / Empty State */}
+      {(parseError || checks.length === 0) ? (
+        <div className="glass rounded-[32px] p-16 text-center space-y-6 border border-amber-500/20">
+          <div className="w-16 h-16 mx-auto bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20">
+            <span className="text-amber-400 text-3xl">⏳</span>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-heading font-black text-white uppercase tracking-tight">Extraction In Progress</h3>
+            <p className="text-sm text-amber-400/80 max-w-md mx-auto font-medium leading-relaxed">
+              {parseError ?? 'No validation checks could be run. The contract parameters are still being extracted by the AI engine. Please wait a moment and refresh the page.'}
+            </p>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-3 bg-[--color-wolvio-orange]/10 hover:bg-[--color-wolvio-orange]/20 border border-[--color-wolvio-orange]/30 rounded-full text-xs font-black uppercase tracking-widest text-[--color-wolvio-orange] transition-all"
+          >
+            Refresh Validation
+          </button>
+        </div>
+      ) : (
+        <div className="animate-fade-in-up animation-delay-200">
+          <ValidationReport result={result!} />
+        </div>
+      )}
     </div>
   )
 }
