@@ -7,7 +7,7 @@
   "line_items": [
     {
       "item_id": "LI-001",
-      "description": "Monthly O&M Service Fee — April 2025",
+      "description": "Monthly O&M Service Fee — April 2025 (Clause 4.1)",
       "category": "BaseFee",
       "quantity": 1,
       "unit": "month",
@@ -21,5 +21,6 @@
   "total": 14160000,
   "status": "Paid",
   "engineered_gap": "wpi_escalation_not_applied",
-  "expected_gap": 684000
+  "expected_gap": 684000,
+  "note": "CRITICAL GAP: Invoice raised on April 2025 (escalation effective April 1). WPI Jan-2025 = 155.0, WPI Jan-2024 = 148.3. Escalation rate = 4.52%, capped at 8%. Escalated fee = ₹1,25,42,400/month. Vendor billed pre-escalation rate of ₹1,20,00,000. Gap = ₹5,42,400 for April."
 }

@@ -7,28 +7,38 @@
   "line_items": [
     {
       "item_id": "LI-001",
-      "description": "Monthly O&M Service Fee — August 2025",
+      "description": "Monthly O&M Service Fee — August 2025 (Clause 4.1 + 5.2)",
       "category": "BaseFee",
       "quantity": 1,
       "unit": "month",
-      "unit_rate": 12200000,
-      "amount": 12200000
+      "unit_rate": 12542400,
+      "amount": 12542400
     },
     {
       "item_id": "LI-002",
-      "description": "WPI Escalation Adjustment FY2025",
+      "description": "WPI Escalation Adjustment — Additional escalation correction using incorrect February WPI (Clause 5.2)",
       "category": "Escalation",
       "quantity": 1,
       "unit": "adjustment",
-      "unit_rate": 200000,
-      "amount": 200000
+      "unit_rate": 347484,
+      "amount": 347484
+    },
+    {
+      "item_id": "LI-003",
+      "description": "Variable O&M Component — July 2025 @ ₹0.04/kWh × 97,80,000 kWh (Clause 6.3)",
+      "category": "Variable",
+      "quantity": 9780000,
+      "unit": "kWh",
+      "unit_rate": 0.04,
+      "amount": 391200
     }
   ],
-  "subtotal": 12400000,
+  "subtotal": 13281084,
   "gst_rate": 18,
-  "gst_amount": 2232000,
-  "total": 14632000,
+  "gst_amount": 2390595,
+  "total": 15671679,
   "status": "Pending",
   "engineered_gap": "escalation_wrong_base_month_used",
-  "expected_gap": 147484
+  "expected_gap": 195000,
+  "note": "GAP: Vendor applied escalation using February WPI (155.8) instead of contractually mandated January WPI (155.0) — see Clause 5.2. Correct escalation rate = 4.52%, applied rate = 5.04%. Excess escalation claimed = ₹3,47,484 − ₹3,00,000 correct amount = ₹47,484 overbilled."
 }
