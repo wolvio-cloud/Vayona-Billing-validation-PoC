@@ -22,6 +22,8 @@ const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: a
 export function ValidationLineItem({ check }: ValidationLineItemProps) {
   const [expanded, setExpanded] = useState(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY')
   const [showSAP, setShowSAP] = useState(false)
+  const [isNotifying, setIsNotifying] = useState(false)
+  const [isNotified, setIsNotified] = useState(false)
   
   const theme = VERDICT_THEME[check.verdict]
   const Icon = theme.icon
@@ -126,13 +128,31 @@ export function ValidationLineItem({ check }: ValidationLineItemProps) {
                   <div className="flex justify-end gap-4 pt-4">
                     <Button 
                       variant="outline" 
-                      className="py-6 px-8 border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white/5"
+                      className="py-6 px-8 border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white/5 transition-colors"
                       onClick={() => setShowSAP(true)}
                     >
                       <Terminal className="w-4 h-4 mr-3 text-[--color-wolvio-orange]" /> SAP Ready
                     </Button>
-                    <Button className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 py-6 rounded-xl shadow-lg group">
-                      Notify Controller <Send className="w-4 h-4 ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    <Button 
+                      className={`font-black text-xs uppercase tracking-widest px-8 py-6 rounded-xl shadow-lg transition-all duration-300 ${isNotified ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white group'}`}
+                      onClick={() => {
+                        if (!isNotified) {
+                          setIsNotifying(true)
+                          setTimeout(() => {
+                            setIsNotifying(false)
+                            setIsNotified(true)
+                          }, 800)
+                        }
+                      }}
+                      disabled={isNotifying}
+                    >
+                      {isNotifying ? (
+                        <>Sending...</>
+                      ) : isNotified ? (
+                        <>Controller Notified <CheckCircle2 className="w-4 h-4 ml-3" /></>
+                      ) : (
+                        <>Notify Controller <Send className="w-4 h-4 ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
+                      )}
                     </Button>
                   </div>
                 )}
