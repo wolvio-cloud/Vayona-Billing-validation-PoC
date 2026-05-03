@@ -9,9 +9,11 @@ import { createLogger } from '@/lib/logger'
 
 const logger = createLogger('api/contracts/validate')
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(
   request: Request,
-  ctx: RouteContext<'/api/contracts/[id]/validate'>
+  ctx: { params: Promise<{ id: string }> }
 ) {
   const { id } = await ctx.params
   const body = await request.json() as { invoice_id: string }

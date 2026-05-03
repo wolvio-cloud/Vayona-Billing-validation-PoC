@@ -6,7 +6,7 @@ const logger = createLogger('api/contracts/[id]')
 
 export async function GET(
   _request: Request,
-  ctx: RouteContext<'/api/contracts/[id]'>
+  ctx: { params: Promise<{ id: string }> }
 ) {
   const { id } = await ctx.params
   try {

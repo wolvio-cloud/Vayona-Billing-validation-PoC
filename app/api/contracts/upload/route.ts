@@ -7,6 +7,8 @@ import { mockStore } from '@/lib/db/mock-store'
 const logger = createLogger('api/contracts/upload')
 const UPLOAD_DIR = process.env.UPLOAD_DIR ?? './uploads'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData()
