@@ -24,7 +24,13 @@ export async function POST(request: Request) {
 
     const { text } = await parsePDF(Buffer.from(bytes))
 
-    const userMessage = `Extract data from this invoice text:\n\n${text}`
+    const MAX_CHARS = 100000;
+    const safeText = text.length > MAX_CHARS ? text.substring(0, MAX_CHARS) : text;
+    if (text.length > MAX_CHARS) {
+      logger.warn(`Invoice text truncated at ${MAX_CHARS} characters to enforce cost guardrails.`);
+    }
+
+    const userMessage = `Extract data from this invoice text:\n\n${safeText}`
     const rawResponse = await callClaude({ 
       systemPrompt: INVOICE_EXTRACTION_SYSTEM_PROMPT, 
       userMessage 
