@@ -59,7 +59,7 @@ export function generateShareReportHtml(result: ValidationResult, includePattern
         ${check.explanation ? `
           <div style="margin-top: 15px; font-size: 14px; line-height: 1.6;">
             <strong>Analysis:</strong><br/>
-            ${check.explanation.cfo_summary}
+            ${typeof check.explanation === 'string' ? check.explanation : (check.explanation as any).cfo_summary || 'Analysis not available.'}
           </div>
         ` : ''}
       </div>

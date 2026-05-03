@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Wolvio brand palette - Dark Professional Theme */
-  --color-wolvio-navy:   #0A2342;
-  --color-wolvio-orange: #F26B38;
-  --color-wolvio-dark:   #061529;
-  --color-wolvio-slate:  #334155;
+  /* Wolvio brand palette - Deep Premium Dark Theme */
+  --color-wolvio-navy:   #061529;
+  --color-wolvio-orange: #F26630;
+  --color-wolvio-dark:   #030A14;
+  --color-wolvio-slate:  #1E293B;
   --color-wolvio-light:  #F8FAFC;
   --color-wolvio-mid:    #94A3B8;
-  --color-wolvio-surface: #112A46;
-  --color-wolvio-green:  #22C55E;
-  --color-wolvio-red:    #EF4444;
+  --color-wolvio-surface: rgba(17, 42, 70, 0.6); /* Glass surface */
+  --color-wolvio-green:  #10B981;
+  --color-wolvio-red:    #F43F5E;
   --color-wolvio-amber:  #F59E0B;
 
   /* Typography */
@@ -19,7 +19,9 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Border radius */
-  --radius: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
 }
 
 :root {
@@ -30,10 +32,45 @@ body {
   background: var(--color-wolvio-dark);
   color: var(--color-wolvio-light);
   font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-orange {
+  background: rgba(242, 102, 48, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(242, 102, 48, 0.2);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-wolvio-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-wolvio-orange);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-heading);
+  letter-spacing: -0.02em;
 }
 
 code, pre, .font-mono {
@@ -44,3 +81,20 @@ code, pre, .font-mono {
   filter: blur(4px);
   user-select: none;
 }
+
+/* Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+

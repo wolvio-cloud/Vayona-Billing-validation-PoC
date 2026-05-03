@@ -1,6 +1,7 @@
 import { formatINRShort } from '@/lib/utils'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Building2, Calendar, Banknote } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
 
 interface ContractCardProps {
   id: string
@@ -12,29 +13,48 @@ interface ContractCardProps {
   counterparty?: string
 }
 
-export function ContractCard({ contractId, displayName, isDemo, annualFee, termYears, counterparty }: ContractCardProps) {
+export function ContractCard({ contractId, displayName, annualFee, termYears, counterparty }: ContractCardProps) {
   return (
-    <div className="group flex items-center justify-between p-6 bg-[--color-wolvio-surface] rounded-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[--color-wolvio-slate] overflow-hidden relative transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:-translate-y-1">
-      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[--color-wolvio-orange]" />
-      
-      <div className="space-y-4 pl-4">
-        <div className="flex items-center gap-3">
-          <h3 className="font-heading font-bold text-xl text-[--color-wolvio-light]">{displayName}</h3>
-        </div>
+    <Link href={`/contracts/${contractId}`} className="block group">
+      <GlassCard hover className="p-8 border-none shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)]">
+        {/* Hover Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[--color-wolvio-orange]/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         
-        <div className="flex items-center gap-3">
-          {counterparty && <span className="px-3 py-1 bg-[--color-wolvio-dark] text-[--color-wolvio-mid] border border-[--color-wolvio-slate] text-sm font-medium rounded-full">{counterparty}</span>}
-          {annualFee && <span className="px-3 py-1 bg-[--color-wolvio-dark] text-[--color-wolvio-mid] border border-[--color-wolvio-slate] text-sm font-medium rounded-full">{formatINRShort(annualFee)}/year</span>}
-          {termYears && <span className="px-3 py-1 bg-[--color-wolvio-dark] text-[--color-wolvio-mid] border border-[--color-wolvio-slate] text-sm font-medium rounded-full">{termYears} years</span>}
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="space-y-6">
+            <div className="space-y-1">
+              <div className="text-[10px] font-black text-[--color-wolvio-orange] uppercase tracking-[0.4em]">Active Agreement</div>
+              <h3 className="font-heading font-black text-3xl text-white tracking-tight">{displayName}</h3>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-6">
+              {counterparty && (
+                <div className="flex items-center gap-2 text-white/60">
+                  <Building2 size={16} />
+                  <span className="text-xs font-bold uppercase tracking-wider">{counterparty}</span>
+                </div>
+              )}
+              {annualFee && (
+                <div className="flex items-center gap-2 text-white/60">
+                  <Banknote size={16} />
+                  <span className="text-xs font-bold uppercase tracking-wider">{formatINRShort(annualFee)} / YR</span>
+                </div>
+              )}
+              {termYears && (
+                <div className="flex items-center gap-2 text-white/60">
+                  <Calendar size={16} />
+                  <span className="text-xs font-bold uppercase tracking-wider">{termYears} YEARS</span>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 group-hover:bg-[--color-wolvio-orange] group-hover:border-[--color-wolvio-orange] transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(242,102,48,0.4)]">
+            <ArrowRight size={24} className="text-white group-hover:translate-x-1 transition-transform" />
+          </div>
         </div>
-      </div>
-      
-      <Link 
-        href={`/contracts/${contractId}`}
-        className="flex items-center gap-2 bg-[--color-wolvio-orange] hover:bg-[#e05a28] text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-sm"
-      >
-        Load Demo Contract <ArrowRight size={18} />
-      </Link>
-    </div>
+      </GlassCard>
+    </Link>
   )
 }
+

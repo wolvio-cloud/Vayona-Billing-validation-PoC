@@ -17,11 +17,9 @@ export default async function ContractDetailPage({
   let contract: ContractParameters | null = null
   
   if (id.startsWith('C')) {
-    // Check if it's the demo contract C001
     if (id === 'C001') {
       contract = await getDemoContractParameters(id)
     } else {
-      // Fetch from DB
       const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
       if (row && row.parameters) {
         contract = row.parameters as unknown as ContractParameters
@@ -32,21 +30,18 @@ export default async function ContractDetailPage({
   if (!contract) return notFound()
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto py-10 px-6 pb-24">
-      <ContractHeader 
-        displayName={id === 'C001' ? "Wind Farm Alpha LTSA" : "Extracted Contract"} 
-        isDemo={id === 'C001'} 
-        annualFee={contract.base_annual_fee.value} 
-        termYears={15} 
-        counterparty="GreenWind Power" 
+    <div className="max-w-7xl mx-auto py-16 px-8 space-y-12">
+      <div className="animate-fade-in-up">
+        <ValidationWarnings warnings={contract.validation_warnings || []} />
+        <ExtractionQualityScore contract={contract} />
+      </div>
+
+      <ContractDetailClient 
+        initialContract={contract} 
+        contractId={id} 
       />
-
-      <ValidationWarnings warnings={contract.validation_warnings || []} />
-      
-      <ExtractionQualityScore contract={contract} />
-
-      <ContractDetailClient initialContract={contract} contractId={id} />
     </div>
   )
 }
+
 

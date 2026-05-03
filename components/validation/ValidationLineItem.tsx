@@ -3,164 +3,154 @@
 import { useState } from 'react'
 import { formatINR } from '@/lib/utils'
 import type { ValidationCheck } from '@/lib/schemas/validation'
-import { ChevronDown, ChevronUp, Copy, Download, Send } from 'lucide-react'
+import { ChevronDown, ChevronUp, Send, CheckCircle2, AlertTriangle, XCircle, Info, Terminal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { GlassCard } from '@/components/ui/glass-card'
+import { SAPPayloadModal } from './SAPPayloadModal'
 
 interface ValidationLineItemProps {
   check: ValidationCheck
 }
 
-const VERDICT_BORDER: Record<ValidationCheck['verdict'], string> = {
-  MATCH: 'border-[#10B981]',
-  GAP: 'border-[#DC2626]',
-  OPPORTUNITY: 'border-[#F59E0B]',
-  INSUFFICIENT_DATA: 'border-[--color-wolvio-slate]',
-}
-
-const VERDICT_ICON: Record<ValidationCheck['verdict'], string> = {
-  MATCH: '✓',
-  GAP: '✗',
-  OPPORTUNITY: '◎',
-  INSUFFICIENT_DATA: '?',
+const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: any, bg: string }> = {
+  MATCH: { color: 'text-[--color-wolvio-green]', icon: CheckCircle2, bg: 'bg-[--color-wolvio-green]/10' },
+  GAP: { color: 'text-[--color-wolvio-red]', icon: XCircle, bg: 'bg-[--color-wolvio-red]/10' },
+  OPPORTUNITY: { color: 'text-[--color-wolvio-amber]', icon: AlertTriangle, bg: 'bg-[--color-wolvio-amber]/10' },
+  INSUFFICIENT_DATA: { color: 'text-[--color-wolvio-mid]', icon: Info, bg: 'bg-white/5' },
 }
 
 export function ValidationLineItem({ check }: ValidationLineItemProps) {
   const [expanded, setExpanded] = useState(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY')
-  const [showModal, setShowModal] = useState(false)
+  const [showSAP, setShowSAP] = useState(false)
+  
+  const theme = VERDICT_THEME[check.verdict]
+  const Icon = theme.icon
 
   const gapValue = check.gap_amount ?? check.opportunity_amount
-  const borderClass = VERDICT_BORDER[check.verdict]
+
+  const generateSAPPayload = () => {
+    return {
+      HEADER: {
+        INVOICE_ID: `CORR-${check.check_id.slice(-4)}-${Date.now().toString().slice(-4)}`,
+        DOC_TYPE: 'RE',
+        COMP_CODE: 'SG01',
+        CURRENCY: 'INR',
+        HEADER_TEXT: `Adjustment: ${check.check_name} | Ref: ${check.clause_reference}`
+      },
+      ITEM_DATA: [
+        {
+          INVOICE_DOC_ITEM: '000001',
+          GL_ACCOUNT: check.verdict === 'GAP' ? '410020' : '410030',
+          ITEM_AMOUNT: gapValue,
+          TAX_CODE: 'I1',
+          COSTCENTER: 'CC_WIND_TN_01',
+          TEXT: `Variance found in ${check.check_name} calculation`
+        }
+      ]
+    }
+  }
 
   return (
     <>
-      <div className={`bg-[--color-wolvio-surface] border border-[--color-wolvio-slate] border-l-4 ${borderClass} rounded-[12px] shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]`}>
+      <GlassCard hover className="border-none shadow-[0_15px_35px_-10px_rgba(0,0,0,0.3)]">
         <button
-          className="w-full flex items-center justify-between px-6 py-4 text-left transition-colors hover:bg-[--color-wolvio-navy]"
+          className="w-full flex items-center justify-between px-8 py-7 text-left group"
           onClick={() => setExpanded((e) => !e)}
         >
-          <div className="flex items-center gap-4">
-            <span className={`font-bold text-lg ${check.verdict === 'GAP' ? 'text-[#EF4444]' : check.verdict === 'OPPORTUNITY' ? 'text-[#F59E0B]' : 'text-[#22C55E]'}`}>
-              {VERDICT_ICON[check.verdict]}
-            </span>
-            <span className="font-heading font-bold text-[--color-wolvio-light] text-lg">{check.check_name}</span>
-            <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded-full border ${check.verdict === 'GAP' ? 'bg-red-500/20 text-[#EF4444] border-red-500/30' : check.verdict === 'OPPORTUNITY' ? 'bg-amber-500/20 text-[#F59E0B] border-amber-500/30' : 'bg-green-500/20 text-[#22C55E] border-green-500/30'}`}>
-              {check.verdict}
-            </span>
-          </div>
           <div className="flex items-center gap-6">
-            {gapValue != null && gapValue > 0 ? (
-              <span className={`font-mono text-lg font-bold ${check.verdict === 'GAP' ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>
-                {formatINR(gapValue)}
-              </span>
-            ) : check.expected_amount != null ? (
-              <span className="font-mono text-lg font-bold text-[--color-wolvio-mid]">
-                {formatINR(check.expected_amount)}
-              </span>
-            ) : null}
-            <div className="text-[--color-wolvio-slate]">
+            <div className={`w-12 h-12 ${theme.bg} rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110`}>
+              <Icon className={theme.color} size={24} />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-heading font-black text-white text-lg tracking-tight">{check.check_name}</h4>
+              <div className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 ${theme.color}`}>
+                {check.verdict}
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-10">
+            <div className="text-right">
+              {gapValue != null && gapValue > 0 ? (
+                <div className={`font-mono text-xl font-black ${theme.color} tracking-tighter`}>
+                  {formatINR(gapValue)}
+                </div>
+              ) : check.expected_amount != null ? (
+                <div className="font-mono text-xl font-black text-white/40 tracking-tighter">
+                  {formatINR(check.expected_amount)}
+                </div>
+              ) : null}
+              <div className="text-[10px] font-bold text-[--color-wolvio-mid] uppercase tracking-widest mt-1">Variance</div>
+            </div>
+            <div className="text-white/20 group-hover:text-[--color-wolvio-orange] transition-colors">
               {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </div>
           </div>
         </button>
 
         {expanded && (
-          <div className="px-6 pb-6 pt-2 bg-[--color-wolvio-surface]">
-            <div className="rounded-[12px] border border-[--color-wolvio-slate] overflow-hidden mb-6">
-              <div className="grid grid-cols-3 divide-x divide-[--color-wolvio-slate] bg-[--color-wolvio-navy] border-b border-[--color-wolvio-slate]">
-                <div className="p-4">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-[--color-wolvio-mid] mb-1">Expected</div>
-                  <div className="font-mono text-lg font-bold text-[--color-wolvio-light]">{check.expected_amount != null ? formatINR(check.expected_amount) : '-'}</div>
+          <div className="px-8 pb-8 animate-in slide-in-from-top-4 duration-500">
+            <div className="bg-white/5 rounded-[24px] border border-white/5 overflow-hidden">
+              <div className="grid grid-cols-3 divide-x divide-white/5 bg-white/5 border-b border-white/5">
+                <div className="p-6">
+                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[--color-wolvio-mid] mb-2">Entitlement</div>
+                  <div className="font-mono text-lg font-black text-white">{check.expected_amount != null ? formatINR(check.expected_amount) : '-'}</div>
                 </div>
-                <div className="p-4">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-[--color-wolvio-mid] mb-1">Billed</div>
-                  <div className="font-mono text-lg font-bold text-[--color-wolvio-light]">{check.actual_amount != null ? formatINR(check.actual_amount) : '-'}</div>
+                <div className="p-6">
+                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[--color-wolvio-mid] mb-2">Actual Billed</div>
+                  <div className="font-mono text-lg font-black text-white">{check.actual_amount != null ? formatINR(check.actual_amount) : '-'}</div>
                 </div>
-                <div className="p-4 bg-red-500/10">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-[--color-wolvio-mid] mb-1">Gap</div>
-                  <div className="font-mono text-xl font-bold text-[#EF4444]">{gapValue != null ? formatINR(gapValue) : '-'}</div>
+                <div className={`p-6 ${gapValue ? 'bg-white/5' : ''}`}>
+                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[--color-wolvio-mid] mb-2">Variance</div>
+                  <div className={`font-mono text-xl font-black ${theme.color}`}>{gapValue != null ? formatINR(gapValue) : '₹0'}</div>
                 </div>
               </div>
 
-              <div className="p-5 border-b border-[--color-wolvio-slate]">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-500/10 text-[--color-wolvio-orange] text-xs font-semibold rounded-full border border-orange-500/30 mb-3">
-                  {check.clause_reference} · Page {check.page_number}
+              <div className="p-8 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-[--color-wolvio-orange] border border-white/10 uppercase tracking-widest">
+                    Reference: {check.clause_reference} · Pg {check.page_number}
+                  </div>
                 </div>
-                <p className="italic text-sm text-[--color-wolvio-mid] leading-relaxed">
+                
+                <p className="text-sm text-[--color-wolvio-mid] leading-relaxed italic border-l-2 border-white/10 pl-6 py-2">
                   "{check.source_clause}"
                 </p>
-              </div>
 
-              <div className="p-5 bg-[--color-wolvio-navy]">
-                <p className="text-[15px] font-medium text-[--color-wolvio-light] leading-relaxed">
-                  {check.explanation}
-                </p>
+                <div className="bg-white/5 rounded-2xl p-6">
+                  <p className="text-base font-semibold text-white/90 leading-relaxed">
+                  {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
+                  </p>
+                </div>
+
+                {(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY') && (
+                  <div className="flex justify-end gap-4 pt-4">
+                    <Button 
+                      variant="outline" 
+                      className="py-6 px-8 border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white/5"
+                      onClick={() => setShowSAP(true)}
+                    >
+                      <Terminal className="w-4 h-4 mr-3 text-[--color-wolvio-orange]" /> SAP Ready
+                    </Button>
+                    <Button className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 py-6 rounded-xl shadow-lg group">
+                      Notify Controller <Send className="w-4 h-4 ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
-
-            {(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY') && (
-              <div className="flex justify-end">
-                <Button 
-                  className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white font-semibold px-6 shadow-sm"
-                  onClick={() => setShowModal(true)}
-                >
-                  <Send className="w-4 h-4 mr-2" /> Send to Finance Controller
-                </Button>
-              </div>
-            )}
           </div>
         )}
-      </div>
+      </GlassCard>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[--color-wolvio-surface] rounded-[12px] shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] border border-[--color-wolvio-slate]">
-            <div className="px-6 py-4 border-b border-[--color-wolvio-slate] flex items-center justify-between bg-[--color-wolvio-navy] text-[--color-wolvio-light]">
-              <h3 className="font-heading font-bold text-lg">Send to Finance Controller</h3>
-              <button onClick={() => setShowModal(false)} className="text-[--color-wolvio-mid] hover:text-white transition-colors">✕</button>
-            </div>
-            
-            <div className="p-6 overflow-y-auto bg-[--color-wolvio-dark] space-y-4">
-              <div className="space-y-1">
-                <div className="text-xs font-semibold uppercase tracking-wider text-[--color-wolvio-mid]">To</div>
-                <div className="text-sm font-medium text-[--color-wolvio-light] bg-[--color-wolvio-surface] p-2 rounded border border-[--color-wolvio-slate]">finance.controller@siemensgamesa.com</div>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="text-xs font-semibold uppercase tracking-wider text-[--color-wolvio-mid]">Subject</div>
-                <div className="text-sm font-medium text-[--color-wolvio-light] bg-[--color-wolvio-surface] p-2 rounded border border-[--color-wolvio-slate]">
-                  URGENT: Billing Discrepancy - {check.check_name} (INV-002)
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-xs font-semibold uppercase tracking-wider text-[--color-wolvio-mid]">Message Draft</div>
-                <div className="text-sm text-[--color-wolvio-light] bg-[--color-wolvio-surface] p-4 rounded border border-[--color-wolvio-slate] whitespace-pre-wrap leading-relaxed">
-                  Hi FC Team,{'\n\n'}
-                  Our system has identified a discrepancy in invoice INV-002 regarding the {check.check_name}.{'\n\n'}
-                  {check.explanation}{'\n\n'}
-                  Details:{'\n'}
-                  - Expected: {check.expected_amount != null ? formatINR(check.expected_amount) : '-'}{'\n'}
-                  - Billed: {check.actual_amount != null ? formatINR(check.actual_amount) : '-'}{'\n'}
-                  - Total Gap: {gapValue != null ? formatINR(gapValue) : '-'}{'\n\n'}
-                  Please review and issue a corrective invoice/credit note as per {check.clause_reference}.{'\n\n'}
-                  Regards,{'\n'}
-                  Contract Execution Intelligence
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border-t border-[--color-wolvio-slate] bg-[--color-wolvio-surface] flex justify-end gap-3">
-              <Button variant="outline" className="border-[--color-wolvio-slate] text-[--color-wolvio-light] bg-transparent hover:bg-[--color-wolvio-navy]" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button variant="outline" className="border-[--color-wolvio-slate] text-[--color-wolvio-light] bg-transparent hover:bg-[--color-wolvio-navy]">
-                <Copy className="w-4 h-4 mr-2" /> Copy to Clipboard
-              </Button>
-              <Button className="bg-[--color-wolvio-orange] text-white hover:bg-[#d95a2b]">
-                <Download className="w-4 h-4 mr-2" /> Download PDF
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SAPPayloadModal 
+        isOpen={showSAP}
+        onClose={() => setShowSAP(false)}
+        checkName={check.check_name}
+        payload={generateSAPPayload()}
+      />
     </>
   )
 }
+
+

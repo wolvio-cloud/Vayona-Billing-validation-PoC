@@ -1,9 +1,8 @@
 import { getDemoContractParameters, getDemoInvoice, getDemoGenerationData } from '@/lib/demo-data'
-import { runValidation, type GenerationData } from '@/lib/validation/engine'
-import { ValidationReport } from '@/components/validation/ValidationReport'
-import { ValidationResultSchema } from '@/lib/schemas/validation'
+import { GenerationData } from '@/lib/validation/engine'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ValidationView } from '@/components/validation/ValidationView'
 
 export default async function ValidatePage({
   params,
@@ -33,29 +32,6 @@ export default async function ValidatePage({
     }
   }
 
-  const rawChecks = runValidation(contract, invData, generation)
-  const checks = rawChecks.map((check) => ({
-    ...check,
-    explanation: check.verdict === 'MATCH' ? 'All amounts match contract terms.' : 
-      check.verdict === 'GAP' ? `Clause ${check.clause_reference} requires WPI escalation from April 1 using the January index — the invoice uses the pre-escalation rate instead of the correct escalated amount. Raise a corrective invoice for ₹${check.gap_amount?.toLocaleString('en-IN')} and apply the escalated rate to all future months this financial year.` :
-      `Availability hit 98.4% in July — above the bonus threshold in ${check.clause_reference}. Raise a bonus invoice for ₹${check.opportunity_amount?.toLocaleString('en-IN')} before the 30-day billing window closes.`
-  }))
-
-  const totalGap = checks.reduce((s, c) => s + (c.gap_amount ?? 0), 0)
-  const totalOpportunity = checks.reduce((s, c) => s + (c.opportunity_amount ?? 0), 0)
-  const hasGaps = checks.some((c) => c.verdict === 'GAP')
-  const hasOpportunities = checks.some((c) => c.verdict === 'OPPORTUNITY')
-
-  const result = ValidationResultSchema.parse({
-    contract_id: id,
-    invoice_id: invoice,
-    run_at: new Date().toISOString(),
-    checks,
-    total_gap_amount: totalGap,
-    total_opportunity_amount: totalOpportunity,
-    verdict: hasGaps ? 'GAPS_FOUND' : hasOpportunities ? 'REVIEW_REQUIRED' : 'CLEAN',
-  })
-
   const ALL_INVOICES = ['INV-001', 'INV-002', 'INV-003', 'INV-004', 'INV-005', 'INV-006']
 
   return (
@@ -80,7 +56,12 @@ export default async function ValidatePage({
         })}
       </div>
 
-      <ValidationReport result={result} />
+      <ValidationView 
+        contract={contract} 
+        initialInvoice={invData} 
+        initialGeneration={generation} 
+        contractId={id} 
+      />
 
       <div className="pt-20 pb-12 text-center">
         <p className="italic text-[--color-wolvio-mid] text-xl font-medium tracking-wide">
@@ -90,3 +71,4 @@ export default async function ValidatePage({
     </div>
   )
 }
+

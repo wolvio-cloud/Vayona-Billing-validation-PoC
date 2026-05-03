@@ -1,6 +1,8 @@
 'use client'
 
 import { ContractParameters } from '@/lib/schemas/contract'
+import { GlassCard } from '@/components/ui/glass-card'
+import { Cpu, ShieldCheck, Activity } from 'lucide-react'
 
 interface ExtractionQualityScoreProps {
   contract: ContractParameters
@@ -10,10 +12,9 @@ export function ExtractionQualityScore({ contract }: ExtractionQualityScoreProps
   let high = 0
   let medium = 0
   let low = 0
-  let notFound = 0
+  let notFoundCount = 0
   let total = 0
 
-  // The specific traced fields we expect in the contract schema
   const fieldsToCheck = [
     'base_annual_fee',
     'base_monthly_fee',
@@ -33,7 +34,7 @@ export function ExtractionQualityScore({ contract }: ExtractionQualityScoreProps
     total++
     const field = (contract as any)[key]
     if (!field || field.value === null || field.value === undefined) {
-      notFound++
+      notFoundCount++
     } else {
       if (field.confidence === 'high') high++
       else if (field.confidence === 'medium') medium++
@@ -41,63 +42,64 @@ export function ExtractionQualityScore({ contract }: ExtractionQualityScoreProps
     }
   })
 
-  // Calculate score (e.g., 100 for high, 50 for medium, 0 for low/not found)
-  const scoreRaw = total > 0 ? ((high * 100) + (medium * 50)) / total : 0
-  const score = Math.round(scoreRaw)
+  const score = total > 0 ? Math.round(((high * 100) + (medium * 50)) / total) : 0
 
-  let colorClass = 'text-[#EF4444]'
-  let bgClass = 'bg-[#EF4444]'
-  let message = 'Manual review recommended before use'
+  let colorClass = 'text-[--color-wolvio-red]'
+  let accentClass = 'bg-[--color-wolvio-red]'
+  let message = 'Manual audit mandatory'
 
   if (score >= 90) {
-    colorClass = 'text-[#22C55E]'
-    bgClass = 'bg-[#22C55E]'
-    message = 'Reliable for billing validation'
+    colorClass = 'text-[--color-wolvio-green]'
+    accentClass = 'bg-[--color-wolvio-green]'
+    message = 'High fidelity extraction'
   } else if (score >= 70) {
-    colorClass = 'text-[#F59E0B]'
-    bgClass = 'bg-[#F59E0B]'
-    message = 'Review flagged fields before validating'
+    colorClass = 'text-[--color-wolvio-amber]'
+    accentClass = 'bg-[--color-wolvio-amber]'
+    message = 'Moderate confidence review'
   }
 
-  // Generate the progress bar chunks
-  const barChunks = 20
-  const filledChunks = Math.round((score / 100) * barChunks)
-
   return (
-    <div className="bg-[--color-wolvio-surface] rounded-[12px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[--color-wolvio-slate] mb-6 flex flex-col md:flex-row items-center gap-8">
-      <div className="flex-1 space-y-4">
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-[--color-wolvio-mid]">Extraction Quality</h3>
-        <div className="flex items-center gap-4">
-          <div className="font-mono text-2xl tracking-tighter text-[--color-wolvio-slate] flex">
-            {Array.from({ length: barChunks }).map((_, i) => (
-              <span key={i} className={i < filledChunks ? colorClass : 'opacity-30'}>
-                {i < filledChunks ? '█' : '░'}
-              </span>
-            ))}
-          </div>
-          <span className={`font-mono text-3xl font-extrabold ${colorClass}`}>{score}%</span>
+    <GlassCard className="mb-8 p-8 border-none flex flex-col lg:flex-row items-center gap-12 overflow-hidden relative">
+      {/* Background decoration */}
+      <div className={`absolute -right-20 -top-20 w-64 h-64 blur-[100px] opacity-10 rounded-full ${accentClass}`} />
+      
+      <div className="flex-1 space-y-6 w-full relative z-10">
+        <div className="flex items-center gap-3 text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.4em]">
+          <Activity size={14} className={colorClass} /> Intelligence Integrity
         </div>
-        <p className={`font-semibold text-sm ${colorClass}`}>{message}</p>
+        
+        <div className="space-y-2">
+          <div className="flex items-end gap-4">
+            <span className={`text-6xl font-heading font-black tracking-tighter ${colorClass}`}>
+              {score}%
+            </span>
+            <div className="pb-2">
+               <div className="text-xs font-bold text-white uppercase tracking-widest">{message}</div>
+            </div>
+          </div>
+          
+          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+            <div 
+              className={`h-full ${accentClass} transition-all duration-1000 ease-out rounded-full shadow-[0_0_15px_currentColor]`}
+              style={{ width: `${score}%`, color: 'inherit' }}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="w-full md:w-auto grid grid-cols-2 gap-x-8 gap-y-3 text-sm font-mono p-4 bg-[--color-wolvio-dark] rounded-xl border border-[--color-wolvio-slate]">
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-[#22C55E]">{high}</span>
-          <span className="text-[--color-wolvio-mid]">high confidence</span>
-        </div>
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-[#F59E0B]">{medium}</span>
-          <span className="text-[--color-wolvio-mid]">medium conf</span>
-        </div>
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-[#EF4444]">{low}</span>
-          <span className="text-[--color-wolvio-mid]">low confidence</span>
-        </div>
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-[--color-wolvio-slate]">{notFound}</span>
-          <span className="text-[--color-wolvio-mid]">not found</span>
-        </div>
+      <div className="grid grid-cols-2 gap-4 w-full lg:w-auto relative z-10">
+        {[
+          { label: 'High', count: high, color: 'text-[--color-wolvio-green]' },
+          { label: 'Medium', count: medium, color: 'text-[--color-wolvio-amber]' },
+          { label: 'Low', count: low, color: 'text-[--color-wolvio-red]' },
+          { label: 'Missing', count: notFoundCount, color: 'text-white/20' }
+        ].map((stat, i) => (stat.count > 0 || stat.label === 'Missing') && (
+          <div key={i} className="bg-white/5 border border-white/5 px-6 py-4 rounded-2xl flex flex-col gap-1 min-w-[120px]">
+            <span className={`text-xl font-mono font-black ${stat.color}`}>{stat.count}</span>
+            <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">{stat.label}</span>
+          </div>
+        ))}
       </div>
-    </div>
+    </GlassCard>
   )
 }

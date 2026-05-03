@@ -7,7 +7,15 @@ declare global {
 
 function createClient() {
   const url = process.env.DATABASE_URL
-  if (!url) throw new Error('DATABASE_URL is not set')
+  
+  // For local development without DB, return a proxy that throws only on invocation
+  if (!url) {
+    console.warn('⚠️ DATABASE_URL is not set. Database features will fail if called.')
+    return (() => {
+      throw new Error('DATABASE_URL is not set. Please check your environment variables.')
+    }) as unknown as ReturnType<typeof postgres>
+  }
+
   return postgres(url, {
     ssl: 'require',
     max: 10,

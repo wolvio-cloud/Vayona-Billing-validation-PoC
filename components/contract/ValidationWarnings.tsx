@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
 
 export function ValidationWarnings({ warnings }: { warnings: string[] }) {
   const [expanded, setExpanded] = useState(false)
@@ -9,34 +10,41 @@ export function ValidationWarnings({ warnings }: { warnings: string[] }) {
   if (!warnings || warnings.length === 0) return null
 
   return (
-    <div className="bg-amber-500/10 border border-amber-500/30 rounded-[12px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)] mb-6">
+    <GlassCard variant="orange" className="mb-8 border-none overflow-hidden">
       <button 
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-amber-500/20 transition-colors"
+        className="w-full flex items-center justify-between p-6 text-left hover:bg-white/5 transition-colors group"
       >
-        <div className="flex items-center gap-3 text-[#F59E0B]">
-          <AlertTriangle size={20} className="text-[#F59E0B]" />
-          <span className="font-semibold text-sm">
-            ⚠ {warnings.length} extraction warning{warnings.length === 1 ? '' : 's'} — review before validating
-          </span>
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-[--color-wolvio-orange]/20 rounded-xl flex items-center justify-center border border-[--color-wolvio-orange]/30">
+            <AlertTriangle size={20} className="text-[--color-wolvio-orange] animate-pulse" />
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-sm font-black text-white uppercase tracking-tight">Data Quality Alert</h4>
+            <p className="text-[10px] font-bold text-[--color-wolvio-orange] uppercase tracking-widest">
+              {warnings.length} Extraction warning{warnings.length === 1 ? '' : 's'} requiring audit
+            </p>
+          </div>
         </div>
-        <div className="text-[#F59E0B]">
+        <div className="text-[--color-wolvio-orange]/50 group-hover:text-[--color-wolvio-orange] transition-colors">
           {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </div>
       </button>
       
       {expanded && (
-        <div className="px-4 pb-4 pt-1 border-t border-amber-500/20">
-          <ul className="space-y-2 mt-2">
-            {warnings.map((warning, i) => (
-              <li key={i} className="flex gap-2 text-sm text-[--color-wolvio-mid]">
-                <span className="font-mono text-[#F59E0B] mt-0.5">•</span>
-                <span>{warning}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="px-6 pb-6 pt-2 animate-in slide-in-from-top-4 duration-500">
+          <div className="bg-black/20 rounded-2xl p-6 border border-white/5">
+            <ul className="space-y-3">
+              {warnings.map((warning, i) => (
+                <li key={i} className="flex gap-4 text-sm text-white/70 leading-relaxed">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[--color-wolvio-orange] shrink-0" />
+                  <span>{warning}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
-    </div>
+    </GlassCard>
   )
 }

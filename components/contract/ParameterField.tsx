@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Edit2, Check, X } from 'lucide-react'
+import { Edit2, Check, X, ChevronDown, ChevronUp } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
 
 interface ParameterFieldProps {
   label: string
@@ -21,10 +22,10 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
   const isNotFound = !value || value === 'NOT FOUND'
 
   const confidenceColor = 
-    confidence === 'high' ? 'bg-[#22C55E]' : 
-    confidence === 'low' ? 'bg-[#EF4444]' : 
+    confidence === 'high' ? 'bg-green-500' : 
+    confidence === 'low' ? 'bg-red-500' : 
     confidence === 'manual_input' ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]' :
-    'bg-[#F59E0B]'
+    'bg-amber-500'
 
   const handleSave = () => {
     onManualValue?.(tempValue)
@@ -32,75 +33,94 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
   }
 
   return (
-    <div 
-      className={`bg-[--color-wolvio-surface] rounded-[12px] border transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col ${
-        isEditing ? 'border-[--color-wolvio-orange] ring-1 ring-[--color-wolvio-orange]' : 'border-[--color-wolvio-slate]'
+    <GlassCard 
+      hover={!isEditing}
+      className={`transition-all duration-500 group overflow-hidden flex flex-col ${
+        isEditing ? 'border-[--color-wolvio-orange] ring-1 ring-[--color-wolvio-orange]' : 'border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)]'
       }`}
     >
-      <div className="p-6 flex-1 flex flex-col justify-between group">
-        <div className="space-y-4">
+      <div className="p-8 flex-1 flex flex-col justify-between relative overflow-hidden">
+        {/* Subtle accent glow */}
+        <div className={`absolute top-0 right-0 w-32 h-32 blur-[40px] opacity-10 rounded-full translate-x-16 -translate-y-16 ${confidenceColor}`} />
+        
+        <div className="space-y-6 relative z-10">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-semibold text-[--color-wolvio-mid] uppercase tracking-wider">{label}</h4>
-            <div className="flex items-center gap-2">
-              <div className={`w-2.5 h-2.5 rounded-full ${confidenceColor}`} title={`Confidence: ${confidence}`} />
-              {!isEditing && (
-                <button 
-                  onClick={() => setIsEditing(true)}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[--color-wolvio-navy] rounded transition-all"
-                >
-                  <Edit2 size={12} className="text-[--color-wolvio-orange]" />
-                </button>
-              )}
+            <h4 className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.3em]">{label}</h4>
+            <div className="flex items-center gap-3">
+              <div className={`w-2 h-2 rounded-full ${confidenceColor} ${confidence !== 'manual_input' ? 'shadow-[0_0_10px_currentColor]' : ''}`} />
+              <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{confidence} confidence</span>
             </div>
           </div>
           
-          {isEditing ? (
-            <div className="flex items-center gap-2">
-              <input 
-                autoFocus
-                className="flex-1 bg-[--color-wolvio-dark] border border-[--color-wolvio-slate] rounded px-3 py-1 text-white font-mono text-lg focus:outline-none focus:border-[--color-wolvio-orange]"
-                value={tempValue}
-                onChange={(e) => setTempValue(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-              />
-              <button onClick={handleSave} className="p-1.5 bg-green-500/20 text-[#22C55E] rounded hover:bg-green-500/30">
-                <Check size={16} />
-              </button>
-              <button onClick={() => { setIsEditing(false); setTempValue(value || '') }} className="p-1.5 bg-red-500/20 text-[#EF4444] rounded hover:bg-red-500/30">
-                <X size={16} />
-              </button>
-            </div>
-          ) : (
-            <div 
-              className={`font-mono text-xl font-bold break-words leading-tight cursor-pointer ${isNotFound ? 'text-[#EF4444]/60 italic' : 'text-[--color-wolvio-light]'}`}
-              onClick={() => setExpanded(!expanded)}
-            >
-              {value || 'NOT FOUND'}
-            </div>
-          )}
+          <div className="py-2">
+            {isEditing ? (
+              <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                <input 
+                  autoFocus
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xl font-mono font-bold text-white outline-none focus:border-[--color-wolvio-orange] transition-colors"
+                  value={tempValue}
+                  onChange={(e) => setTempValue(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                />
+                <div className="flex gap-2">
+                  <button 
+                    onClick={handleSave}
+                    className="flex-1 bg-[--color-wolvio-orange] text-white py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#d95a2b] transition-colors"
+                  >
+                    Confirm
+                  </button>
+                  <button 
+                    onClick={() => { setIsEditing(false); setTempValue(value || '') }}
+                    className="px-4 bg-white/5 text-white/60 py-2 rounded-lg text-xs font-bold uppercase hover:bg-white/10 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div 
+                className="group/val cursor-pointer relative"
+                onClick={() => setIsEditing(true)}
+              >
+                <div className={`text-3xl font-heading font-black tracking-tighter transition-colors ${isNotFound ? 'text-red-500/60' : 'text-white group-hover/val:text-[--color-wolvio-orange]'}`}>
+                  {value || 'NOT FOUND'}
+                </div>
+                <div className="absolute -right-2 top-0 opacity-0 group-hover/val:opacity-100 transition-opacity">
+                   <div className="p-1 bg-[--color-wolvio-orange]/10 rounded border border-[--color-wolvio-orange]/20">
+                     <Edit2 size={12} className="text-[--color-wolvio-orange]" />
+                   </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="mt-8 flex items-center justify-between">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-500/10 text-[--color-wolvio-orange] text-xs font-semibold rounded-full border border-orange-500/30 transition-colors group-hover:bg-orange-500/20 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-            <span>{isNotFound && !isEditing ? 'ABSENT' : clauseReference}</span>
-            <span className="opacity-50">·</span>
-            <span>Page {pageNumber}</span>
+          <div 
+            className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-[--color-wolvio-orange] border border-white/10 uppercase tracking-widest cursor-pointer hover:bg-white/10 transition-colors"
+            onClick={() => setExpanded(!expanded)}
+          >
+            {clauseReference} · Pg {pageNumber}
           </div>
-          <div className="text-[--color-wolvio-slate] group-hover:text-[--color-wolvio-orange] transition-colors cursor-pointer" onClick={() => setExpanded(!expanded)}>
-            {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </div>
+          <button 
+            onClick={() => setExpanded(!expanded)}
+            className="text-white/20 hover:text-white transition-colors"
+          >
+            {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </button>
         </div>
       </div>
       
       {expanded && (
-        <div className="px-6 py-4 bg-[--color-wolvio-dark] border-t border-[--color-wolvio-slate] animate-in slide-in-from-top-2">
-          <div className="text-[10px] font-bold text-[--color-wolvio-mid] mb-2 uppercase tracking-widest">Source Context</div>
-          <p className="text-sm italic text-[--color-wolvio-light] leading-relaxed">
-            {confidence === 'manual_input' ? 'Manual entry by controller. Verify against original contract.' : `"${sourceClause}"`}
-          </p>
+        <div className="px-8 pb-8 animate-in slide-in-from-top-2 duration-300">
+          <div className="bg-white/5 rounded-2xl p-6 border border-white/5">
+            <div className="text-[10px] font-black text-white/20 mb-3 uppercase tracking-widest">Source Clause</div>
+            <p className="text-sm italic text-[--color-wolvio-mid] leading-relaxed border-l-2 border-white/10 pl-4">
+              {confidence === 'manual_input' ? 'Manual entry by controller. Verify against original contract.' : `"${sourceClause}"`}
+            </p>
+          </div>
         </div>
       )}
-    </div>
+    </GlassCard>
   )
 }
-

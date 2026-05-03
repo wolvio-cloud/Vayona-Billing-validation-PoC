@@ -11,20 +11,36 @@ export interface ParsedPDF {
   text: string
   pageCount: number
   chunks: string[]
+  pages: string[] // NEW: Array of text per page
 }
 
 export async function parsePDF(buffer: Buffer): Promise<ParsedPDF> {
   return logger.timed('parsePDF', async () => {
+    // pdf-parse uses \f for page breaks by default
     const result = await pdfParse(buffer)
-    const text = result.text.replace(/\s+/g, ' ').trim()
+    const rawText = result.text
     const pageCount = result.numpages
 
-    const chunks: string[] = []
-    for (let i = 0; i < text.length; i += CHUNK_SIZE) {
-      chunks.push(text.slice(i, i + CHUNK_SIZE))
-    }
+    // Split by form feed and clean up
+    const pages = rawText.split('\f').map(p => p.replace(/\s+/g, ' ').trim()).filter(p => p.length > 0)
+    const text = pages.join(' ')
 
-    logger.info(`Parsed PDF`, { pageCount, chars: text.length, chunks: chunks.length })
-    return { text, pageCount, chunks }
+    // For extraction, we group pages into chunks of ~50KB to stay within context limits
+    // but without cutting sentences in half randomly
+    const chunks: string[] = []
+    let currentChunk = ''
+    
+    for (const pageText of pages) {
+      if ((currentChunk.length + pageText.length) > CHUNK_SIZE && currentChunk.length > 0) {
+        chunks.push(currentChunk)
+        currentChunk = ''
+      }
+      currentChunk += pageText + '\n\n'
+    }
+    if (currentChunk.length > 0) chunks.push(currentChunk)
+
+    logger.info(`Parsed PDF (Page-Aware)`, { pageCount, chars: text.length, chunks: chunks.length })
+    return { text, pageCount, chunks, pages }
   })
 }
+
