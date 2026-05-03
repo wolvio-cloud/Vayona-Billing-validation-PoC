@@ -14,7 +14,25 @@ export default async function ValidatePage({
   const { id } = await params
   const { invoice = 'INV-002' } = await searchParams
 
-  const contract = await getDemoContractParameters(id)
+  let contract = await getDemoContractParameters(id)
+  
+  // If not a demo contract, attempt to fetch from DB or mockStore
+  if (!contract) {
+    const sql = (await import('@/lib/db')).default
+    try {
+      const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
+      if (row && row.parameters) {
+        contract = row.parameters as any
+      } else {
+        const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
+        if (mockData?.parameters) contract = mockData.parameters as any
+      }
+    } catch (err) {
+      console.warn('DB query failed, falling back to mockStore', err)
+      const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
+      if (mockData?.parameters) contract = mockData.parameters as any
+    }
+  }
   const invData = await getDemoInvoice(invoice)
   if (!contract || !invData) return notFound()
 

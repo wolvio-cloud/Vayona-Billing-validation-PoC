@@ -19,13 +19,13 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
   const [availability, setAvailability] = useState(93)
   const [wpiIncrease, setWpiIncrease] = useState(4)
 
-  const guarantee = contract.availability_guarantee_pct.value || 97
-  const baseAnnualFee = contract.base_annual_fee.value || 0
-  const baseMonthlyFee = contract.base_monthly_fee.value || 0
+  const guarantee = contract.availability_guarantee_pct?.value || 97
+  const baseAnnualFee = contract.base_annual_fee?.value || 0
+  const baseMonthlyFee = contract.base_monthly_fee?.value || 0
   
   // Scenario A Math
-  const ldRate = contract.ld_rate_per_pp.value || 0
-  const ldCapPct = contract.ld_cap_pct.value || 15
+  const ldRate = contract.ld_rate_per_pp?.value || 0
+  const ldCapPct = contract.ld_cap_pct?.value || 15
   const ldCapValue = (baseAnnualFee * ldCapPct) / 100
   const shortfall = Math.max(0, guarantee - availability)
   const rawLdExposure = (baseAnnualFee * (shortfall * ldRate)) / 100
@@ -79,9 +79,9 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
             <div className="bg-[--color-wolvio-dark] p-4 rounded-lg border border-[--color-wolvio-slate]">
               <div className="text-sm text-[--color-wolvio-mid] mb-2 font-mono">Contract Parameters</div>
               <div className="text-sm text-[--color-wolvio-light] leading-relaxed">
-                <span className="text-[--color-wolvio-orange] font-semibold">{contract.ld_rate_per_pp.clause_reference}</span> · {ldRate}% per pp shortfall
+                <span className="text-[--color-wolvio-orange] font-semibold">{contract.ld_rate_per_pp?.clause_reference || 'Clause'}</span> · {ldRate}% per pp shortfall
                 <br/>
-                <span className="text-[--color-wolvio-orange] font-semibold">{contract.ld_cap_pct.clause_reference}</span> · Cap: {ldCapPct}% of annual fee ({formatINRShort(ldCapValue)})
+                <span className="text-[--color-wolvio-orange] font-semibold">{contract.ld_cap_pct?.clause_reference || 'Clause'}</span> · Cap: {ldCapPct}% of annual fee ({formatINRShort(ldCapValue)})
               </div>
             </div>
           </div>

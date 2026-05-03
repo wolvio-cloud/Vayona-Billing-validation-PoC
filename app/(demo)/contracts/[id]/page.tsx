@@ -20,9 +20,19 @@ export default async function ContractDetailPage({
     if (id === 'C001' || id === 'C002') {
       contract = await getDemoContractParameters(id)
     } else {
-      const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
-      if (row && row.parameters) {
-        contract = row.parameters as unknown as ContractParameters
+      try {
+        const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
+        if (row && row.parameters) {
+          contract = row.parameters as unknown as ContractParameters
+        } else {
+          // If row exists but parameters is null, try mockStore
+          const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
+          if (mockData?.parameters) contract = mockData.parameters as unknown as ContractParameters
+        }
+      } catch (err) {
+        console.warn('DB query failed, falling back to mockStore', err)
+        const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
+        if (mockData?.parameters) contract = mockData.parameters as unknown as ContractParameters
       }
     }
   }
