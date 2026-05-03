@@ -64,31 +64,30 @@ export async function POST(
     const buffer = await readFile(contract.pdf_storage_path)
     const { text, pageCount, chunks, pages } = await parsePDF(buffer)
 
-    // --- PHASE 1: DOCUMENT MAPPING (For Large Docs) ---
-    let targetChunks = [chunks[0]]
-    if (pageCount > 10) {
-      await updateProgress('Mapping complex document structure...')
-      const mapPrompt = `Identify the page numbers for these sections in this contract:\n1. Fees & Payment\n2. Price Escalation/Indexation\n3. Performance Guarantees & LDs\n\nReturn JSON: { "fees_pages": [n], "escalation_pages": [n], "performance_pages": [n] }\n\nText Extract:\n${chunks[0].slice(0, 10000)}...`
-      try {
-        const mapping = await callClaude({ systemPrompt: 'You are a document structure expert.', userMessage: mapPrompt })
-        const mapData = safeParseJSON<{fees_pages: number[], escalation_pages: number[], performance_pages: number[]}>(mapping)
-        
-        const relevantPages = [...new Set([...mapData.fees_pages, ...mapData.escalation_pages, ...mapData.performance_pages])]
-        if (relevantPages.length > 0) {
-          const customChunk = relevantPages
-            .filter(p => p > 0 && p <= pages.length)
-            .map(p => `--- PAGE ${p} ---\n${pages[p-1]}`)
-            .join('\n\n')
-          targetChunks = [customChunk]
-        }
-      } catch (err) {
-        logger.warn('Document mapping failed, falling back to sequential extraction', err)
+    // --- PHASE 1: TOKEN GUARDRAILS (Cost Control) ---
+    // Instead of relying on chunks[0], we concatenate pages up to a safe limit.
+    // 100,000 chars is roughly 25,000 tokens (well within the 40k budget, high coverage).
+    const MAX_CHARS = 100000;
+    let safePayload = '';
+    let truncated = false;
+    
+    for (let i = 0; i < pages.length; i++) {
+      const pageText = `--- PAGE ${i + 1} ---\n${pages[i]}\n\n`;
+      if (safePayload.length + pageText.length > MAX_CHARS) {
+        safePayload += pageText.substring(0, MAX_CHARS - safePayload.length);
+        truncated = true;
+        break;
       }
+      safePayload += pageText;
+    }
+    
+    if (truncated) {
+      logger.warn(`Document truncated at ${MAX_CHARS} characters to enforce cost guardrails.`);
     }
 
     // --- PHASE 2: SURGICAL EXTRACTION ---
     await updateProgress('Identifying commercial clauses...')
-    const userMessage = `Extract commercial parameters from this contract:\n\n${targetChunks[0]}`
+    const userMessage = `Extract commercial parameters from this contract:\n\n${safePayload}`
     const rawResponse = await callClaude({ systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT, userMessage })
 
     const parsed = safeParseJSON<any>(rawResponse)

@@ -32,8 +32,8 @@ const mockInvoice: Invoice = {
   invoice_id: "INV-002",
   contract_id: "C001",
   invoice_date: "2024-04-05",
-  billing_period_start: "2024-01-01",
-  billing_period_end: "2024-03-31",
+  period_start: "2024-01-01",
+  period_end: "2024-03-31",
   total_amount: 36000000, // Just 3 months of base fee, missing escalation and variable
   tax_amount: 6480000,
   currency: "INR",

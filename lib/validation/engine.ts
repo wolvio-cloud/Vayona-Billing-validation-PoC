@@ -35,7 +35,7 @@ export function runValidation(
 
   // CHECK 1 — Base Fee
   if (params.base_monthly_fee.value !== null) {
-    const numMonths = getMonthsDiff(invoice.billing_period_start, invoice.billing_period_end)
+    const numMonths = getMonthsDiff(invoice.period_start, invoice.period_end)
     const expected = params.base_monthly_fee.value * numMonths
     const actual = sumByCategory(invoice, 'BaseFee')
     const gap = expected - actual
