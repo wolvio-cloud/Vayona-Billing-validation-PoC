@@ -10,9 +10,11 @@ import { safeParseJSON } from '@/lib/extraction/utils'
 
 const logger = createLogger('api/contracts/extract')
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(
   _request: Request,
-  ctx: RouteContext<'/api/contracts/[id]/extract'>
+  ctx: { params: Promise<{ id: string }> }
 ) {
   const { id } = await ctx.params
 

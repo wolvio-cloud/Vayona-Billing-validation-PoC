@@ -8,7 +8,7 @@ import { Invoice } from '@/lib/schemas/invoice'
 import { runValidation, GenerationData } from '@/lib/validation/engine'
 import { ValidationResultSchema } from '@/lib/schemas/validation'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 interface ValidationViewProps {
@@ -116,5 +116,4 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
       </div>
     </div>
   )
-
 }

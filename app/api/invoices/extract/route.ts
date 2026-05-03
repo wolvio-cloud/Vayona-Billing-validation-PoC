@@ -9,6 +9,8 @@ import { createLogger } from '@/lib/logger'
 const logger = createLogger('api/invoices/extract')
 const UPLOAD_DIR = './uploads/invoices'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData()

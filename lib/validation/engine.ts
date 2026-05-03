@@ -25,7 +25,7 @@ export function runValidation(
   const checks: Omit<ValidationCheck, 'explanation'>[] = []
 
   // CHECK 1 — Base Fee
-  {
+  if (params.base_monthly_fee.value !== null) {
     const expected = params.base_monthly_fee.value
     const actual = sumByCategory(invoice, 'BaseFee')
     const gap = expected - actual
@@ -45,7 +45,7 @@ export function runValidation(
   }
 
   // CHECK 2 — WPI Escalation
-  if (params.escalation?.value.type === 'WPI') {
+  if (params.escalation?.value?.type === 'WPI') {
     const esc = params.escalation
     const invoiceYear = new Date(invoice.invoice_date).getFullYear()
     const currentJanKey = `${invoiceYear}-01`
@@ -53,12 +53,12 @@ export function runValidation(
     const currentWPI = lookupWPI(currentJanKey)
     const baseWPI = lookupWPI(baseJanKey)
 
-    if (currentWPI && baseWPI) {
+    if (currentWPI && baseWPI && params.base_monthly_fee.value !== null) {
       const escalatedFee = calcEscalatedMonthlyFee({
         baseMonthlyFee: params.base_monthly_fee.value,
         currentJanWPI: currentWPI,
         baseJanWPI: baseWPI,
-        capPct: esc.value.cap_pct,
+        capPct: esc.value!.cap_pct,
       })
       const expectedEscalation = escalatedFee - params.base_monthly_fee.value
       const actualEscalation = sumByCategory(invoice, 'Escalation')
@@ -99,9 +99,9 @@ export function runValidation(
   }
 
   // CHECK 3 — Variable Component
-  if (params.variable_component && generation) {
+  if (params.variable_component?.value && generation) {
     const vc = params.variable_component
-    const expected = calcVariableComponent(generation.total_kwh, vc.value.rate_per_kwh)
+    const expected = calcVariableComponent(generation.total_kwh, vc.value!.rate_per_kwh)
     const actual = sumByCategory(invoice, 'Variable')
     const gap = expected - actual
 
@@ -123,11 +123,11 @@ export function runValidation(
   // CHECK 4 — LD Netting
   if (generation) {
     const guarantee = params.availability_guarantee_pct.value
-    if (generation.availability_pct < guarantee) {
+    if (guarantee !== null && generation.availability_pct < guarantee && params.base_annual_fee.value !== null && params.ld_rate_per_pp.value !== null && params.ld_cap_pct.value !== null) {
       const expectedLD = calcLiquidatedDamages({
-        baseAnnualFee: params.base_annual_fee.value,
-        ldRatePerPP: params.ld_rate_per_pp.value,
-        ldCapPct: params.ld_cap_pct.value,
+        baseAnnualFee: params.base_annual_fee.value!,
+        ldRatePerPP: params.ld_rate_per_pp.value!,
+        ldCapPct: params.ld_cap_pct.value!,
         guaranteePct: guarantee,
         actualAvailabilityPct: generation.availability_pct,
       })
@@ -153,10 +153,10 @@ export function runValidation(
   // CHECK 5 — Performance Bonus
   if (params.bonus_threshold_pct && params.bonus_rate_per_pp && generation) {
     const threshold = params.bonus_threshold_pct.value
-    if (generation.availability_pct >= threshold) {
+    if (threshold !== null && generation.availability_pct >= threshold && params.base_annual_fee.value !== null && params.bonus_rate_per_pp?.value !== null) {
       const expectedBonus = calcPerformanceBonus({
-        baseAnnualFee: params.base_annual_fee.value,
-        bonusRatePerPP: params.bonus_rate_per_pp.value,
+        baseAnnualFee: params.base_annual_fee.value!,
+        bonusRatePerPP: params.bonus_rate_per_pp!.value!,
         bonusThresholdPct: threshold,
         actualAvailabilityPct: generation.availability_pct,
       })

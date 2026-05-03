@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ContractParameters } from '@/lib/schemas/contract'
 import { ParameterField } from './ParameterField'
 import { Button } from '@/components/ui/button'
+import { GlassCard } from '@/components/ui/glass-card'
 import { 
   ShieldCheck, 
   FileText, 
@@ -261,8 +262,5 @@ export function ContractDetailClient({ initialContract, contractId }: ContractDe
         </section>
       </div>
     </div>
-  )
-}
-
   )
 }
