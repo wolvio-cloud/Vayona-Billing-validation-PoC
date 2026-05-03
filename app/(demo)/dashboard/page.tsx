@@ -94,15 +94,32 @@ export default function HomePage() {
             <UploadFlow />
           </div>
           
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="glass p-6 rounded-[24px] border-white/5">
-              <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-1">Precision</div>
-              <div className="text-xl font-mono font-black text-green-400">99.9%</div>
-            </div>
-            <div className="glass p-6 rounded-[24px] border-white/5">
-              <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-1">Response</div>
-              <div className="text-xl font-mono font-black text-blue-400">&lt;1.2s</div>
+          {/* Enterprise Analytics & Integration */}
+          <div className="space-y-4">
+            <h3 className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.3em] mb-4">Ecosystem Health</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="glass p-6 rounded-[24px] border-white/5 relative overflow-hidden group hover:border-green-500/30 transition-colors">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-bl-[40px] -mr-8 -mt-8 group-hover:scale-150 transition-transform" />
+                <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-2 relative z-10">Revenue Recovered (YTD)</div>
+                <div className="text-2xl font-mono font-black text-green-400 relative z-10">₹14.2 Cr</div>
+                <div className="text-[10px] font-bold text-green-400/60 mt-1">+2.4% vs Last Year</div>
+              </div>
+              <div className="glass p-6 rounded-[24px] border-white/5 relative overflow-hidden group hover:border-[--color-wolvio-orange]/30 transition-colors">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-[--color-wolvio-orange]/10 rounded-bl-[40px] -mr-8 -mt-8 group-hover:scale-150 transition-transform" />
+                <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-2 relative z-10">Pending SAP Syncs</div>
+                <div className="text-2xl font-mono font-black text-[--color-wolvio-orange] relative z-10">12</div>
+                <div className="text-[10px] font-bold text-[--color-wolvio-orange]/60 mt-1">Requires FC Approval</div>
+              </div>
+              <div className="glass p-6 rounded-[24px] border-white/5 col-span-2 flex items-center justify-between group hover:bg-white/5 transition-colors cursor-pointer">
+                <div>
+                  <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-1">ERP Connection Status</div>
+                  <div className="text-sm font-bold text-white flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                    SAP S/4HANA (PRD)
+                  </div>
+                </div>
+                <div className="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-mono text-white/40">Ping: 12ms</div>
+              </div>
             </div>
           </div>
         </div>
