@@ -260,6 +260,8 @@ export function ContractDetailClient({ initialContract, contractId }: ContractDe
               confidence={contract.renewal_notice_months?.confidence}
             />
           </div>
+        </section>
+
         {/* CATEGORY: PREDICTIVE FORECASTING */}
         <section className="space-y-12 pb-20">
           <div className="flex items-center gap-8">

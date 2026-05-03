@@ -17,6 +17,15 @@ function sumByCategory(invoice: Invoice, category: Invoice['line_items'][number]
     .reduce((s, i) => s + i.amount, 0)
 }
 
+function getMonthsDiff(start: string, end: string): number {
+  const startDate = new Date(start)
+  const endDate = new Date(end)
+  let months = (endDate.getFullYear() - startDate.getFullYear()) * 12
+  months -= startDate.getMonth()
+  months += endDate.getMonth()
+  return months <= 0 ? 1 : months + 1
+}
+
 export function runValidation(
   params: ContractParameters,
   invoice: Invoice,
@@ -26,7 +35,8 @@ export function runValidation(
 
   // CHECK 1 — Base Fee
   if (params.base_monthly_fee.value !== null) {
-    const expected = params.base_monthly_fee.value
+    const numMonths = getMonthsDiff(invoice.billing_period_start, invoice.billing_period_end)
+    const expected = params.base_monthly_fee.value * numMonths
     const actual = sumByCategory(invoice, 'BaseFee')
     const gap = expected - actual
     checks.push({

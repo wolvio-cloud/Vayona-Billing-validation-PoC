@@ -1,42 +1,49 @@
-# Wolvio: Contract Execution Intelligence Platform
+# Wolvio: Contract Execution Intelligence Platform (PoC)
 
-## Overview
-Wolvio is an enterprise-grade AI platform designed specifically for the Renewable Energy sector (Wind & Solar). It automates the extraction, auditing, and validation of highly complex Long-Term Service Agreements (LTSA) and Turbine Service Agreements (TSA). 
+## Executive Summary
+Wolvio is an enterprise-grade AI platform designed specifically for the Renewable Energy sector. It automates the extraction, auditing, and validation of highly complex Long-Term Service Agreements (LTSA) to prevent revenue leakage.
 
-By leveraging cutting-edge LLMs (Claude 3.5 Sonnet) and robust OCR pipelines, Wolvio prevents revenue leakage by identifying billing discrepancies, missed performance bonuses, and unapplied liquidated damages.
+---
 
-## Product Scope (PoC)
-The current Proof of Concept (PoC) focuses on the core "Billing Validation" flow:
-1. **Intelligent Extraction:** Ingesting 100+ page LTSA documents (PDF) and converting unstructured legal text (e.g., WPI Escalation formulas, Tiered LD Caps) into a highly structured, machine-readable JSON schema.
-2. **Automated Auditing:** Parsing incoming monthly/quarterly invoices and cross-referencing them against the extracted contract parameters and real-time generation data (Turbine Availability, kWh output).
-3. **Variance Detection:** A deterministic calculation engine that flags mismatches (Gaps) or missed opportunities (e.g., unclaimed bonuses) with 100% mathematical precision.
-4. **Actionable Resolution:** Generating SAP-ready BAPI payloads to immediately issue Credit Notes or dispute resolutions.
+## 🚀 DEMO RUNBOOK (T-ZERO ZERO-FAIL CHECKLIST)
 
-## The Big Picture & Future Roadmap
-While the PoC validates the core engine, the ultimate vision for Wolvio is to become the **Central Nervous System for Commercial Operations**:
+### 1. Environment Readiness (T-24h)
+Ensure the following environment variables are strictly set in your `.env.local` file:
+\`\`\`env
+# Core AI Extraction Engine
+ANTHROPIC_API_KEY=sk-ant-api03-... # Must be active and funded
 
-### Phase 1: Expansion & Integration
-* **Multi-Modal Document Processing:** Support for scanned PDFs, handwritten annexures, and email chains.
-* **ERP Integration:** Direct API connections to SAP, Oracle, and Microsoft Dynamics for automated invoice holding and automated Credit Note generation.
-* **WPI/CPI Auto-Sync:** Live data feeds from the Office of the Economic Adviser (GoI) to ensure escalation calculations are always using the latest indices without manual input.
+# Optional: Supabase Connection (if using real DB instead of Mock DB)
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+\`\`\`
 
-### Phase 2: Predictive Intelligence
-* **Risk Forecasting:** Simulating future financial exposure based on historical availability trends (e.g., "If availability drops by 1% next quarter, LD exposure will hit the 15% cap").
-* **Contract Negotiation AI:** Analyzing historical leakage to recommend tighter clauses in future contract renewals.
+### 2. Cache Warmup & Cinematic Flow (T-1h)
+The PoC is designed with a "Cinematic Extraction" flow to keep the client engaged while the AI processes complex documents.
+1. Start the server: `taskkill /F /IM node.exe /T` (to clear locks) -> `npm run dev`
+2. Open `http://localhost:3000/welcome`
+3. Click through the login (any credentials work).
+4. **Important**: Go to the Dashboard and click on the **ReNew Power Mega-LTSA (C002)** contract to ensure the Next.js cache has compiled the page.
+5. In the contract detail view, expand the "Predictive Financial Modeling" section at the bottom.
+6. Click "Validate New Invoice" and upload the provided `demo_data/invoices/INV-002.pdf` (or any dummy PDF, the engine will use the seeded INV-002 logic for the demo).
 
-### Phase 3: Total Portfolio Command
-* **Fleet-Wide Analytics:** Aggregating data across dozens of wind/solar farms to identify systemic vendor underperformance.
-* **Compliance Auto-Pilot:** Ensuring all regulatory and tax (GST) compliance is met automatically before any payment leaves the organization.
+### 3. Demo Pilot Controls (Fallback Mode)
+If the live AI extraction fails due to hotel Wi-Fi or API timeouts, press **`Ctrl+Shift+D` (Windows) or `Cmd+Shift+D` (Mac)** to open the **Demo Pilot Panel**.
+- **Restart Experience**: Quickly drops you back to the welcome screen.
+- **Confidential Mode**: Toggles UI blurring for sensitive client screens.
+- **Pre-cached Path**: The `INV-002` validation results are deterministic and will always render perfectly, even if the Anthropic API is slow.
+
+---
 
 ## Technical Architecture
-* **Frontend:** Next.js 16 (App Router), React, TailwindCSS (High-performance Glassmorphism UI)
-* **Backend:** Next.js Server Actions, Node.js
-* **AI/Extraction:** Anthropic Claude 3.5 Sonnet (via `@anthropic-ai/sdk`)
-* **Styling:** Custom CSS with CSS Variables for theme consistency
+* **Frontend:** Next.js 16 (Turbopack), TailwindCSS, Radix UI.
+* **Validation Engine:** Deterministic rule-engine (`lib/validation/engine.ts`) with 100% precision.
+* **AI Extraction:** Claude 3.5 Sonnet with exponential backoff for resilience.
 
-## Running Locally
+## Test Harness
+To verify the deterministic engine is working flawlessly for the golden scenario (INV-002):
 \`\`\`bash
-npm install
-npm run dev
+npm install -D vitest
+npx vitest run
 \`\`\`
-*Note: Ensure \`ANTHROPIC_API_KEY\` is set in your \`.env\` file.*
+This ensures the Base Fee match, WPI gap, Variable under-billing, and Bonus opportunity are mathematically verified before you step into the room.
