@@ -13,6 +13,7 @@ export const ValidationCheckSchema = z.object({
   page_number: z.number(),
   explanation: z.string(),
   severity: z.enum(['High', 'Medium', 'Low']).nullable(),
+  confidence: z.enum(['High', 'Medium', 'Low']).optional(),
 })
 
 export const ValidationResultSchema = z.object({

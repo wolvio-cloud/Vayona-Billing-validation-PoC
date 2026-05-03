@@ -1,0 +1,80 @@
+{
+  "contract_id": "C002",
+  "client_name": "ReNew Power — Pavagada Solar/Wind Hybrid",
+  "contract_type": "Mega LTSA (Life-cycle TSA)",
+  "status": "active",
+  "start_date": "2024-01-01",
+  "end_date": "2049-01-01",
+  "params": {
+    "base_annual_fee": {
+      "value": 480000000,
+      "source_clause": "The Base Annual Fee for the comprehensive O&M of the Facility shall be INR 48,00,00,000 (Forty-Eight Crores) subject to annual escalation as defined in Annexure 4.",
+      "clause_reference": "Clause 8.1",
+      "page_number": 14,
+      "confidence": "high"
+    },
+    "base_monthly_fee": {
+      "value": 40000000,
+      "source_clause": "The Operator shall invoice the Owner a Monthly O&M Fee equivalent to 1/12th of the Base Annual Fee, payable in arrears within 15 days of the succeeding month.",
+      "clause_reference": "Clause 8.2",
+      "page_number": 15,
+      "confidence": "high"
+    },
+    "escalation": {
+      "value": {
+        "type": "WPI",
+        "cap_pct": 10,
+        "base_month": "January 2023"
+      },
+      "source_clause": "On each anniversary of the Effective Date, the Base Annual Fee shall be escalated by the change in the Wholesale Price Index (WPI) for the month of January preceding the anniversary date, compared to the Base WPI of January 2023. Such escalation shall be capped at a maximum of 10% per annum.",
+      "clause_reference": "Annexure 4, Para 1.2",
+      "page_number": 88,
+      "confidence": "high"
+    },
+    "availability_guarantee_pct": {
+      "value": 98.5,
+      "source_clause": "The Operator guarantees an annual Machine Availability (MA) of 98.5% for the entire Facility, excluding Grid Unavailability beyond 24 hours.",
+      "clause_reference": "Clause 12.1",
+      "page_number": 42,
+      "confidence": "high"
+    },
+    "ld_rate_per_pp": {
+      "value": 2.5,
+      "source_clause": "In the event the actual MA falls below the Guaranteed Availability, the Operator shall pay Liquidated Damages at the rate of 2.5% of the Base Annual Fee for every 1% (pro-rata) shortfall in MA.",
+      "clause_reference": "Clause 12.4",
+      "page_number": 43,
+      "confidence": "high"
+    },
+    "ld_cap_pct": {
+      "value": 20,
+      "source_clause": "The total Liquidated Damages payable by the Operator under this Clause 12 shall be capped at 20% of the total Base Annual Fee for the relevant contract year.",
+      "clause_reference": "Clause 12.5",
+      "page_number": 44,
+      "confidence": "high"
+    },
+    "bonus_threshold_pct": {
+      "value": 99.2,
+      "source_clause": "The Owner shall pay a Performance Bonus to the Operator if the actual MA exceeds 99.2% for the relevant contract year.",
+      "clause_reference": "Clause 13.1",
+      "page_number": 45,
+      "confidence": "high"
+    },
+    "bonus_rate_per_pp": {
+      "value": 1.2,
+      "source_clause": "The Performance Bonus shall be calculated at 1.2% of the Base Annual Fee for every 1% exceedance over the Bonus Threshold.",
+      "clause_reference": "Clause 13.2",
+      "page_number": 45,
+      "confidence": "high"
+    },
+    "variable_component": {
+      "value": {
+        "rate_per_kwh": 0.45,
+        "description": "Consumables & Spares Variable Component"
+      },
+      "source_clause": "In addition to the Base Fee, the Owner shall pay a Variable Component of INR 0.45 per kWh generated and exported to the Grid.",
+      "clause_reference": "Clause 8.4",
+      "page_number": 16,
+      "confidence": "medium"
+    }
+  }
+}

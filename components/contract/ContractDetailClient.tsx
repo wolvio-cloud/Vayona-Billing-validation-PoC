@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ContractParameters } from '@/lib/schemas/contract'
 import { ParameterField } from './ParameterField'
+import { ContractSimulator } from './ContractSimulator'
 import { Button } from '@/components/ui/button'
 import { GlassCard } from '@/components/ui/glass-card'
 import { 
@@ -259,6 +260,19 @@ export function ContractDetailClient({ initialContract, contractId }: ContractDe
               confidence={contract.renewal_notice_months?.confidence}
             />
           </div>
+        {/* CATEGORY: PREDICTIVE FORECASTING */}
+        <section className="space-y-12 pb-20">
+          <div className="flex items-center gap-8">
+            <div className="w-16 h-16 bg-red-500/10 rounded-[24px] flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+              <TrendingUp className="text-red-400" size={32} />
+            </div>
+            <div className="space-y-1">
+              <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Predictive Financial Modeling</h2>
+              <p className="text-sm font-bold text-[--color-wolvio-mid] uppercase tracking-widest">Simulate Long-Term Exposure & Risk</p>
+            </div>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+          </div>
+          <ContractSimulator contract={contract} termYears={(contract as any).termYears || 15} />
         </section>
       </div>
     </div>

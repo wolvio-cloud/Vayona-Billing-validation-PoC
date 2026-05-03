@@ -61,9 +61,9 @@ export function ValidationLineItem({ check }: ValidationLineItemProps) {
             <div className={`w-12 h-12 ${theme.bg} rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110`}>
               <Icon className={theme.color} size={24} />
             </div>
-            <div className="space-y-1">
-              <h4 className="font-heading font-black text-white text-lg tracking-tight">{check.check_name}</h4>
-              <div className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 ${theme.color}`}>
+            <div className="space-y-1.5 min-w-0">
+              <h4 className="font-heading font-black text-white text-lg tracking-tight truncate">{check.check_name}</h4>
+              <div className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/5 whitespace-nowrap ${theme.color}`}>
                 {check.verdict}
               </div>
             </div>
@@ -71,16 +71,12 @@ export function ValidationLineItem({ check }: ValidationLineItemProps) {
           
           <div className="flex items-center gap-10">
             <div className="text-right">
-              {gapValue != null && gapValue > 0 ? (
-                <div className={`font-mono text-xl font-black ${theme.color} tracking-tighter`}>
-                  {formatINR(gapValue)}
-                </div>
-              ) : check.expected_amount != null ? (
-                <div className="font-mono text-xl font-black text-white/40 tracking-tighter">
-                  {formatINR(check.expected_amount)}
-                </div>
-              ) : null}
-              <div className="text-[10px] font-bold text-[--color-wolvio-mid] uppercase tracking-widest mt-1">Variance</div>
+              <div className={`font-mono text-xl font-black tracking-tighter ${gapValue != null && gapValue > 0 ? theme.color : 'text-white/40'}`}>
+                {formatINR(gapValue || 0)}
+              </div>
+              <div className="text-[10px] font-bold text-[--color-wolvio-mid] uppercase tracking-widest mt-1">
+                {gapValue != null && gapValue > 0 ? 'Variance' : 'Match'}
+              </div>
             </div>
             <div className="text-white/20 group-hover:text-[--color-wolvio-orange] transition-colors">
               {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -109,7 +105,10 @@ export function ValidationLineItem({ check }: ValidationLineItemProps) {
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-[--color-wolvio-orange] border border-white/10 uppercase tracking-widest">
-                    Reference: {check.clause_reference} · Pg {check.page_number}
+                    Ref: {check.clause_reference} · Pg {check.page_number}
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-full text-[10px] font-bold text-green-400 border border-green-500/20 uppercase tracking-widest">
+                    AI Confidence: {check.confidence || 'High'}
                   </div>
                 </div>
                 
@@ -152,5 +151,3 @@ export function ValidationLineItem({ check }: ValidationLineItemProps) {
     </>
   )
 }
-
-
