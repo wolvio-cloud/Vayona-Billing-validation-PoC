@@ -1,11 +1,80 @@
 {
   "contract_id": "C001",
+  "site_name": "Wind Farm Alpha — 150 MW, Rajasthan",
+  "turbines": 60,
+  "rated_capacity_mw": 150,
   "monthly": [
-    { "month": "2025-01", "kwh": 8450000, "availability_pct": 96.8 },
-    { "month": "2025-04", "kwh": 9350000, "availability_pct": 96.2 },
-    { "month": "2025-05", "kwh": 12800000, "availability_pct": 95.2 },
-    { "month": "2025-06", "kwh": 12850000, "availability_pct": 96.5 },
-    { "month": "2025-07", "kwh": 9780000, "availability_pct": 98.4 },
-    { "month": "2025-08", "kwh": 9010000, "availability_pct": 96.1 }
+    {
+      "month": "2024-10",
+      "kwh": 24800000,
+      "availability_pct": 97.1,
+      "note": "Q3 FY2024-25 (INV-001 variable component basis)"
+    },
+    {
+      "month": "2024-11",
+      "kwh": 22100000,
+      "availability_pct": 96.9,
+      "note": "Q3 FY2024-25"
+    },
+    {
+      "month": "2024-12",
+      "kwh": 19200000,
+      "availability_pct": 97.4,
+      "note": "Q3 FY2024-25. Total Q3 = 6,61,00,000 kWh × ₹0.04 = ₹26,44,000"
+    },
+    {
+      "month": "2025-01",
+      "kwh": 8450000,
+      "availability_pct": 96.8,
+      "note": "INV-001 period. Clean month, availability above guarantee."
+    },
+    {
+      "month": "2025-02",
+      "kwh": 7900000,
+      "availability_pct": 97.2,
+      "note": "No invoice in demo set for this month."
+    },
+    {
+      "month": "2025-03",
+      "kwh": 9200000,
+      "availability_pct": 96.5,
+      "note": "No invoice in demo set for this month."
+    },
+    {
+      "month": "2025-04",
+      "kwh": 9350000,
+      "availability_pct": 96.2,
+      "note": "INV-002 period. WPI escalation not applied — Golden Scenario."
+    },
+    {
+      "month": "2025-05",
+      "kwh": 12800000,
+      "availability_pct": 95.2,
+      "note": "INV-004 period. Below 96% guarantee — LD should have been netted. LD = (96-95.2) × 0.5% × 14.4Cr = ₹5,76,000"
+    },
+    {
+      "month": "2025-06",
+      "kwh": 12850000,
+      "availability_pct": 96.5,
+      "note": "INV-003 period (April–June quarterly). Variable component missing."
+    },
+    {
+      "month": "2025-07",
+      "kwh": 9780000,
+      "availability_pct": 98.4,
+      "note": "INV-005 period. Above 98% bonus threshold. Bonus = 0.4pp × 1% × 14.4Cr = ₹5,76,000 — not claimed!"
+    },
+    {
+      "month": "2025-08",
+      "kwh": 9010000,
+      "availability_pct": 96.1,
+      "note": "INV-006 period. Wrong WPI index month used in escalation calculation."
+    },
+    {
+      "month": "2025-09",
+      "kwh": 8600000,
+      "availability_pct": 97.8,
+      "note": "Future month — not yet invoiced."
+    }
   ]
 }

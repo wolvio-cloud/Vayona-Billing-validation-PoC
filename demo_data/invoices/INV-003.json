@@ -7,19 +7,38 @@
   "line_items": [
     {
       "item_id": "LI-001",
-      "description": "Quarterly O&M Service Fee — Q1 2025",
+      "description": "Monthly O&M Service Fee — April 2025 (Post WPI Escalation, Clause 4.1 + 5.2)",
       "category": "BaseFee",
-      "quantity": 3,
+      "quantity": 1,
       "unit": "month",
-      "unit_rate": 12000000,
-      "amount": 36000000
+      "unit_rate": 12542400,
+      "amount": 12542400
+    },
+    {
+      "item_id": "LI-002",
+      "description": "Monthly O&M Service Fee — May 2025 (Post WPI Escalation, Clause 4.1 + 5.2)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "month",
+      "unit_rate": 12542400,
+      "amount": 12542400
+    },
+    {
+      "item_id": "LI-003",
+      "description": "Monthly O&M Service Fee — June 2025 (Post WPI Escalation, Clause 4.1 + 5.2)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "month",
+      "unit_rate": 12542400,
+      "amount": 12542400
     }
   ],
-  "subtotal": 36000000,
+  "subtotal": 37627200,
   "gst_rate": 18,
-  "gst_amount": 6480000,
-  "total": 42480000,
+  "gst_amount": 6772896,
+  "total": 44400096,
   "status": "Pending",
   "engineered_gap": "variable_component_missing",
-  "expected_gap": 14960000
+  "expected_gap": 1494000,
+  "note": "GAP: Q1 FY2025-26 (Apr–Jun) variable component not invoiced. Generation data: Apr=93,50,000 kWh, May=1,28,00,000 kWh, Jun=1,28,50,000 kWh. Total = 3,50,00,000 kWh × ₹0.04 = ₹14,00,000 missing. Base fee is correct at escalated rate."
 }

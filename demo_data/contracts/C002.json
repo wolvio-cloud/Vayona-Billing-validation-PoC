@@ -1,80 +1,104 @@
 {
   "contract_id": "C002",
-  "client_name": "ReNew Power — Pavagada Solar/Wind Hybrid",
-  "contract_type": "Mega LTSA (Life-cycle TSA)",
-  "status": "active",
-  "start_date": "2024-01-01",
-  "end_date": "2049-01-01",
-  "params": {
-    "base_annual_fee": {
-      "value": 480000000,
-      "source_clause": "The Base Annual Fee for the comprehensive O&M of the Facility shall be INR 48,00,00,000 (Forty-Eight Crores) subject to annual escalation as defined in Annexure 4.",
-      "clause_reference": "Clause 8.1",
-      "page_number": 14,
-      "confidence": "high"
+  "contract_type": "LTSA",
+  "display_name": "ReNew Power Mega-LTSA — 300 MW Wind Portfolio",
+  "base_annual_fee": {
+    "value": 480000000,
+    "source_clause": "The Base Annual Fee payable by the Customer to the Service Provider shall be INR 48,00,00,000 (Rupees Forty Eight Crores only) for the first Contract Year, subject to annual WPI escalation as specified in Annexure 4. The Base Annual Fee is payable in equal monthly instalments of INR 4,00,00,000 (Rupees Four Crores only) each.",
+    "clause_reference": "Clause 8.1",
+    "page_number": 14,
+    "confidence": "high"
+  },
+  "base_monthly_fee": {
+    "value": 40000000,
+    "source_clause": "Monthly O&M Service Fee equivalent to 1/12th of the Base Annual Fee, i.e., INR 4,00,00,000 (Rupees Four Crores only) per month, payable on or before the 7th day of each month.",
+    "clause_reference": "Clause 8.2",
+    "page_number": 15,
+    "confidence": "high"
+  },
+  "escalation": {
+    "value": {
+      "type": "WPI",
+      "index_base_month": "January",
+      "effective_date": "April 1",
+      "cap_pct": 10,
+      "floor_pct": 0
     },
-    "base_monthly_fee": {
-      "value": 40000000,
-      "source_clause": "The Operator shall invoice the Owner a Monthly O&M Fee equivalent to 1/12th of the Base Annual Fee, payable in arrears within 15 days of the succeeding month.",
-      "clause_reference": "Clause 8.2",
-      "page_number": 15,
-      "confidence": "high"
+    "source_clause": "The Base Annual Fee shall be escalated on the 1st day of April each year based on the change in the All India Wholesale Price Index (WPI — All Commodities) published by the Office of the Economic Adviser, GoI, for the month of January of that year relative to the January of the preceding year. The annual escalation shall be capped at a maximum of 10% (Ten Percent) per annum.",
+    "clause_reference": "Annexure 4, Section A",
+    "page_number": 88,
+    "confidence": "high"
+  },
+  "variable_component": {
+    "value": {
+      "rate_per_kwh": 0.035,
+      "billing_frequency": "Monthly"
     },
-    "escalation": {
-      "value": {
-        "type": "WPI",
-        "cap_pct": 10,
-        "base_month": "January 2023"
-      },
-      "source_clause": "On each anniversary of the Effective Date, the Base Annual Fee shall be escalated by the change in the Wholesale Price Index (WPI) for the month of January preceding the anniversary date, compared to the Base WPI of January 2023. Such escalation shall be capped at a maximum of 10% per annum.",
-      "clause_reference": "Annexure 4, Para 1.2",
-      "page_number": 88,
-      "confidence": "high"
-    },
-    "availability_guarantee_pct": {
-      "value": 98.5,
-      "source_clause": "The Operator guarantees an annual Machine Availability (MA) of 98.5% for the entire Facility, excluding Grid Unavailability beyond 24 hours.",
-      "clause_reference": "Clause 12.1",
-      "page_number": 42,
-      "confidence": "high"
-    },
-    "ld_rate_per_pp": {
-      "value": 2.5,
-      "source_clause": "In the event the actual MA falls below the Guaranteed Availability, the Operator shall pay Liquidated Damages at the rate of 2.5% of the Base Annual Fee for every 1% (pro-rata) shortfall in MA.",
-      "clause_reference": "Clause 12.4",
-      "page_number": 43,
-      "confidence": "high"
-    },
-    "ld_cap_pct": {
-      "value": 20,
-      "source_clause": "The total Liquidated Damages payable by the Operator under this Clause 12 shall be capped at 20% of the total Base Annual Fee for the relevant contract year.",
-      "clause_reference": "Clause 12.5",
-      "page_number": 44,
-      "confidence": "high"
-    },
-    "bonus_threshold_pct": {
-      "value": 99.2,
-      "source_clause": "The Owner shall pay a Performance Bonus to the Operator if the actual MA exceeds 99.2% for the relevant contract year.",
-      "clause_reference": "Clause 13.1",
-      "page_number": 45,
-      "confidence": "high"
-    },
-    "bonus_rate_per_pp": {
-      "value": 1.2,
-      "source_clause": "The Performance Bonus shall be calculated at 1.2% of the Base Annual Fee for every 1% exceedance over the Bonus Threshold.",
-      "clause_reference": "Clause 13.2",
-      "page_number": 45,
-      "confidence": "high"
-    },
-    "variable_component": {
-      "value": {
-        "rate_per_kwh": 0.45,
-        "description": "Consumables & Spares Variable Component"
-      },
-      "source_clause": "In addition to the Base Fee, the Owner shall pay a Variable Component of INR 0.45 per kWh generated and exported to the Grid.",
-      "clause_reference": "Clause 8.4",
-      "page_number": 16,
-      "confidence": "medium"
-    }
-  }
+    "source_clause": "In addition to the fixed monthly O&M fee, the Service Provider shall charge a variable component of INR 0.035 (Three and a Half Paise) per net kWh of energy generated, as certified by the SCADA system and counter-signed by the Customer's site engineer. This variable component is billed monthly along with the Base Monthly Fee.",
+    "clause_reference": "Clause 9.1",
+    "page_number": 22,
+    "confidence": "high"
+  },
+  "availability_guarantee_pct": {
+    "value": 97.5,
+    "source_clause": "The Service Provider guarantees a minimum annual Machine Availability (MA) of 97.5% (Ninety Seven point Five percent) for the entire Wind Turbine fleet covered under this Agreement. Machine Availability shall be computed using the IEC 61400-26 standard methodology, excluding grid and Force Majeure downtime.",
+    "clause_reference": "Clause 12.1",
+    "page_number": 42,
+    "confidence": "high"
+  },
+  "ld_rate_per_pp": {
+    "value": 2.5,
+    "source_clause": "For each percentage point (or part thereof) of shortfall in Machine Availability below the Guaranteed Level of 97.5%, the Service Provider shall be liable to pay Liquidated Damages at the rate of 2.5% (Two and a Half Percent) of the Base Annual Fee. Total LD liability is capped at 20% of the Base Annual Fee in any Contract Year.",
+    "clause_reference": "Clause 12.4",
+    "page_number": 43,
+    "confidence": "high"
+  },
+  "ld_cap_pct": {
+    "value": 20,
+    "source_clause": "Total LD liability under this Agreement shall not exceed 20% (Twenty Percent) of the Base Annual Fee in any single Contract Year (i.e., a maximum of INR 9,60,00,000 per annum based on Year 1 fees). This cap is inclusive of all penalties arising from availability shortfalls.",
+    "clause_reference": "Clause 12.5",
+    "page_number": 44,
+    "confidence": "high"
+  },
+  "bonus_threshold_pct": {
+    "value": 99.0,
+    "source_clause": "If the annual Machine Availability exceeds 99.0% (Ninety Nine percent), the Service Provider shall be entitled to a Performance Incentive Bonus of 1.5% (One point Five percent) of the Base Annual Fee per percentage point of outperformance above 99.0%. The maximum payable bonus under this clause shall not exceed 6% of the Base Annual Fee per Contract Year.",
+    "clause_reference": "Clause 13.2",
+    "page_number": 48,
+    "confidence": "high"
+  },
+  "bonus_rate_per_pp": {
+    "value": 1.5,
+    "source_clause": "If the annual Machine Availability exceeds 99.0% (Ninety Nine percent), the Service Provider shall be entitled to a Performance Incentive Bonus of 1.5% (One point Five percent) of the Base Annual Fee per percentage point of outperformance above 99.0%. The maximum payable bonus under this clause shall not exceed 6% of the Base Annual Fee per Contract Year.",
+    "clause_reference": "Clause 13.2",
+    "page_number": 48,
+    "confidence": "high"
+  },
+  "payment_terms_days": {
+    "value": 30,
+    "source_clause": "Payment of all undisputed invoices shall be made within 30 (Thirty) days from the date of receipt. The Customer shall notify the Service Provider of any invoice disputes within 7 working days of receipt, failing which the invoice shall be deemed accepted.",
+    "clause_reference": "Clause 15.1",
+    "page_number": 55,
+    "confidence": "high"
+  },
+  "late_payment_interest": {
+    "value": "MCLR + 3%",
+    "source_clause": "Overdue payments shall attract interest at the rate of the RBI Marginal Cost of Funds-based Lending Rate (MCLR — 1 year tenor) plus 3% (Three Percent) per annum, calculated on a daily compounding basis from the due date to the date of actual receipt of payment.",
+    "clause_reference": "Clause 15.4",
+    "page_number": 57,
+    "confidence": "high"
+  },
+  "renewal_notice_months": {
+    "value": 18,
+    "source_clause": "Either Party intending not to renew this Agreement upon expiry of the initial 10-year Term, or any subsequent Extension Term, shall provide written notice to the other Party no less than 18 (Eighteen) calendar months before the expiry date. Absent such notice, the Agreement shall auto-renew for successive periods of 2 (Two) years.",
+    "clause_reference": "Clause 21.3",
+    "page_number": 78,
+    "confidence": "high"
+  },
+  "validation_warnings": [
+    "MATH CHECK: base_annual_fee (48,00,00,000) / 12 = base_monthly_fee (4,00,00,000) — CONSISTENT.",
+    "HIGH RISK: LD rate of 2.5% per PP and cap of 20% represent significantly higher exposure than standard market LTSA terms. Flag for risk review.",
+    "NOTE: Variable component billing frequency is Monthly (not Quarterly as in C001). Invoice validation must account for this difference.",
+    "ATTENTION: Bonus threshold is 99.0% — extremely high bar. At 97.5% guarantee, there is a 1.5% buffer before bonus kicks in."
+  ]
 }

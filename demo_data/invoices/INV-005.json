@@ -7,19 +7,29 @@
   "line_items": [
     {
       "item_id": "LI-001",
-      "description": "Monthly O&M Service Fee — July 2025",
+      "description": "Monthly O&M Service Fee — July 2025 (Clause 4.1 + 5.2 Escalated Rate)",
       "category": "BaseFee",
       "quantity": 1,
       "unit": "month",
-      "unit_rate": 12347484,
-      "amount": 12347484
+      "unit_rate": 12542400,
+      "amount": 12542400
+    },
+    {
+      "item_id": "LI-002",
+      "description": "Variable O&M Component — Q1 FY2025-26 (Apr–Jun 2025) @ ₹0.04/kWh × 3,50,00,000 kWh (Clause 6.3)",
+      "category": "Variable",
+      "quantity": 35000000,
+      "unit": "kWh",
+      "unit_rate": 0.04,
+      "amount": 1400000
     }
   ],
-  "subtotal": 12347484,
+  "subtotal": 13942400,
   "gst_rate": 18,
-  "gst_amount": 2222547,
-  "total": 14570031,
+  "gst_amount": 2509632,
+  "total": 16452032,
   "status": "Paid",
   "engineered_gap": "performance_bonus_not_claimed",
-  "expected_gap": 720000
+  "expected_gap": 1440000,
+  "note": "OPPORTUNITY: July availability = 98.4% (above 98% bonus threshold). Vendor is entitled to claim a bonus of 0.4 pp × 1% × ₹14,40,00,000 = ₹5,76,000 but has NOT included it on this invoice. This is an unclaimed revenue opportunity for the vendor."
 }
