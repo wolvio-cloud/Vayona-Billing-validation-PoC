@@ -1,5 +1,4 @@
 import { getDemoContractParameters } from '@/lib/demo-data'
-import { ContractHeader } from '@/components/contract/ContractHeader'
 import { ValidationWarnings } from '@/components/contract/ValidationWarnings'
 import { ExtractionQualityScore } from '@/components/contract/ExtractionQualityScore'
 import { notFound } from 'next/navigation'
@@ -16,24 +15,24 @@ export default async function ContractDetailPage({
   
   let contract: ContractParameters | null = null
   
+  // Try demo JSON files first (C001–C008 all have JSON files)
   if (id.startsWith('C')) {
-    if (id === 'C001' || id === 'C002') {
-      contract = await getDemoContractParameters(id)
-    } else {
-      try {
-        const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
-        if (row && row.parameters) {
-          contract = row.parameters as unknown as ContractParameters
-        } else {
-          // If row exists but parameters is null, try mockStore
-          const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
-          if (mockData?.parameters) contract = mockData.parameters as unknown as ContractParameters
-        }
-      } catch (err) {
-        console.warn('DB query failed, falling back to mockStore', err)
+    contract = await getDemoContractParameters(id)
+  }
+
+  // If not found in demo data, check database / mockStore (for uploaded contracts)
+  if (!contract) {
+    try {
+      const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
+      if (row?.parameters) {
+        contract = row.parameters as unknown as ContractParameters
+      } else {
         const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
         if (mockData?.parameters) contract = mockData.parameters as unknown as ContractParameters
       }
+    } catch {
+      const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
+      if (mockData?.parameters) contract = mockData.parameters as unknown as ContractParameters
     }
   }
 
