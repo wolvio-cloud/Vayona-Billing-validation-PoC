@@ -311,5 +311,155 @@
     "extraction_error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"LTSA\",\n      \"TSA\",\n      \"Service\",\n      \"Supply\",\n      \"Hybrid\",\n      \"Fixed-Fee\"\n    ],\n    \"path\": [\n      \"contract_type\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"LTSA\\\"|\\\"TSA\\\"|\\\"Service\\\"|\\\"Supply\\\"|\\\"Hybrid\\\"|\\\"Fixed-Fee\\\"\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_annual_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_monthly_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"escalation\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"variable_component\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"availability_guarantee_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_cap_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_threshold_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"payment_terms_days\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"late_payment_interest\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"renewal_notice_months\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]",
     "page_count": 87,
     "confidence_score": 0
+  },
+  "C1777878225358": {
+    "contract_id": "C1777878225358",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777878225358.pdf",
+    "extraction_status": "partial",
+    "created_at": "2026-05-04T07:03:45.364Z",
+    "parameters": {
+      "contract_id": "C1777878225358",
+      "_error": "404 {\"type\":\"error\",\"error\":{\"type\":\"not_found_error\",\"message\":\"model: claude-3-5-sonnet-20240620\"},\"request_id\":\"req_011Cah6sUW7wxyTC18oy76zY\"}",
+      "confidence": "low"
+    },
+    "extraction_error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"LTSA\",\n      \"TSA\",\n      \"Service\",\n      \"Supply\",\n      \"Hybrid\",\n      \"Fixed-Fee\"\n    ],\n    \"path\": [\n      \"contract_type\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"LTSA\\\"|\\\"TSA\\\"|\\\"Service\\\"|\\\"Supply\\\"|\\\"Hybrid\\\"|\\\"Fixed-Fee\\\"\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_annual_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_monthly_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"escalation\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"variable_component\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"availability_guarantee_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_cap_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_threshold_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"payment_terms_days\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"late_payment_interest\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"renewal_notice_months\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]",
+    "page_count": 87,
+    "confidence_score": 0
+  },
+  "C1777878691068": {
+    "contract_id": "C1777878691068",
+    "display_name": "LELE23M144WOD25000249-Dibang",
+    "pdf_storage_path": "uploads\\C1777878691068.pdf",
+    "extraction_status": "partial",
+    "created_at": "2026-05-04T07:11:31.079Z",
+    "parameters": {
+      "contract_id": "C1777878691068",
+      "_error": "404 {\"type\":\"error\",\"error\":{\"type\":\"not_found_error\",\"message\":\"model: claude-3-5-sonnet-latest\"},\"request_id\":\"req_011Cah7ThCZAAr67dwWQozuv\"}",
+      "confidence": "low"
+    },
+    "extraction_error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"LTSA\",\n      \"TSA\",\n      \"Service\",\n      \"Supply\",\n      \"Hybrid\",\n      \"Fixed-Fee\"\n    ],\n    \"path\": [\n      \"contract_type\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"LTSA\\\"|\\\"TSA\\\"|\\\"Service\\\"|\\\"Supply\\\"|\\\"Hybrid\\\"|\\\"Fixed-Fee\\\"\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_annual_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_monthly_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"escalation\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"variable_component\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"availability_guarantee_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_cap_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_threshold_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"payment_terms_days\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"late_payment_interest\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"renewal_notice_months\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]",
+    "page_count": 8,
+    "confidence_score": 0
+  },
+  "C100": {
+    "contract_id": "C100",
+    "display_name": "Adani Green — Mega Wind Portfolio (50 Page Test)",
+    "pdf_storage_path": "demo/C100_Super_Contract.pdf",
+    "extraction_status": "completed",
+    "page_count": 50,
+    "created_at": "2026-05-04T07:25:07.989Z",
+    "parameters": {
+      "contract_id": "C100",
+      "contract_type": "LTSA",
+      "base_annual_fee": {
+        "value": 85000000,
+        "source_clause": "The Base Annual Fee shall be INR 8,50,00,000 (Rupees Eight Crore Fifty Lakhs only) per annum, payable in equal monthly installments.",
+        "clause_reference": "Clause 4.1",
+        "page_number": 12,
+        "confidence": "high"
+      },
+      "base_monthly_fee": {
+        "value": 7083333,
+        "source_clause": "Monthly payment shall be 1/12th of the Base Annual Fee.",
+        "clause_reference": "Clause 4.1.2",
+        "page_number": 12,
+        "confidence": "high"
+      },
+      "escalation": {
+        "value": {
+          "type": "WPI",
+          "index_base_month": "January",
+          "effective_date": "April 1",
+          "cap_pct": 7,
+          "floor_pct": 1
+        },
+        "source_clause": "The fee shall escalate annually on April 1st based on the WPI (All Commodities) movement from the previous January. Escalation is capped at 7% and has a floor of 1%.",
+        "clause_reference": "Clause 5.4",
+        "page_number": 22,
+        "confidence": "high"
+      },
+      "variable_component": {
+        "value": {
+          "rate_per_kwh": 0.05,
+          "billing_frequency": "Monthly"
+        },
+        "source_clause": "A variable rate of INR 0.05 per kWh generated shall apply.",
+        "clause_reference": "Clause 6.1",
+        "page_number": 25,
+        "confidence": "high"
+      },
+      "availability_guarantee_pct": {
+        "value": 97,
+        "source_clause": "The guaranteed availability is 97.0%.",
+        "clause_reference": "Clause 7.2",
+        "page_number": 32,
+        "confidence": "high"
+      },
+      "ld_rate_per_pp": {
+        "value": 1.5,
+        "source_clause": "Penalty of 1.5% of Annual Fee applies for every 1% availability shortfall.",
+        "clause_reference": "Clause 8.1",
+        "page_number": 35,
+        "confidence": "high"
+      },
+      "ld_cap_pct": {
+        "value": 15,
+        "source_clause": "Maximum Liquidated Damages capped at 15% of Base Annual Fee.",
+        "clause_reference": "Clause 8.3",
+        "page_number": 36,
+        "confidence": "high"
+      },
+      "bonus_threshold_pct": {
+        "value": 98.5,
+        "source_clause": "Performance bonus applies above 98.5% availability.",
+        "clause_reference": "Clause 9.1",
+        "page_number": 40,
+        "confidence": "high"
+      },
+      "bonus_rate_per_pp": {
+        "value": 0.75,
+        "source_clause": "Bonus of 0.75% of Annual Fee per 1% outperformance.",
+        "clause_reference": "Clause 9.2",
+        "page_number": 40,
+        "confidence": "high"
+      },
+      "payment_terms_days": {
+        "value": 60,
+        "source_clause": "Invoices shall be paid within 60 days of submission.",
+        "clause_reference": "Clause 10.4",
+        "page_number": 42,
+        "confidence": "high"
+      },
+      "late_payment_interest": {
+        "value": "15% p.a.",
+        "source_clause": "Late payments attract interest at 15% per annum.",
+        "clause_reference": "Clause 10.6",
+        "page_number": 43,
+        "confidence": "high"
+      },
+      "renewal_notice_months": {
+        "value": 6,
+        "source_clause": "6 months notice required for renewal.",
+        "clause_reference": "Clause 15.1",
+        "page_number": 48,
+        "confidence": "high"
+      }
+    }
+  },
+  "C1777881134245": {
+    "contract_id": "C1777881134245",
+    "display_name": "Break_System_Contract",
+    "pdf_storage_path": "uploads\\C1777881134245.pdf",
+    "extraction_status": "partial",
+    "created_at": "2026-05-04T07:52:14.277Z",
+    "parameters": {
+      "contract_id": "C1777881134245",
+      "_error": "404 {\"type\":\"error\",\"error\":{\"type\":\"not_found_error\",\"message\":\"model: claude-3-haiku-20240307\"},\"request_id\":\"req_011CahAZxV5qy6SCq2TdEDYb\"}",
+      "confidence": "low"
+    },
+    "extraction_error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"LTSA\",\n      \"TSA\",\n      \"Service\",\n      \"Supply\",\n      \"Hybrid\",\n      \"Fixed-Fee\"\n    ],\n    \"path\": [\n      \"contract_type\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"LTSA\\\"|\\\"TSA\\\"|\\\"Service\\\"|\\\"Supply\\\"|\\\"Hybrid\\\"|\\\"Fixed-Fee\\\"\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_annual_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_monthly_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"escalation\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"variable_component\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"availability_guarantee_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_cap_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_threshold_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"payment_terms_days\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"late_payment_interest\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"renewal_notice_months\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]",
+    "page_count": 4,
+    "confidence_score": 0
   }
 }

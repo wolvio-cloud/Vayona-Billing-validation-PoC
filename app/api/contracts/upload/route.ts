@@ -25,24 +25,41 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer()
     await writeFile(filePath, Buffer.from(bytes))
 
+    let dbSuccess = false
+    let row: any = null
+
     try {
-      const [row] = await sql`
+      // 2-second timeout for DB check to prevent hanging
+      const dbPromise = sql`
         INSERT INTO contracts (contract_id, display_name, pdf_storage_path, extraction_status)
         VALUES (${contractId}, ${file.name.replace('.pdf', '')}, ${filePath}, 'pending')
         RETURNING id, contract_id
       `
-      logger.info('Contract uploaded to DB', { contractId, filePath })
-      return Response.json({ contract_id: contractId, id: row.id }, { status: 201 })
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 2000))
+      
+      const result = await Promise.race([dbPromise, timeoutPromise]) as any[]
+      row = result[0]
+      dbSuccess = true
+      logger.info('Contract uploaded to DB', { contractId })
     } catch (dbErr) {
-      logger.warn('DB missing, using MockStore for PoC', { contractId })
+      logger.warn('DB failover to MockStore', { contractId, reason: (dbErr as Error).message })
+    }
+
+    if (!dbSuccess) {
       mockStore.set(contractId, {
         contract_id: contractId,
         display_name: file.name.replace('.pdf', ''),
         pdf_storage_path: filePath,
-        extraction_status: 'pending'
+        extraction_status: 'pending',
+        created_at: new Date().toISOString()
       })
-      return Response.json({ contract_id: contractId, id: 0 }, { status: 201 })
     }
+
+    return Response.json({ 
+      contract_id: contractId, 
+      id: row?.id ?? 0,
+      storage: dbSuccess ? 'postgres' : 'mock_db'
+    }, { status: 201 })
 
   } catch (err) {
     logger.error('Upload failed', err)

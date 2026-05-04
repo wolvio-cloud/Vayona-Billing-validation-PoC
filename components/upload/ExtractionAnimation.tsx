@@ -50,17 +50,17 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
           setStageEta(eta)
         }
 
-        if (data.extraction_status === 'completed') {
+        if (data.extraction_status === 'completed' || data.extraction_status === 'partial') {
           if (!completedSteps.includes(currentStep)) {
             setCompletedSteps(prev => [...prev, currentStep])
           }
-          setCurrentStep('Extraction Verified & Finalized')
+          setCurrentStep(data.extraction_status === 'partial' ? 'Extraction Partial (Manual Review Needed)' : 'Extraction Verified & Finalized')
           setStageIndex(TOTAL_STAGES)
           setStageEta('')
           setProgress(100)
           clearInterval(pollInterval)
           clearInterval(progressInterval)
-          setTimeout(() => onComplete?.(), 1000)
+          setTimeout(() => onComplete?.(), 1500)
         }
       } catch (err) {
         console.error('Polling failed', err)
