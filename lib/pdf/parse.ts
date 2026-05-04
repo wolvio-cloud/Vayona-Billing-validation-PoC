@@ -103,13 +103,18 @@ export async function parsePDF(buffer: Buffer): Promise<ParsedPDF> {
     const rawText: string = result.text
     const pageCount: number = result.total
 
-    // Preserve structure by only replacing horizontal whitespace, not newlines
-    const pages = result.pages.map((p: any) => 
-      p.text.split('\n')
-        .map((line: string) => line.replace(/[ \t]+/g, ' ').trim())
-        .filter((line: string) => line.length > 0)
-        .join('\n')
-    ).filter((p: string) => p.length > 0)
+    // Use result.pages if available, otherwise fallback to raw text split
+    let pages: string[] = []
+    if (result.pages && Array.isArray(result.pages)) {
+      pages = result.pages.map((p: any) => 
+        p.text.split('\n')
+          .map((line: string) => line.replace(/[ \t]+/g, ' ').trim())
+          .filter((line: string) => line.length > 0)
+          .join('\n')
+      ).filter((p: string) => p.length > 0)
+    } else {
+      pages = [rawText]
+    }
 
     const text = pages.join('\n\n--- PAGE BREAK ---\n\n')
 
