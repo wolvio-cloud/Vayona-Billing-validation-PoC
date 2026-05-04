@@ -28,11 +28,11 @@ function getMonthsDiff(start: string | undefined, end: string | undefined): numb
   return months <= 0 ? 1 : months + 1
 }
 
-export function runValidation(
+export async function runValidation(
   params: ContractParameters,
   invoice: Invoice,
   generation?: GenerationData
-): Omit<ValidationCheck, 'explanation'>[] {
+): Promise<Omit<ValidationCheck, 'explanation'>[]> {
   const checks: Omit<ValidationCheck, 'explanation'>[] = []
 
   // CHECK 1 — Base Fee
@@ -190,5 +190,104 @@ export function runValidation(
     }
   }
 
+  // CHECK 6 — GST Correctness
+  {
+    const expectedGST = Math.round(invoice.subtotal * (invoice.gst_rate / 100))
+    const actualGST = invoice.gst_amount
+    const diff = Math.abs(actualGST - expectedGST)
+    const gstClause = 'GST Act, 2017 — CGST + SGST @ stated rate on taxable value'
+    if (diff > 1) {
+      checks.push({
+        check_id: 'CHECK_6_GST',
+        check_name: 'GST Correctness',
+        verdict: 'GAP',
+        expected_amount: expectedGST,
+        actual_amount: actualGST,
+        gap_amount: actualGST - expectedGST,
+        opportunity_amount: null,
+        clause_reference: 'GST Act 2017 / Invoice',
+        source_clause: gstClause,
+        page_number: 0,
+        severity: diff > 10000 ? 'High' : 'Low',
+      })
+    } else {
+      checks.push({
+        check_id: 'CHECK_6_GST',
+        check_name: 'GST Correctness',
+        verdict: 'MATCH',
+        expected_amount: expectedGST,
+        actual_amount: actualGST,
+        gap_amount: 0,
+        opportunity_amount: null,
+        clause_reference: 'GST Act 2017 / Invoice',
+        source_clause: gstClause,
+        page_number: 0,
+        severity: null,
+      })
+    }
+  }
+
+  // CHECK 7 — Payment Terms Breach (days overdue → late interest exposure)
+  if (params.payment_terms_days?.value != null && params.late_payment_interest?.value != null) {
+    const dueDate = new Date(invoice.invoice_date)
+    dueDate.setDate(dueDate.getDate() + params.payment_terms_days.value)
+    const today = new Date()
+    const daysOverdue = Math.max(0, Math.floor((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24)))
+
+    if (daysOverdue > 0 && invoice.status !== 'Paid') {
+      // Rough interest exposure: subtotal × 15% p.a. (SBI base ~10% + 2% spread, simplified) × days/365
+      const annualRate = 0.15
+      const interestExposure = Math.round(invoice.subtotal * annualRate * (daysOverdue / 365))
+      checks.push({
+        check_id: 'CHECK_7_PAYMENT_BREACH',
+        check_name: 'Payment Terms Breach',
+        verdict: 'GAP',
+        expected_amount: 0,
+        actual_amount: interestExposure,
+        gap_amount: interestExposure,
+        opportunity_amount: null,
+        clause_reference: params.payment_terms_days.clause_reference,
+        source_clause: `Invoice ${invoice.invoice_id} due ${dueDate.toDateString()} — ${daysOverdue} days overdue. Late interest: ${params.late_payment_interest.value}.`,
+        page_number: params.payment_terms_days.page_number,
+        severity: daysOverdue > 30 ? 'High' : 'Medium',
+      })
+    }
+  }
+
+  // CHECK 9 — Escalation Cap/Floor Enforcement
+  if (params.escalation?.value?.type === 'WPI' && params.base_monthly_fee?.value != null) {
+    const esc = params.escalation.value
+    const invoiceYear = new Date(invoice.invoice_date).getFullYear()
+    const currentJanKey = `${invoiceYear}-01`
+    const baseJanKey = `${invoiceYear - 1}-01`
+    const { lookupWPI } = await import('./wpi-index')
+    const currentWPI = lookupWPI(currentJanKey)
+    const baseWPI = lookupWPI(baseJanKey)
+    if (currentWPI && baseWPI) {
+      const rawRate = ((currentWPI - baseWPI) / baseWPI) * 100
+      const appliedRate = Math.max(esc.floor_pct ?? 0, Math.min(esc.cap_pct, rawRate))
+      const capBreached = rawRate > esc.cap_pct
+      const floorBreached = rawRate < (esc.floor_pct ?? 0)
+      if (capBreached || floorBreached) {
+        checks.push({
+          check_id: 'CHECK_9_CAP_FLOOR',
+          check_name: 'Escalation Cap/Floor',
+          verdict: 'MATCH',
+          expected_amount: appliedRate,
+          actual_amount: rawRate,
+          gap_amount: 0,
+          opportunity_amount: null,
+          clause_reference: esc.cap_pct != null ? params.escalation.clause_reference : 'N/A',
+          source_clause: capBreached
+            ? `Raw WPI change ${rawRate.toFixed(2)}% exceeds cap of ${esc.cap_pct}%. Applied rate limited to ${appliedRate.toFixed(2)}%.`
+            : `Raw WPI change ${rawRate.toFixed(2)}% is below floor of ${esc.floor_pct}%. Minimum rate ${appliedRate.toFixed(2)}% applied.`,
+          page_number: params.escalation.page_number,
+          severity: 'Low',
+        })
+      }
+    }
+  }
+
   return checks
 }
+

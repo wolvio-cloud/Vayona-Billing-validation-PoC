@@ -50,7 +50,7 @@ export async function POST(
         }
       : undefined
 
-    const rawChecks = runValidation(params, inv, generation)
+    const rawChecks = await runValidation(params, inv, generation)
 
     const checks = await Promise.all(
       rawChecks.map(async (check) => {

@@ -1,4 +1,4 @@
-import { expect, test, describe } from 'vitest'
+import { expect, test, describe, beforeAll } from 'vitest'
 import { runValidation } from '../lib/validation/engine'
 import { ContractParameters } from '../lib/schemas/contract'
 import { Invoice } from '../lib/schemas/invoice'
@@ -47,7 +47,11 @@ const mockInvoice: Invoice = {
 }
 
 describe('Deterministic Engine Validation (INV-002 Golden Scenario)', () => {
-  const checks = runValidation(mockContract, mockInvoice, mockGeneration)
+  let checks: Awaited<ReturnType<typeof runValidation>>
+
+  beforeAll(async () => {
+    checks = await runValidation(mockContract, mockInvoice, mockGeneration)
+  })
 
   test('Check 1: Base Fee must MATCH', () => {
     const baseCheck = checks.find(c => c.check_id === 'CHECK_1_BASE_FEE')

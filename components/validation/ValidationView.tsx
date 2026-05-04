@@ -1,14 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { InvoiceUpload } from './InvoiceUpload'
 import { ValidationReport } from './ValidationReport'
 import { ContractParameters } from '@/lib/schemas/contract'
 import { Invoice } from '@/lib/schemas/invoice'
 import { runValidation, GenerationData } from '@/lib/validation/engine'
-import { ValidationResultSchema } from '@/lib/schemas/validation'
+import { ValidationResultSchema, ValidationResult } from '@/lib/schemas/validation'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ArrowRight } from 'lucide-react'
+import { ChevronLeft, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 interface ValidationViewProps {
@@ -22,20 +22,50 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
   const [currentInvoice, setCurrentInvoice] = useState<Invoice>(initialInvoice)
   const [isProcessing, setIsProcessing] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
+  const [result, setResult] = useState<ValidationResult | null>(null)
+  const [parseError, setParseError] = useState<string | null>(null)
+  const [isComputing, setIsComputing] = useState(true)
+
+  // Re-run validation whenever invoice changes
+  useEffect(() => {
+    setIsComputing(true)
+    setParseError(null)
+    runValidation(contract, currentInvoice, initialGeneration).then((rawChecks) => {
+      const checks = rawChecks.map((check) => ({
+        ...check,
+        explanation: check.verdict === 'MATCH' ? 'All amounts match contract terms.' :
+          check.verdict === 'GAP' ? `Clause ${check.clause_reference}: contractual obligation not met. Review and issue corrective note.` :
+          check.verdict === 'OPPORTUNITY' ? `Clause ${check.clause_reference}: earned entitlement not yet claimed. Issue supplementary invoice.` :
+          'Insufficient data to validate this check.'
+      }))
+      try {
+        const validated = ValidationResultSchema.parse({
+          contract_id: contractId,
+          invoice_id: currentInvoice.invoice_id,
+          run_at: new Date().toISOString(),
+          checks,
+          total_gap_amount: checks.reduce((s, c) => s + (c.gap_amount ?? 0), 0),
+          total_opportunity_amount: checks.reduce((s, c) => s + (c.opportunity_amount ?? 0), 0),
+          verdict: checks.some(c => c.verdict === 'GAP') ? 'GAPS_FOUND' : checks.some(c => c.verdict === 'OPPORTUNITY') ? 'REVIEW_REQUIRED' : 'CLEAN',
+        })
+        setResult(validated)
+      } catch (err) {
+        console.error('Validation parse error:', err)
+        setParseError('Unable to run validation — contract parameters may still be extracting.')
+      }
+    }).catch((err) => {
+      console.error('runValidation failed:', err)
+      setParseError('Validation engine error. Please refresh.')
+    }).finally(() => setIsComputing(false))
+  }, [contract, currentInvoice, initialGeneration, contractId])
 
   const handleUpload = async (file: File) => {
     setIsProcessing(true)
     try {
       const formData = new FormData()
       formData.append('file', file)
-      
-      const res = await fetch('/api/invoices/extract', {
-        method: 'POST',
-        body: formData,
-      })
-      
+      const res = await fetch('/api/invoices/extract', { method: 'POST', body: formData })
       if (!res.ok) throw new Error('Extraction failed')
-      
       const data = await res.json()
       setCurrentInvoice(data)
       setShowUpload(false)
@@ -47,31 +77,6 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
     }
   }
 
-  // Run validation logic
-  const rawChecks = runValidation(contract, currentInvoice, initialGeneration)
-  const checks = rawChecks.map((check) => ({
-    ...check,
-    explanation: check.verdict === 'MATCH' ? 'All amounts match contract terms.' : 
-      check.verdict === 'GAP' ? `Clause ${check.clause_reference} requires WPI escalation. The invoice uses the pre-escalation rate.` :
-      `Availability hit ${initialGeneration?.availability_pct}% — above the bonus threshold in ${check.clause_reference}.`
-  }))
-
-  let result = null
-  let parseError: string | null = null
-  try {
-    result = ValidationResultSchema.parse({
-      contract_id: contractId,
-      invoice_id: currentInvoice.invoice_id,
-      run_at: new Date().toISOString(),
-      checks,
-      total_gap_amount: checks.reduce((s, c) => s + (c.gap_amount ?? 0), 0),
-      total_opportunity_amount: checks.reduce((s, c) => s + (c.opportunity_amount ?? 0), 0),
-      verdict: checks.some(c => c.verdict === 'GAP') ? 'GAPS_FOUND' : checks.some(c => c.verdict === 'OPPORTUNITY') ? 'REVIEW_REQUIRED' : 'CLEAN',
-    })
-  } catch (err) {
-    console.error('Validation parse error:', err)
-    parseError = 'Unable to run validation — contract parameters may still be extracting.'
-  }
 
   return (
     <div className="space-y-12 pb-32 animate-fade-in-up">
@@ -118,8 +123,18 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
         </div>
       </div>
 
-      {/* Error / Empty State */}
-      {(parseError || checks.length === 0) ? (
+      {/* Validation Result */}
+      {isComputing ? (
+        <div className="glass rounded-[32px] p-16 text-center space-y-6 border border-white/5">
+          <div className="w-16 h-16 mx-auto bg-[--color-wolvio-orange]/10 rounded-2xl flex items-center justify-center border border-[--color-wolvio-orange]/20">
+            <Loader2 className="text-[--color-wolvio-orange] animate-spin" size={32} />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-heading font-black text-white uppercase tracking-tight">Running Validation</h3>
+            <p className="text-sm text-[--color-wolvio-mid] max-w-md mx-auto">Executing deterministic checks against contract terms…</p>
+          </div>
+        </div>
+      ) : (parseError || !result) ? (
         <div className="glass rounded-[32px] p-16 text-center space-y-6 border border-amber-500/20">
           <div className="w-16 h-16 mx-auto bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20">
             <span className="text-amber-400 text-3xl">⏳</span>
@@ -127,7 +142,7 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
           <div className="space-y-2">
             <h3 className="text-2xl font-heading font-black text-white uppercase tracking-tight">Extraction In Progress</h3>
             <p className="text-sm text-amber-400/80 max-w-md mx-auto font-medium leading-relaxed">
-              {parseError ?? 'No validation checks could be run. The contract parameters are still being extracted by the AI engine. Please wait a moment and refresh the page.'}
+              {parseError ?? 'Contract parameters are still being extracted. Please wait a moment and refresh.'}
             </p>
           </div>
           <button
@@ -139,7 +154,7 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
         </div>
       ) : (
         <div className="animate-fade-in-up animation-delay-200">
-          <ValidationReport result={result!} />
+          <ValidationReport result={result} />
         </div>
       )}
     </div>

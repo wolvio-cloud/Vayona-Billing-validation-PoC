@@ -1,0 +1,18 @@
+{
+  "contract_id": "C003",
+  "contract_type": "LTSA",
+  "display_name": "Coastal Breezes Wind LTSA",
+  "base_annual_fee": { "value": 110000000, "source_clause": "The Base Annual Fee payable by the Customer shall be INR 11,00,00,000 (Rupees Eleven Crores only) per annum, payable in monthly instalments of INR 91,66,667 (Rupees Ninety-One Lakhs Sixty-Six Thousand Six Hundred and Sixty-Seven only).", "clause_reference": "Clause 5.1", "page_number": 10, "confidence": "high" },
+  "base_monthly_fee": { "value": 9166667, "source_clause": "Monthly instalments of INR 91,66,667 payable on or before the 7th calendar day of each month.", "clause_reference": "Clause 5.1", "page_number": 10, "confidence": "high" },
+  "escalation": { "value": { "type": "WPI", "index_base_month": "January", "effective_date": "July 1", "cap_pct": 7, "floor_pct": 0 }, "source_clause": "The Base Annual Fee shall be adjusted annually on July 1 of each year based on WPI All Commodities for January. Maximum escalation capped at 7% per annum, with a floor of 0% (no decrease).", "clause_reference": "Clause 6.3", "page_number": 15, "confidence": "high" },
+  "variable_component": { "value": { "rate_per_kwh": 0.035, "billing_frequency": "Quarterly" }, "source_clause": "Variable O&M charge of INR 0.035 per net kWh generated at grid connection, billed quarterly within 45 days of quarter close.", "clause_reference": "Clause 7.1", "page_number": 19, "confidence": "high" },
+  "availability_guarantee_pct": { "value": 95.5, "source_clause": "The Contractor guarantees minimum annual Wind Turbine Availability of 95.5%. Availability computed per IEC 61400-26 excluding Force Majeure and Grid Unavailability.", "clause_reference": "Clause 9.2", "page_number": 28, "confidence": "high" },
+  "ld_rate_per_pp": { "value": 0.75, "source_clause": "For each percentage point shortfall below 95.5% availability, LDs payable at 0.75% of Base Annual Fee per PP. Maximum LD capped at 12% of BAF.", "clause_reference": "Clause 10.1", "page_number": 32, "confidence": "high" },
+  "ld_cap_pct": { "value": 12, "source_clause": "Maximum LD liability shall not exceed 12% of the Base Annual Fee in any Contract Year.", "clause_reference": "Clause 10.2", "page_number": 32, "confidence": "high" },
+  "bonus_threshold_pct": { "value": 97.5, "source_clause": "Performance Bonus of 0.75% of BAF per PP above 97.5% availability. Bonus cap: 4% of BAF per annum.", "clause_reference": "Clause 11.1", "page_number": 36, "confidence": "high" },
+  "bonus_rate_per_pp": { "value": 0.75, "source_clause": "Performance Bonus rate of 0.75% of BAF per percentage point above the 97.5% bonus threshold.", "clause_reference": "Clause 11.1", "page_number": 36, "confidence": "high" },
+  "payment_terms_days": { "value": 30, "source_clause": "Payment due within 30 days of receipt of a valid tax invoice.", "clause_reference": "Clause 12.1", "page_number": 40, "confidence": "high" },
+  "late_payment_interest": { "value": "SBI MCLR + 1.5%", "source_clause": "Overdue amounts attract interest at SBI MCLR (1-year) + 1.5% per annum, calculated daily.", "clause_reference": "Clause 12.3", "page_number": 41, "confidence": "high" },
+  "renewal_notice_months": { "value": 9, "source_clause": "9 months written notice required for termination or non-renewal.", "clause_reference": "Clause 18.1", "page_number": 52, "confidence": "high" },
+  "validation_warnings": ["NOTE: Escalation effective date is July 1 (not April 1) — atypical for the sector.", "MATH: 110000000 / 12 = 9166666.67, rounded to 9166667 — rounding convention documented."]
+}

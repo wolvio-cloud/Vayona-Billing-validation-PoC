@@ -10,6 +10,7 @@ import { SAPPayloadModal } from './SAPPayloadModal'
 
 interface ValidationLineItemProps {
   check: ValidationCheck
+  showFormula?: boolean
 }
 
 const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: any, bg: string }> = {
@@ -19,8 +20,8 @@ const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: a
   INSUFFICIENT_DATA: { color: 'text-[--color-wolvio-mid]', icon: Info, bg: 'bg-white/5' },
 }
 
-export function ValidationLineItem({ check }: ValidationLineItemProps) {
-  const [expanded, setExpanded] = useState(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY')
+export function ValidationLineItem({ check, showFormula = false }: ValidationLineItemProps) {
+  const [expanded, setExpanded] = useState(showFormula || check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY')
   const [showSAP, setShowSAP] = useState(false)
   const [isNotifying, setIsNotifying] = useState(false)
   const [isNotified, setIsNotified] = useState(false)
