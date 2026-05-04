@@ -60,11 +60,18 @@ export async function POST(
     const payload: any = { current_step: step }
     if (stageIndex !== undefined) payload.stage_index = stageIndex
     if (eta) payload.stage_eta = eta
+    
+    const dbUpdate = sql`UPDATE contracts SET parameters = jsonb_set(COALESCE(parameters, '{}'::jsonb), '{current_step}', ${JSON.stringify(step)}) WHERE contract_id = ${id}`
+    
     try {
-      await sql`UPDATE contracts SET parameters = jsonb_set(COALESCE(parameters, '{}'::jsonb), '{current_step}', ${JSON.stringify(step)}) WHERE contract_id = ${id}`
+      // 2s limit for status updates — if DB is slow, we skip and use mock
+      await Promise.race([
+        dbUpdate,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('DB Slow')), 2000))
+      ])
     } catch {
       const existing = mockStore.get(id)?.parameters || {}
-      mockStore.set(id, { parameters: { ...existing, ...payload } })
+      mockStore.set(id, { ...mockStore.get(id), parameters: { ...existing, ...payload } })
     }
   }
 

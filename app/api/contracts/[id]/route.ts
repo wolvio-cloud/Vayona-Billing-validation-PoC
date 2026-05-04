@@ -13,8 +13,14 @@ export async function GET(
     const [row] = await sql`
       SELECT * FROM contracts WHERE contract_id = ${id} LIMIT 1
     `
+    const mock = mockStore.get(id)
+    
+    // Hybrid logic: If cloud says pending but mock says completed, use mock!
+    if (row && mock && mock.extraction_status === 'completed' && row.extraction_status !== 'completed') {
+       return Response.json(mock)
+    }
+
     if (!row) {
-      const mock = mockStore.get(id)
       if (mock) return Response.json(mock)
       return Response.json({ error: 'Contract not found' }, { status: 404 })
     }
