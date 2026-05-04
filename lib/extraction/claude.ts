@@ -3,13 +3,11 @@ import { createLogger } from '@/lib/logger'
 
 const logger = createLogger('claude-extraction')
 const MODELS = [
-  'claude-3-5-sonnet-latest',
-  'claude-3-5-sonnet-20240620',
-  'claude-3-opus-20240229',
-  'claude-3-haiku-20240307',
-  'claude-3-5-haiku-20241022',
-  'claude-2.1',
-  'claude-instant-1.2'
+  'claude-sonnet-4-6',
+  'claude-sonnet-4-5',
+  'claude-opus-4-7',
+  'claude-haiku-4-5',
+  'claude-3-5-sonnet-20241022',
 ]
 const MAX_TOKENS = 4000
 const COST_PER_INPUT_TOKEN = 0.000003
