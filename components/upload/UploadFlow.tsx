@@ -64,7 +64,7 @@ export function UploadFlow() {
 
   if (isExtracting) {
     return (
-      <div className="rounded-xl border border-[--color-wolvio-slate] bg-[--color-wolvio-surface] p-8 shadow-[0_4px_20px_rgba(0,0,0,0.3)] max-w-xl mx-auto">
+      <div className="rounded-xl border border-wolvio-slate bg-[--color-wolvio-surface] p-8 shadow-[0_4px_20px_rgba(0,0,0,0.3)] max-w-xl mx-auto">
         <ExtractionAnimation contractId={contractId} onComplete={handleComplete} />
       </div>
     )

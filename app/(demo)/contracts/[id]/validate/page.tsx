@@ -29,23 +29,24 @@ export default async function ValidatePage({
   const defaultInvoice = allInvoices.length > 0 ? (allInvoices[1] ?? allInvoices[0]) : null
   const { invoice = defaultInvoice } = await searchParams
 
-  let contract = await getDemoContractParameters(id)
+  let contract: any = null
+  let displayName: string = ''
   
-  // If not a demo contract, attempt to fetch from DB or mockStore
-  if (!contract) {
-    const sql = (await import('@/lib/db')).default
-    try {
-      const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
-      if (row?.parameters) {
-        contract = row.parameters as any
-      } else {
-        const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
-        if (mockData?.parameters) contract = mockData.parameters as any
-      }
-    } catch {
-      const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
-      if (mockData?.parameters) contract = mockData.parameters as any
+  const sql = (await import('@/lib/db')).default
+  try {
+    const [row] = await sql`SELECT parameters, display_name FROM contracts WHERE contract_id = ${id} LIMIT 1`
+    if (row) {
+      contract = row.parameters
+      displayName = row.display_name
     }
+  } catch (err) {
+    console.error('DB fetch failed on validate page', err)
+  }
+
+  // Fallback to demo data
+  if (!contract) {
+    contract = await getDemoContractParameters(id)
+    displayName = id === 'C001' ? 'Wind Farm Alpha LTSA' : id
   }
 
   // Load invoice if provided
@@ -55,7 +56,7 @@ export default async function ValidatePage({
 
   const genMonthly = await getDemoGenerationData(id)
   let generation: GenerationData | undefined
-  if (genMonthly) {
+  if (genMonthly && invData) {
     const relevant = genMonthly.filter((m: any) =>
       m.month >= invData.period_start.substring(0, 7) &&
       m.month <= invData.period_end.substring(0, 7)
@@ -99,6 +100,7 @@ export default async function ValidatePage({
         initialInvoice={invData}
         initialGeneration={generation}
         contractId={id}
+        contractDisplayName={displayName}
       />
 
       <div className="pt-20 pb-12 text-center">

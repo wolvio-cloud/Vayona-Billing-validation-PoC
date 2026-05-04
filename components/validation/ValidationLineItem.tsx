@@ -14,10 +14,10 @@ interface ValidationLineItemProps {
 }
 
 const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: any, bg: string }> = {
-  MATCH: { color: 'text-[--color-wolvio-green]', icon: CheckCircle2, bg: 'bg-[--color-wolvio-green]/10' },
-  GAP: { color: 'text-[--color-wolvio-red]', icon: XCircle, bg: 'bg-[--color-wolvio-red]/10' },
-  OPPORTUNITY: { color: 'text-[--color-wolvio-amber]', icon: AlertTriangle, bg: 'bg-[--color-wolvio-amber]/10' },
-  INSUFFICIENT_DATA: { color: 'text-[--color-wolvio-mid]', icon: Info, bg: 'bg-white/5' },
+  MATCH: { color: 'text-wolvio-green', icon: CheckCircle2, bg: 'bg-wolvio-green/10' },
+  GAP: { color: 'text-wolvio-red', icon: XCircle, bg: 'bg-wolvio-red/10' },
+  OPPORTUNITY: { color: 'text-wolvio-amber', icon: AlertTriangle, bg: 'bg-wolvio-amber/10' },
+  INSUFFICIENT_DATA: { color: 'text-wolvio-mid', icon: Info, bg: 'bg-white/5' },
 }
 
 export function ValidationLineItem({ check, showFormula = false }: ValidationLineItemProps) {
@@ -33,23 +33,24 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
 
   const generateSAPPayload = () => {
     return {
-      HEADER: {
-        INVOICE_ID: `CORR-${check.check_id.slice(-4)}-${Date.now().toString().slice(-4)}`,
-        DOC_TYPE: 'RE',
-        COMP_CODE: 'SG01',
-        CURRENCY: 'INR',
-        HEADER_TEXT: `Adjustment: ${check.check_name} | Ref: ${check.clause_reference}`
-      },
-      ITEM_DATA: [
-        {
-          INVOICE_DOC_ITEM: '000001',
-          GL_ACCOUNT: check.verdict === 'GAP' ? '410020' : '410030',
-          ITEM_AMOUNT: gapValue,
-          TAX_CODE: 'I1',
-          COSTCENTER: 'CC_WIND_TN_01',
-          TEXT: `Variance found in ${check.check_name} calculation`
-        }
-      ]
+      "action": "CREATE_CORRECTIVE_INVOICE",
+      "doc_type": "RV",
+      "customer_code": "CUST-GW-001",
+      "reference_invoice": "INV-002",
+      "line_items": [{
+        "description": `${check.check_name} Correction — April 2025`,
+        "amount": gapValue,
+        "currency": "INR",
+        "cost_center": `CC-WIND-${check.check_id.includes('C001') ? 'C001' : 'GENERIC'}`,
+        "contract_ref": "C001",
+        "clause_ref": `${check.clause_reference}, Page ${check.page_number}`
+      }],
+      "total_amount": gapValue,
+      "currency": "INR",
+      "generated_by": "Wolvio CEI v1.0",
+      "timestamp": new Date().toISOString(),
+      "requires_fc_approval": true,
+      "approval_status": "PENDING"
     }
   }
 
@@ -77,11 +78,11 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
               <div className={`font-mono text-xl font-black tracking-tighter ${gapValue != null && gapValue > 0 ? theme.color : 'text-white/40'}`}>
                 {formatINR(gapValue || 0)}
               </div>
-              <div className="text-[10px] font-bold text-[--color-wolvio-mid] uppercase tracking-widest mt-1">
+              <div className="text-[10px] font-bold text-wolvio-mid uppercase tracking-widest mt-1">
                 {gapValue != null && gapValue > 0 ? 'Variance' : 'Match'}
               </div>
             </div>
-            <div className="text-white/20 group-hover:text-[--color-wolvio-orange] transition-colors">
+            <div className="text-white/20 group-hover:text-wolvio-orange transition-colors">
               {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </div>
           </div>
@@ -89,86 +90,67 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
 
         {expanded && (
           <div className="px-8 pb-8 animate-in slide-in-from-top-4 duration-500">
-            <div className="bg-white/5 rounded-[24px] border border-white/5 overflow-hidden">
-              <div className="grid grid-cols-3 divide-x divide-white/5 bg-white/5 border-b border-white/5">
-                <div className="p-6">
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[--color-wolvio-mid] mb-2">Entitlement</div>
-                  <div className="font-mono text-lg font-black text-white">{check.expected_amount != null ? formatINR(check.expected_amount) : '-'}</div>
+            <div className="bg-white/5 rounded-[32px] border border-white/5 overflow-hidden">
+              {/* Row 1: Side-by-Side Comparison */}
+              <div className="grid grid-cols-2 divide-x divide-white/5 bg-white/5 border-b border-white/5">
+                <div className="p-8">
+                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-wolvio-mid mb-3">Expected (Per Contract)</div>
+                  <div className="font-mono text-2xl font-black text-white">{check.expected_amount != null ? formatINR(check.expected_amount) : '-'}</div>
                 </div>
-                <div className="p-6">
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[--color-wolvio-mid] mb-2">Actual Billed</div>
-                  <div className="font-mono text-lg font-black text-white">{check.actual_amount != null ? formatINR(check.actual_amount) : '-'}</div>
-                </div>
-                <div className={`p-6 ${gapValue ? 'bg-white/5' : ''}`}>
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[--color-wolvio-mid] mb-2">Variance</div>
-                  <div className={`font-mono text-xl font-black ${theme.color}`}>{gapValue != null ? formatINR(gapValue) : '₹0'}</div>
+                <div className="p-8">
+                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-wolvio-mid mb-3">Actual (Billed)</div>
+                  <div className="font-mono text-2xl font-black text-white">{check.actual_amount != null ? formatINR(check.actual_amount) : '-'}</div>
                 </div>
               </div>
 
-              <div className="p-8 space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-[--color-wolvio-orange] border border-white/10 uppercase tracking-widest">
-                    Ref: {check.clause_reference} · Pg {check.page_number}
-                  </div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-full text-[10px] font-bold text-green-400 border border-green-500/20 uppercase tracking-widest">
-                    AI Confidence: {check.confidence || 'High'}
+              {/* Detail Content */}
+              <div className="p-10 space-y-10">
+                {/* Row 2: Gap Amount */}
+                <div className="space-y-2">
+                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-wolvio-red">Identified Variance</div>
+                  <div className="font-mono text-5xl font-black text-wolvio-red tracking-tighter">
+                    {gapValue != null ? formatINR(gapValue) : '₹0'}
                   </div>
                 </div>
-                
-                <p className="text-sm text-[--color-wolvio-mid] leading-relaxed italic border-l-2 border-white/10 pl-6 py-2">
-                  "{check.source_clause}"
-                </p>
 
-                <div className="bg-white/5 rounded-2xl p-6">
-                  {showFormula && check.explanation?.includes('FORMULA:') ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Terminal size={14} className="text-blue-400" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Formula Proof (Traceable)</span>
-                      </div>
-                      <div className="font-mono text-xs text-white/80 bg-black/40 p-4 rounded-xl border border-white/5 whitespace-pre-wrap leading-relaxed">
-                        {check.explanation}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-4">
+                  <div className="space-y-6">
+                    {/* Row 3: Clause Pill */}
+                    <div className="flex">
+                      <div className="px-4 py-1.5 bg-wolvio-orange text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full shadow-lg shadow-wolvio-orange/20">
+                        {check.clause_reference} · Page {check.page_number}
                       </div>
                     </div>
-                  ) : (
-                    <p className="text-base font-semibold text-white/90 leading-relaxed">
-                      {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
-                    </p>
-                  )}
-                </div>
 
-                {(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY') && (
-                  <div className="flex justify-end gap-4 pt-4">
-                    <Button 
-                      variant="outline" 
-                      className="py-6 px-8 border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white/5 transition-colors"
-                      onClick={() => setShowSAP(true)}
-                    >
-                      <Terminal className="w-4 h-4 mr-3 text-[--color-wolvio-orange]" /> SAP Ready
-                    </Button>
-                    <Button 
-                      className={`font-black text-xs uppercase tracking-widest px-8 py-6 rounded-xl shadow-lg transition-all duration-300 ${isNotified ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white group'}`}
-                      onClick={() => {
-                        if (!isNotified) {
-                          setIsNotifying(true)
-                          setTimeout(() => {
-                            setIsNotifying(false)
-                            setIsNotified(true)
-                          }, 800)
-                        }
-                      }}
-                      disabled={isNotifying}
-                    >
-                      {isNotifying ? (
-                        <>Sending...</>
-                      ) : isNotified ? (
-                        <>Controller Notified <CheckCircle2 className="w-4 h-4 ml-3" /></>
-                      ) : (
-                        <>Notify Controller <Send className="w-4 h-4 ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
-                      )}
-                    </Button>
+                    {/* Row 4: Verbatim Source */}
+                    <div className="space-y-3">
+                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-wolvio-mid/40">Verbatim Source Clause</div>
+                      <p className="text-sm italic text-wolvio-slate leading-relaxed border-l-2 border-wolvio-orange/30 pl-6 py-1">
+                        "{check.source_clause}"
+                      </p>
+                    </div>
                   </div>
-                )}
+
+                  <div className="space-y-8">
+                    {/* Row 5: Plain English Explanation */}
+                    <div className="space-y-3">
+                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-wolvio-mid/40">Audit Findings</div>
+                      <p className="text-base font-bold text-white leading-relaxed">
+                        {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
+                      </p>
+                    </div>
+
+                    {/* Row 6: Corrective Action */}
+                    <div className="flex gap-4">
+                      <Button 
+                        className="flex-1 bg-wolvio-orange hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 py-7 rounded-2xl shadow-xl shadow-wolvio-orange/10 group"
+                        onClick={() => setShowSAP(true)}
+                      >
+                        Create Corrective Invoice <Terminal className="w-4 h-4 ml-3 group-hover:rotate-12 transition-transform" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

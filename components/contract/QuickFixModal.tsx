@@ -53,9 +53,9 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
       <DialogContent className="glass border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] sm:max-w-[600px] text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-heading font-black uppercase tracking-tight flex items-center gap-3">
-            <AlertCircle className="text-[--color-wolvio-orange]" /> Exception Workbench
+            <AlertCircle className="text-wolvio-orange" /> Exception Workbench
           </DialogTitle>
-          <DialogDescription className="text-[--color-wolvio-mid] font-medium">
+          <DialogDescription className="text-wolvio-mid font-medium">
             Confirm or manually input critical parameters to enable precise billing validation.
           </DialogDescription>
         </DialogHeader>
@@ -68,9 +68,9 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
             const label = key.replace(/_/g, ' ').toUpperCase()
 
             return (
-              <div key={key} className="space-y-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-[--color-wolvio-orange]/30 transition-colors">
+              <div key={key} className="space-y-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-wolvio-orange/30 transition-colors">
                 <div className="flex items-center justify-between">
-                  <Label className="text-[10px] font-black tracking-widest text-[--color-wolvio-mid] uppercase">
+                  <Label className="text-[10px] font-black tracking-widest text-wolvio-mid uppercase">
                     {label}
                   </Label>
                   {isMissing ? (
@@ -86,7 +86,7 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
                     type={typeof field.value === 'number' ? 'number' : 'text'}
                     value={values[key] ?? ''}
                     onChange={(e) => setValues({ ...values, [key]: e.target.type === 'number' ? parseFloat(e.target.value) : e.target.value })}
-                    className="bg-black/20 border-white/10 text-white font-mono focus:border-[--color-wolvio-orange]/50 h-12"
+                    className="bg-black/20 border-white/10 text-white font-mono focus:border-wolvio-orange/50 h-12"
                     placeholder="Enter value..."
                   />
                 </div>
@@ -102,12 +102,12 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
         </div>
 
         <DialogFooter className="pt-6 border-t border-white/5 gap-4">
-          <Button variant="ghost" onClick={onClose} className="text-[--color-wolvio-mid] hover:text-white font-black text-xs uppercase tracking-widest">
+          <Button variant="ghost" onClick={onClose} className="text-wolvio-mid hover:text-white font-black text-xs uppercase tracking-widest">
             Cancel
           </Button>
           <Button 
             onClick={handleSave}
-            className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 rounded-xl h-12 shadow-lg"
+            className="bg-wolvio-orange hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 rounded-xl h-12 shadow-lg"
           >
             Save & Continue <ShieldCheck className="ml-2 w-4 h-4" />
           </Button>

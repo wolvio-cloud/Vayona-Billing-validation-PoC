@@ -35,19 +35,19 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
         <GlassCard className="border-white/10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
           <div className="flex items-center justify-between p-8 border-b border-white/5">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[--color-wolvio-orange]/10 flex items-center justify-center border border-[--color-wolvio-orange]/20 text-[--color-wolvio-orange]">
+              <div className="w-10 h-10 rounded-xl bg-wolvio-orange/10 flex items-center justify-center border border-wolvio-orange/20 text-wolvio-orange">
                 <Terminal size={20} />
               </div>
               <div>
                 <h3 className="text-xl font-heading font-black text-white tracking-tight">SAP Corrective Payload</h3>
-                <p className="text-xs font-bold text-[--color-wolvio-mid] uppercase tracking-widest mt-1">
+                <p className="text-xs font-bold text-wolvio-mid uppercase tracking-widest mt-1">
                   Correcting: {checkName}
                 </p>
               </div>
             </div>
             <button 
               onClick={onClose}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-[--color-wolvio-mid] hover:text-white hover:bg-white/10 transition-all"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-wolvio-mid hover:text-white hover:bg-white/10 transition-all"
             >
               <X size={24} />
             </button>
@@ -56,12 +56,12 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
           <div className="p-8 space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.3em]">JSON Structure (BAPI_INCOMINGINVOICE)</span>
+                <span className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.3em]">JSON Structure (BAPI_INCOMINGINVOICE)</span>
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={handleCopy}
-                  className="h-8 text-[10px] font-black uppercase tracking-widest text-[--color-wolvio-orange] hover:bg-[--color-wolvio-orange]/10"
+                  className="h-8 text-[10px] font-black uppercase tracking-widest text-wolvio-orange hover:bg-wolvio-orange/10"
                 >
                   {copied ? (
                     <>
@@ -82,9 +82,9 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
               </div>
             </div>
 
-            <div className="bg-[--color-wolvio-orange]/5 border border-[--color-wolvio-orange]/20 rounded-2xl p-6">
+            <div className="bg-wolvio-orange/5 border border-wolvio-orange/20 rounded-2xl p-6">
               <div className="flex gap-4">
-                <div className="text-[--color-wolvio-orange] mt-1">
+                <div className="text-wolvio-orange mt-1">
                   <Check size={18} />
                 </div>
                 <p className="text-sm text-white/80 leading-relaxed font-medium">
@@ -104,7 +104,7 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
               Close
             </Button>
             <Button 
-              className="py-6 px-8 bg-[--color-wolvio-orange] text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-lg"
+              className="py-6 px-8 bg-wolvio-orange text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-lg"
               disabled
             >
               Push to SAP (Dev Only)

@@ -1,24 +1,30 @@
 import { ValidationResult } from '@/lib/schemas/validation'
 import { formatINR } from '@/lib/utils'
 
-export function generateShareReportHtml(result: ValidationResult, includePatternAnalysis: boolean): string {
+export interface ReportMetadata {
+  contract_name: string
+  counterparty: string
+  invoice_id: string
+}
+
+export function generateShareReportHtml(
+  result: ValidationResult, 
+  includePatternAnalysis: boolean,
+  metadata?: ReportMetadata
+): string {
   const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })
   
   const gaps = result.checks.filter(c => c.verdict === 'GAP')
   const opportunities = result.checks.filter(c => c.verdict === 'OPPORTUNITY')
+  const insufficient = result.checks.filter(c => c.verdict === 'INSUFFICIENT_DATA')
   
   let patternAnalysisHtml = ''
-  if (includePatternAnalysis) {
+  if (includePatternAnalysis && gaps.length > 0) {
     patternAnalysisHtml = `
       <div style="background-color: #FFFBEB; border-left: 4px solid #F59E0B; padding: 20px; margin-bottom: 30px; border-radius: 4px;">
         <h2 style="color: #F59E0B; margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Pattern Analysis</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #FDE68A;"><strong>WPI Escalation</strong></td><td style="padding: 8px 0; border-bottom: 1px solid #FDE68A; color: #DC2626;">Missing in 3 of 6 invoices</td></tr>
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #FDE68A;"><strong>Variable Charge</strong></td><td style="padding: 8px 0; border-bottom: 1px solid #FDE68A; color: #DC2626;">Missing in 2 of 6 invoices</td></tr>
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #FDE68A;"><strong>Base Fee</strong></td><td style="padding: 8px 0; border-bottom: 1px solid #FDE68A; color: #16A34A;">Correct in 6 of 6 invoices</td></tr>
-          <tr><td style="padding: 8px 0;"><strong>Performance Bonus</strong></td><td style="padding: 8px 0; color: #D97706;">Claimable in 1 of 6</td></tr>
-        </table>
-        <p style="margin: 0; font-weight: bold; color: #B45309;">This is a systematic billing process gap, not a one-off error.</p>
+        <p style="margin: 0; font-size: 14px;"><strong>Detected Gaps:</strong> ${gaps.map(g => g.check_name).join(', ')}</p>
+        <p style="margin: 10px 0 0 0; font-weight: bold; color: #B45309;">This audit detected ${gaps.length} critical financial gaps totaling ${formatINR(result.total_gap_amount)}.</p>
       </div>
     `
   }
@@ -87,8 +93,9 @@ export function generateShareReportHtml(result: ValidationResult, includePattern
   <h1>Billing Validation Findings Report</h1>
   
   <div style="margin-bottom: 30px; font-size: 14px;">
-    <p><strong>Contract:</strong> Wind Farm Alpha LTSA (C001)</p>
-    <p><strong>Counterparty:</strong> GreenWind Power</p>
+    <p><strong>Contract:</strong> ${metadata?.contract_name || 'Service Agreement'}</p>
+    <p><strong>Counterparty:</strong> ${metadata?.counterparty || 'External Provider'}</p>
+    <p><strong>Invoice ID:</strong> ${metadata?.invoice_id || result.invoice_id}</p>
     <p><strong>Generated on:</strong> ${dateStr}</p>
   </div>
   

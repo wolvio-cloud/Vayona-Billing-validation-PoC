@@ -11,7 +11,7 @@ interface GlassCardProps {
 export function GlassCard({ children, className, variant = 'default', hover = false }: GlassCardProps) {
   const variants = {
     default: 'bg-white/5 border-white/10',
-    orange: 'bg-[--color-wolvio-orange]/10 border-[--color-wolvio-orange]/20 shadow-[0_20px_40px_-15px_rgba(242,102,48,0.2)]',
+    orange: 'bg-wolvio-orange/10 border-wolvio-orange/20 shadow-[0_20px_40px_-15px_rgba(242,102,48,0.2)]',
     blue: 'bg-blue-500/10 border-blue-500/20 shadow-[0_20px_40px_-15px_rgba(59,130,246,0.2)]',
     muted: 'bg-white/[0.02] border-white/5 opacity-60'
   }

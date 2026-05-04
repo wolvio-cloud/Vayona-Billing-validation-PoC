@@ -35,17 +35,17 @@ export function InvoiceUpload({ onUpload, isProcessing }: InvoiceUploadProps) {
   const CurrentIcon = DEMO_STEPS[step].icon
 
   return (
-    <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-white/10 rounded-[40px] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[--color-wolvio-orange]/50 transition-all group relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-white/10 rounded-[40px] bg-white/[0.02] hover:bg-white/[0.05] hover:border-wolvio-orange/50 transition-all group relative overflow-hidden">
       {/* Background Pulse during processing */}
       {isProcessing && (
-        <div className="absolute inset-0 bg-gradient-to-b from-[--color-wolvio-orange]/5 to-transparent animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-b from-wolvio-orange/5 to-transparent animate-pulse" />
       )}
 
       <div className="w-24 h-24 bg-white/5 rounded-[32px] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)] border border-white/10 relative z-10">
         {isProcessing ? (
-          <CurrentIcon className="w-10 h-10 text-[--color-wolvio-orange] animate-bounce" />
+          <CurrentIcon className="w-10 h-10 text-wolvio-orange animate-bounce" />
         ) : (
-          <FileUp className="w-10 h-10 text-[--color-wolvio-orange]" />
+          <FileUp className="w-10 h-10 text-wolvio-orange" />
         )}
       </div>
 
@@ -53,7 +53,7 @@ export function InvoiceUpload({ onUpload, isProcessing }: InvoiceUploadProps) {
         <h3 className="text-2xl font-heading font-black text-white">
           {isProcessing ? 'Analyzing Audit' : 'Upload Client Invoice'}
         </h3>
-        <p className="text-[--color-wolvio-mid] text-sm max-w-sm mx-auto font-medium leading-relaxed">
+        <p className="text-wolvio-mid text-sm max-w-sm mx-auto font-medium leading-relaxed">
           {isProcessing 
             ? DEMO_STEPS[step].text 
             : 'Drop a digital PDF invoice here to test high-precision extraction and contract validation in real-time.'}
@@ -72,7 +72,7 @@ export function InvoiceUpload({ onUpload, isProcessing }: InvoiceUploadProps) {
         <Button 
           asChild 
           disabled={isProcessing}
-          className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white px-12 py-8 rounded-[24px] text-lg font-black shadow-[0_20px_60px_-15px_rgba(242,102,48,0.4)] transition-all disabled:opacity-50"
+          className="bg-wolvio-orange hover:bg-[#d95a2b] text-white px-12 py-8 rounded-[24px] text-lg font-black shadow-[0_20px_60px_-15px_rgba(242,102,48,0.4)] transition-all disabled:opacity-50"
         >
           <label htmlFor="invoice-upload" className="cursor-pointer flex items-center gap-4">
             {isProcessing ? (

@@ -19,7 +19,7 @@ export function Select({ value, onValueChange, children }: SelectProps) {
       <select 
         value={value} 
         onChange={(e) => onValueChange(e.target.value)}
-        className="w-full h-10 bg-black/40 border border-white/10 rounded-xl px-3 text-[10px] font-black uppercase tracking-widest text-white appearance-none focus:outline-none focus:ring-1 focus:ring-[--color-wolvio-orange] transition-all cursor-pointer"
+        className="w-full h-10 bg-black/40 border border-white/10 rounded-xl px-3 text-[10px] font-black uppercase tracking-widest text-white appearance-none focus:outline-none focus:ring-1 focus:ring-wolvio-orange transition-all cursor-pointer"
       >
         {children}
       </select>

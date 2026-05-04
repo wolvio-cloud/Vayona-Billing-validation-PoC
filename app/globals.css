@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Wolvio brand palette - Deep Premium Dark Theme */
-  --color-wolvio-navy:   #061529;
-  --color-wolvio-orange: #F26630;
-  --color-wolvio-dark:   #030A14;
-  --color-wolvio-slate:  #1E293B;
-  --color-wolvio-light:  #F8FAFC;
-  --color-wolvio-mid:    #94A3B8;
-  --color-wolvio-surface: rgba(17, 42, 70, 0.6); /* Glass surface */
+  /* Wolvio brand palette - Siemens Gamesa Demo Specs */
+  --color-wolvio-navy:   #0A2342;
+  --color-wolvio-orange: #F26B38;
   --color-wolvio-green:  #10B981;
-  --color-wolvio-red:    #F43F5E;
+  --color-wolvio-red:    #DC2626;
   --color-wolvio-amber:  #F59E0B;
+  --color-wolvio-slate:  #4A5568;
+  --color-wolvio-off:    #F7F8FA;
+  --color-wolvio-mid:    #C5D0E0;
+  --color-wolvio-dark:   #061529;
+  --color-wolvio-surface: rgba(10, 35, 66, 0.6); /* Navy glass surface */
 
-  /* Typography */
+  /* Typography Enforcement */
   --font-heading: 'Montserrat', system-ui, sans-serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: 'Montserrat', system-ui, sans-serif; /* Default to Montserrat for labels */
+  --font-mono: 'JetBrains Mono', monospace;
 
   /* Border radius */
   --radius-xl: 1rem;
@@ -79,9 +79,29 @@ code, pre, .font-mono {
   font-family: var(--font-mono);
 }
 
-.confidential-mode .font-mono {
-  filter: blur(4px);
+.confidential-mode .font-mono,
+.confidential-mode [data-confidential] {
+  filter: blur(8px);
+  transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  position: relative;
   user-select: none;
+  pointer-events: none;
+}
+
+.confidential-mode .font-mono::after,
+.confidential-mode [data-confidential]::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  background: rgba(242, 107, 56, 0.15);
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+/* Base transition for non-confidential state */
+.font-mono, [data-confidential] {
+  transition: filter 0.3s ease-in-out;
 }
 
 /* Animations */

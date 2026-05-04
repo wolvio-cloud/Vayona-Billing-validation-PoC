@@ -90,9 +90,9 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
       <DialogContent className="glass border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] sm:max-w-[800px] text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-heading font-black uppercase tracking-tight flex items-center gap-3">
-            <ListFilter className="text-[--color-wolvio-orange]" /> Smart Mapping Workbench
+            <ListFilter className="text-wolvio-orange" /> Smart Mapping Workbench
           </DialogTitle>
-          <DialogDescription className="text-[--color-wolvio-mid] font-medium">
+          <DialogDescription className="text-wolvio-mid font-medium">
             {rawInvoice?.counterparty ? `Source: ${rawInvoice.counterparty} | Learning active` : 'Categorize line items to ensure audit accuracy.'}
           </DialogDescription>
         </DialogHeader>
@@ -117,12 +117,12 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
                 value={item.category} 
                 onValueChange={(val) => handleCategoryChange(item.item_id, val)}
               >
-                <SelectTrigger className="bg-black/20 border-white/10 text-[10px] font-black uppercase h-10 focus:ring-1 focus:ring-[--color-wolvio-orange]/50">
+                <SelectTrigger className="bg-black/20 border-white/10 text-[10px] font-black uppercase h-10 focus:ring-1 focus:ring-wolvio-orange/50">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0A101F] border-white/10 text-white">
                   {CATEGORIES.map(cat => (
-                    <SelectItem key={cat} value={cat} className="text-[10px] font-black uppercase tracking-widest focus:bg-[--color-wolvio-orange] focus:text-white">
+                    <SelectItem key={cat} value={cat} className="text-[10px] font-black uppercase tracking-widest focus:bg-wolvio-orange focus:text-white">
                       {cat}
                     </SelectItem>
                   ))}
@@ -137,12 +137,12 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
             <AlertTriangle size={14} />
             <span className="text-[10px] font-bold uppercase tracking-widest">Calculations will auto-update</span>
           </div>
-          <Button variant="ghost" onClick={onClose} className="text-[--color-wolvio-mid] hover:text-white font-black text-xs uppercase tracking-widest">
+          <Button variant="ghost" onClick={onClose} className="text-wolvio-mid hover:text-white font-black text-xs uppercase tracking-widest">
             Cancel
           </Button>
           <Button 
             onClick={handleSave}
-            className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 rounded-xl h-12 shadow-lg"
+            className="bg-wolvio-orange hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 rounded-xl h-12 shadow-lg"
           >
             Apply Mapping <CheckCircle2 className="ml-2 w-4 h-4" />
           </Button>

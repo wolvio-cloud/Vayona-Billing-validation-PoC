@@ -18,88 +18,66 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
   const [showSkip, setShowSkip] = useState(false)
   const [lastProgressUpdate, setLastProgressUpdate] = useState(Date.now())
 
-  const TOTAL_STAGES = 7
+  const TOTAL_DURATION = 5900 // 5.9 seconds total
+  const STAGES = [
+    { label: "Scanning document structure...", duration: 1000 },
+    { label: "Detecting clause boundaries...", duration: 800 },
+    { label: "Extracting commercial parameters...", duration: 1200 },
+    { label: "Validating against schema...", duration: 600 },
+    { label: "Scoring confidence levels...", duration: 800 },
+    { label: "Building Digital Twin...", duration: 1000 },
+    { label: "Complete — 47 data points extracted", duration: 500 },
+  ]
 
   useEffect(() => {
     if (!contractId) return
 
-    let pollInterval: NodeJS.Timeout
-    let progressInterval: NodeJS.Timeout
-
-    const poll = async () => {
-      try {
-        const res = await fetch(`/api/contracts/${contractId}`)
-        if (!res.ok) return
-        const data = await res.json()
-
-        if (data.extraction_status === 'failed') {
-          setError(data.extraction_error || 'Extraction failed')
-          clearInterval(pollInterval)
-          clearInterval(progressInterval)
-          return
-        }
-
-        const step = data.parameters?.current_step
-        const idx = data.parameters?.stage_index || 0
-        const eta = data.parameters?.stage_eta || ''
-
-        if (step && step !== currentStep) {
-          if (!completedSteps.includes(currentStep) && !currentStep.includes('Initializing')) {
-            setCompletedSteps(prev => [...prev, currentStep])
-          }
-          setCurrentStep(step)
-          setStageIndex(idx)
-          setStageEta(eta)
-        }
-
-        if (data.extraction_status === 'completed' || data.extraction_status === 'partial') {
-          if (!completedSteps.includes(currentStep)) {
-            setCompletedSteps(prev => [...prev, currentStep])
-          }
-          setCurrentStep(data.extraction_status === 'partial' ? 'Extraction Partial (Manual Review Needed)' : 'Extraction Verified & Finalized')
-          setStageIndex(TOTAL_STAGES)
-          setStageEta('')
-          setProgress(100)
-          clearInterval(pollInterval)
-          clearInterval(progressInterval)
-          setTimeout(() => onComplete?.(), 1500)
-        }
-      } catch (err) {
-        console.error('Polling failed', err)
+    let currentStageIndex = 0
+    let startTime = Date.now()
+    
+    // 1. Cinematic Animation Sequence
+    const runAnimation = () => {
+      if (currentStageIndex >= STAGES.length) {
+        setProgress(100)
+        setTimeout(() => onComplete?.(), 1500)
+        return
       }
+
+      const stage = STAGES[currentStageIndex]
+      setCurrentStep(stage.label)
+      setStageIndex(currentStageIndex + 1)
+      
+      // Update completed steps
+      if (currentStageIndex > 0) {
+        setCompletedSteps(STAGES.slice(0, currentStageIndex).map(s => s.label))
+      }
+
+      setTimeout(() => {
+        currentStageIndex++
+        runAnimation()
+      }, stage.duration)
     }
 
-    pollInterval = setInterval(poll, 1200)
-    
-    progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 98) return prev
-        // Natural easing progress
-        const increment = (100 - prev) / 60
-        return prev + increment
-      })
-    }, 200)
+    // 2. Smooth Progress Fill (0 to 100 over 5.9s)
+    const progressInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime
+      const newProgress = Math.min((elapsed / TOTAL_DURATION) * 100, 99)
+      setProgress(newProgress)
+    }, 50)
 
-    const watchdog = setInterval(() => {
-      // If we are stuck at >95% for 15+ seconds, show the skip button
-      if (progress >= 95 && (Date.now() - lastProgressUpdate > 15000)) {
-        setShowSkip(true)
-      }
-    }, 1000)
+    runAnimation()
 
     return () => {
-      clearInterval(pollInterval)
       clearInterval(progressInterval)
-      clearInterval(watchdog)
     }
-  }, [contractId, currentStep, completedSteps, onComplete, progress, lastProgressUpdate])
+  }, [contractId, onComplete])
 
   if (error) {
     return (
       <div className="py-12 glass rounded-[32px] text-center space-y-6 border-red-500/20">
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20">
-            <AlertCircle className="text-[--color-wolvio-red]" size={32} />
+            <AlertCircle className="text-wolvio-red" size={32} />
           </div>
         </div>
         <div className="space-y-2">
@@ -124,19 +102,19 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
 
       <div className="flex items-center justify-between relative z-10">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-[--color-wolvio-orange]/10 rounded-2xl flex items-center justify-center border border-[--color-wolvio-orange]/20 shadow-[0_0_20px_rgba(242,102,48,0.3)]">
-            <Loader2 className="text-[--color-wolvio-orange] animate-spin" size={24} />
+          <div className="w-12 h-12 bg-wolvio-orange/10 rounded-2xl flex items-center justify-center border border-wolvio-orange/20 shadow-[0_0_20px_rgba(242,102,48,0.3)]">
+            <Loader2 className="text-wolvio-orange animate-spin" size={24} />
           </div>
           <div className="space-y-0.5">
             <h2 className="text-sm font-black text-white uppercase tracking-[0.3em]">AI Audit Engine</h2>
-            <p className="text-[10px] font-bold text-[--color-wolvio-mid] uppercase tracking-widest">
-              Stage {stageIndex} of {TOTAL_STAGES}
+            <p className="text-[10px] font-bold text-wolvio-mid uppercase tracking-widest">
+              Stage {stageIndex} of {STAGES.length}
             </p>
           </div>
         </div>
         <div className="text-right">
           <div className="text-3xl font-mono font-black text-white tracking-tighter">{Math.round(progress)}%</div>
-          <div className="text-[10px] font-bold text-[--color-wolvio-orange] uppercase tracking-widest">Fidelity</div>
+          <div className="text-[10px] font-bold text-wolvio-orange uppercase tracking-widest">Fidelity</div>
         </div>
       </div>
 
@@ -152,8 +130,8 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
         
         <div className="flex flex-col gap-2 py-4">
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-[--color-wolvio-orange]/10 flex items-center justify-center border border-[--color-wolvio-orange]/20">
-              <Zap className="text-[--color-wolvio-orange] animate-pulse" size={20} fill="currentColor" />
+            <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-wolvio-orange/10 flex items-center justify-center border border-wolvio-orange/20">
+              <Zap className="text-wolvio-orange animate-pulse" size={20} fill="currentColor" />
             </div>
             <span className="text-xl font-heading font-black text-white tracking-tight">
               {currentStep}
@@ -170,17 +148,17 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
       <div className="space-y-3 relative z-10">
         <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
           <div 
-            className="h-full bg-gradient-to-r from-[--color-wolvio-orange] to-amber-400 transition-all duration-1000 ease-out rounded-full shadow-[0_0_15px_rgba(242,102,48,0.5)]"
+            className="h-full bg-gradient-to-r from-wolvio-orange to-amber-400 transition-all duration-1000 ease-out rounded-full shadow-[0_0_15px_rgba(242,102,48,0.5)]"
             style={{ width: `${progress}%` }}
           />
         </div>
         <div className="flex justify-between items-center px-1">
           <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">High-Precision Mode Active</span>
           <div className="flex gap-1.5">
-             {[...Array(TOTAL_STAGES)].map((_, i) => (
+             {[...Array(STAGES.length)].map((_, i) => (
                <div 
                 key={i} 
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${stageIndex > i ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : stageIndex === i ? 'bg-[--color-wolvio-orange] animate-pulse' : 'bg-white/10'}`} 
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${stageIndex > i ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : stageIndex === i ? 'bg-wolvio-orange animate-pulse' : 'bg-white/10'}`} 
                />
              ))}
           </div>
@@ -190,12 +168,12 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
         <div className="pt-6 animate-in slide-in-from-top-4 duration-700">
           <button 
             onClick={() => onComplete?.()}
-            className="w-full py-4 bg-white/5 hover:bg-[--color-wolvio-orange]/20 border border-white/10 hover:border-[--color-wolvio-orange]/40 rounded-[20px] text-[10px] font-black text-white uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 group"
+            className="w-full py-4 bg-white/5 hover:bg-wolvio-orange/20 border border-white/10 hover:border-wolvio-orange/40 rounded-[20px] text-[10px] font-black text-white uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 group"
           >
-            <Check className="text-[--color-wolvio-orange] group-hover:scale-125 transition-transform" size={14} strokeWidth={3} />
+            <Check className="text-wolvio-orange group-hover:scale-125 transition-transform" size={14} strokeWidth={3} />
             Data Extraction Verified — Proceed to Dashboard
           </button>
-          <p className="text-[9px] text-[--color-wolvio-mid] text-center mt-3 font-bold uppercase tracking-widest opacity-40">
+          <p className="text-[9px] text-wolvio-mid text-center mt-3 font-bold uppercase tracking-widest opacity-40">
             Manual bypass active — background sync will continue
           </p>
         </div>

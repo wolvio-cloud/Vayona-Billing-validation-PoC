@@ -14,6 +14,8 @@ import { generateShareReportHtml } from './generateReport'
 
 interface ValidationReportProps {
   result: ValidationResult
+  contractName?: string
+  counterparty?: string
 }
 
 function formatCr(val: number): string {
@@ -22,7 +24,7 @@ function formatCr(val: number): string {
   return `₹${val.toLocaleString('en-IN')}`
 }
 
-export function ValidationReport({ result }: ValidationReportProps) {
+export function ValidationReport({ result, contractName, counterparty }: ValidationReportProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
   const [showTotals, setShowTotals] = useState(false)
   const [gapCount, setGapCount] = useState(0)
@@ -64,9 +66,9 @@ export function ValidationReport({ result }: ValidationReportProps) {
     return (
       <div className="flex flex-col items-center justify-center py-40 space-y-8">
         <div className="relative">
-          <Loader2 className="w-16 h-16 text-[--color-wolvio-orange] animate-spin opacity-20" />
+          <Loader2 className="w-16 h-16 text-wolvio-orange animate-spin opacity-20" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 bg-[--color-wolvio-orange] rounded-full animate-pulse shadow-[0_0_20px_rgba(242,102,48,0.5)]" />
+            <div className="w-8 h-8 bg-wolvio-orange rounded-full animate-pulse shadow-[0_0_20px_rgba(242,102,48,0.5)]" />
           </div>
         </div>
         <div className="text-2xl font-heading font-black text-white tracking-tight animate-pulse uppercase">Determining Variances...</div>
@@ -79,17 +81,17 @@ export function ValidationReport({ result }: ValidationReportProps) {
 
       {/* ── FC / IT Toggle ────────────────────────────────────── */}
       <div className="flex items-center justify-between">
-        <div className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.4em]">Validation Report — {result.invoice_id}</div>
+        <div className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.4em]">Validation Report — {result.invoice_id}</div>
         <div className="flex items-center gap-2 glass rounded-full p-1 border border-white/10">
           <button
             onClick={() => setViewMode('fc')}
-            className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'fc' ? 'bg-[--color-wolvio-orange] text-white shadow-md' : 'text-[--color-wolvio-mid] hover:text-white'}`}
+            className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'fc' ? 'bg-wolvio-orange text-white shadow-md' : 'text-wolvio-mid hover:text-white'}`}
           >
             <DollarSign size={12} className="inline mr-1" />FC View
           </button>
           <button
             onClick={() => setViewMode('it')}
-            className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'it' ? 'bg-blue-500 text-white shadow-md' : 'text-[--color-wolvio-mid] hover:text-white'}`}
+            className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${viewMode === 'it' ? 'bg-blue-500 text-white shadow-md' : 'text-wolvio-mid hover:text-white'}`}
           >
             <FlaskConical size={12} className="inline mr-1" />IT View
           </button>
@@ -98,27 +100,27 @@ export function ValidationReport({ result }: ValidationReportProps) {
 
       {/* ── FC View: Business impact first ───────────────────── */}
       {viewMode === 'fc' && (
-        <div className="glass rounded-[28px] p-8 border border-[--color-wolvio-orange]/20 bg-gradient-to-br from-[--color-wolvio-orange]/5 via-transparent to-transparent">
-          <div className="text-[10px] font-black text-[--color-wolvio-orange] uppercase tracking-[0.3em] mb-4">2-Minute Summary for Finance Controller</div>
+        <div className="glass rounded-[28px] p-8 border border-wolvio-orange/20 bg-gradient-to-br from-wolvio-orange/5 via-transparent to-transparent">
+          <div className="text-[10px] font-black text-wolvio-orange uppercase tracking-[0.3em] mb-4">2-Minute Summary for Finance Controller</div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-1">
-              <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest">This Invoice: Gap</div>
+              <div className="text-[9px] font-black text-wolvio-mid uppercase tracking-widest">This Invoice: Gap</div>
               <div className="text-3xl font-mono font-black text-red-400">{formatCr(result.total_gap_amount)}</div>
               <div className="text-[10px] text-red-400/60 font-medium">Under/over-billed amounts found</div>
             </div>
             <div className="space-y-1">
-              <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest">Unclaimed Upside</div>
+              <div className="text-[9px] font-black text-wolvio-mid uppercase tracking-widest">Unclaimed Upside</div>
               <div className="text-3xl font-mono font-black text-amber-400">{formatCr(result.total_opportunity_amount)}</div>
               <div className="text-[10px] text-amber-400/60 font-medium">Entitlements not yet invoiced</div>
             </div>
             <div className="space-y-1">
-              <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest">Annual Run-Rate Risk</div>
-              <div className="text-3xl font-mono font-black text-[--color-wolvio-orange]">{formatCr(annualRecoverable)}</div>
-              <div className="text-[10px] text-[--color-wolvio-orange]/60 font-medium">If this pattern repeats monthly</div>
+              <div className="text-[9px] font-black text-wolvio-mid uppercase tracking-widest">Annual Run-Rate Risk</div>
+              <div className="text-3xl font-mono font-black text-wolvio-orange">{formatCr(annualRecoverable)}</div>
+              <div className="text-[10px] text-wolvio-orange/60 font-medium">If this pattern repeats monthly</div>
             </div>
           </div>
           <div className="mt-6 pt-6 border-t border-white/5">
-            <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-3">Actions Required</div>
+            <div className="text-[9px] font-black text-wolvio-mid uppercase tracking-widest mb-3">Actions Required</div>
             <div className="flex flex-wrap gap-3">
               {gaps.map(g => (
                 <div key={g.check_id} className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-[10px] font-bold text-red-400">
@@ -147,7 +149,7 @@ export function ValidationReport({ result }: ValidationReportProps) {
           <div className="space-y-3">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div className="glass rounded-2xl p-4 border border-white/5">
-                <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-1">Checks Run</div>
+                <div className="text-[9px] font-black text-wolvio-mid uppercase tracking-widest mb-1">Checks Run</div>
                 <div className="text-2xl font-mono font-black text-white">{result.checks.length}</div>
               </div>
               <div className="glass rounded-2xl p-4 border border-red-500/20">
@@ -164,7 +166,7 @@ export function ValidationReport({ result }: ValidationReportProps) {
               </div>
             </div>
             <div className="glass rounded-2xl p-4 border border-white/5">
-              <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest mb-2">Run Metadata</div>
+              <div className="text-[9px] font-black text-wolvio-mid uppercase tracking-widest mb-2">Run Metadata</div>
               <div className="font-mono text-[10px] text-white/60 space-y-1">
                 <div>run_at: {result.run_at}</div>
                 <div>contract_id: {result.contract_id}</div>
@@ -188,58 +190,58 @@ export function ValidationReport({ result }: ValidationReportProps) {
         {/* Executive Summary Panel */}
         <div className="lg:sticky lg:top-32 space-y-8 animate-fade-in-up z-10 lg:w-[400px]">
           <div className="glass rounded-[40px] p-10 border border-white/5 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)] bg-[#030A14]/98 backdrop-blur-3xl flex flex-col items-center text-center relative overflow-hidden">
-            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[--color-wolvio-orange] to-transparent opacity-40" />
-            <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-[--color-wolvio-mid] mb-10">Executive Audit</h2>
+            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-wolvio-orange to-transparent opacity-40" />
+            <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-wolvio-mid mb-10">Executive Audit</h2>
             <div className="mb-10 w-full">
-              <div className={`font-mono text-5xl font-black tracking-tighter transition-all duration-700 ${showTotals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} ${result.total_gap_amount > 0 ? 'text-[--color-wolvio-red]' : 'text-[--color-wolvio-green]'}`}>
+              <div className={`font-mono text-5xl font-black tracking-tighter transition-all duration-700 ${showTotals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} ${result.total_gap_amount > 0 ? 'text-wolvio-red' : 'text-wolvio-green'}`}>
                 {formatINR(gapCount)}
               </div>
-              <div className={`text-xs font-bold mt-3 tracking-widest uppercase transition-all duration-700 delay-200 ${showTotals ? 'opacity-100' : 'opacity-0'} ${result.total_gap_amount > 0 ? 'text-[--color-wolvio-red]' : 'text-[--color-wolvio-green]'}`}>
+              <div className={`text-xs font-bold mt-3 tracking-widest uppercase transition-all duration-700 delay-200 ${showTotals ? 'opacity-100' : 'opacity-0'} ${result.total_gap_amount > 0 ? 'text-wolvio-red' : 'text-wolvio-green'}`}>
                 {result.total_gap_amount > 0 ? 'Leakage Identified' : 'Revenue Secured'}
               </div>
             </div>
             <div className={`w-full space-y-4 transition-all duration-700 delay-400 ${showTotals ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
               <div className="flex items-center justify-between px-6 py-4 glass rounded-2xl border-white/5">
-                <div className="flex items-center gap-3"><TrendingDown size={16} className="text-[--color-wolvio-red]" /><span className="text-sm font-bold text-white/80">Gaps</span></div>
-                <span className="font-mono font-black text-[--color-wolvio-red]">{gaps.length}</span>
+                <div className="flex items-center gap-3"><TrendingDown size={16} className="text-wolvio-red" /><span className="text-sm font-bold text-white/80">Gaps</span></div>
+                <span className="font-mono font-black text-wolvio-red">{gaps.length}</span>
               </div>
               <div className="flex items-center justify-between px-6 py-4 glass rounded-2xl border-white/5">
-                <div className="flex items-center gap-3"><TrendingUp size={16} className="text-[--color-wolvio-amber]" /><span className="text-sm font-bold text-white/80">Upside</span></div>
-                <span className="font-mono font-black text-[--color-wolvio-amber]">{opportunities.length}</span>
+                <div className="flex items-center gap-3"><TrendingUp size={16} className="text-wolvio-amber" /><span className="text-sm font-bold text-white/80">Upside</span></div>
+                <span className="font-mono font-black text-wolvio-amber">{opportunities.length}</span>
               </div>
               <div className="flex items-center justify-between px-6 py-4 glass rounded-2xl border-white/5">
-                <div className="flex items-center gap-3"><CheckCircle2 size={16} className="text-[--color-wolvio-green]" /><span className="text-sm font-bold text-white/80">Matches</span></div>
-                <span className="font-mono font-black text-[--color-wolvio-green]">{matches.length}</span>
+                <div className="flex items-center gap-3"><CheckCircle2 size={16} className="text-wolvio-green" /><span className="text-sm font-bold text-white/80">Matches</span></div>
+                <span className="font-mono font-black text-wolvio-green">{matches.length}</span>
               </div>
             </div>
           </div>
 
           {/* Recovery Forecast Widget */}
           {totalRecoverable > 0 && (
-            <div className="glass rounded-[24px] p-6 border border-amber-500/20 bg-amber-500/5 space-y-4">
+            <div className="glass rounded-[32px] p-8 border border-wolvio-amber/20 bg-wolvio-amber/5 space-y-6">
               <div className="flex items-center gap-3">
-                <CalendarRange size={16} className="text-amber-400" />
-                <div className="text-[10px] font-black text-amber-400 uppercase tracking-[0.3em]">Recovery Forecast</div>
+                <CalendarRange size={16} className="text-wolvio-amber" />
+                <div className="text-[10px] font-black text-wolvio-amber uppercase tracking-[0.4em]">Leakage Forecast</div>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="text-[11px] font-bold text-white/60">This Invoice</div>
-                  <div className="text-sm font-mono font-black text-amber-400">{formatCr(totalRecoverable)}</div>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <div className="text-[11px] font-bold text-white/40 uppercase tracking-widest">If this gap continues:</div>
+                  <div className="text-3xl font-mono font-black text-wolvio-amber tracking-tighter">
+                    {formatCr(annualRecoverable)} <span className="text-xs">per year</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="text-[11px] font-bold text-white/60">Annual Run-Rate</div>
-                  <div className="text-sm font-mono font-black text-[--color-wolvio-orange]">{formatCr(annualRecoverable)}</div>
+                <div className="text-[10px] text-wolvio-mid/50 font-medium leading-relaxed italic">
+                  *Based on a 12-month extrapolation of current monthly variances.
                 </div>
               </div>
-              <div className="text-[9px] text-white/30 font-medium leading-relaxed">*Assumes same gap pattern recurs monthly. Actual recovery depends on contract and dispute resolution timeline.</div>
             </div>
           )}
 
           {/* Assumptions Panel */}
           <div className="glass rounded-[24px] p-5 border border-white/5 space-y-3">
             <div className="flex items-center gap-2">
-              <BookOpen size={12} className="text-[--color-wolvio-mid]" />
-              <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest">Assumptions Used</div>
+              <BookOpen size={12} className="text-wolvio-mid" />
+              <div className="text-[9px] font-black text-wolvio-mid uppercase tracking-widest">Assumptions Used</div>
             </div>
             <div className="space-y-2 text-[10px] text-white/40 font-medium leading-relaxed">
               <p>• WPI Jan-2025: 161.5 (OEA GoI cached snapshot)</p>
@@ -258,9 +260,13 @@ export function ValidationReport({ result }: ValidationReportProps) {
               <LayoutPanelLeft className="w-4 h-4 mr-3" /> Multi-Month Analysis
             </Button>
             <Button
-              className="w-full py-8 bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-[0_15px_40px_-10px_rgba(242,102,48,0.4)] group"
+              className="w-full py-8 bg-wolvio-orange hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-[0_15px_40px_-10px_rgba(242,102,48,0.4)] group"
               onClick={() => {
-                const html = generateShareReportHtml(result, showAggregate)
+                const html = generateShareReportHtml(result, showAggregate, {
+                  contract_name: contractName || 'Contract Agreement',
+                  counterparty: counterparty || 'Provider',
+                  invoice_id: result.invoice_id
+                })
                 const blob = new Blob([html], { type: 'text/html' })
                 const url = URL.createObjectURL(blob)
                 const a = document.createElement('a')
@@ -276,8 +282,8 @@ export function ValidationReport({ result }: ValidationReportProps) {
         {/* Findings List */}
         <div className="space-y-6 overflow-visible">
           <div className="flex items-center gap-4 mb-8">
-            <ShieldCheck size={16} className="text-[--color-wolvio-mid]" />
-            <h3 className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.5em]">Line Item Variance Analysis</h3>
+            <ShieldCheck size={16} className="text-wolvio-mid" />
+            <h3 className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.5em]">Line Item Variance Analysis</h3>
             <div className="flex-1 h-[1px] bg-white/5" />
             {viewMode === 'it' && (
               <div className="text-[9px] font-bold text-blue-400 uppercase tracking-widest px-2 py-1 bg-blue-500/10 rounded-full">

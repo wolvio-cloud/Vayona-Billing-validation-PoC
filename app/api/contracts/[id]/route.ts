@@ -34,3 +34,41 @@ export async function GET(
   }
 }
 
+export async function PUT(
+  request: Request,
+  ctx: { params: Promise<{ id: string }> }
+) {
+  const { id } = await ctx.params
+  try {
+    const body = await request.json()
+    const { field, value } = body
+
+    if (!field) return Response.json({ error: 'Field name required' }, { status: 400 })
+
+    // Fetch existing parameters
+    const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
+    const parameters = row?.parameters || {}
+
+    // Update specific field with manual metadata
+    parameters[field] = {
+      value,
+      confidence: 'manual',
+      source_clause: 'Entered manually — verify against document',
+      clause_reference: 'Manual Override',
+      page_number: 0
+    }
+
+    try {
+      await sql`UPDATE contracts SET parameters = ${JSON.stringify(parameters)} WHERE contract_id = ${id}`
+    } catch {
+      const mock = mockStore.get(id) || {}
+      mockStore.set(id, { ...mock, parameters })
+    }
+
+    return Response.json({ status: 'updated', field, value })
+  } catch (err) {
+    logger.error('Failed to update parameters', err)
+    return Response.json({ error: 'Update failed' }, { status: 500 })
+  }
+}
+
