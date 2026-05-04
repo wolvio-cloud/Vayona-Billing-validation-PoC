@@ -13,6 +13,7 @@ export default async function ContractDetailPage({
 }) {
   const { id } = await params
   
+  let contract: ContractParameters | null = null
   let displayName = 'Service Agreement'
   
   // Try demo JSON files first (C001–C008 all have JSON files)
