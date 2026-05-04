@@ -5,15 +5,12 @@ declare global {
   var _pgClient: ReturnType<typeof postgres> | undefined
 }
 
-function createClient() {
+function createNeonClient() {
   const url = process.env.DATABASE_URL
   
-  // For local development without DB, return a proxy that throws only on invocation
   if (!url) {
-    console.warn('⚠️ DATABASE_URL is not set. Database features will fail if called.')
-    return (() => {
-      throw new Error('DATABASE_URL is not set. Please check your environment variables.')
-    }) as unknown as ReturnType<typeof postgres>
+    console.warn('⚠️ Neon DATABASE_URL is not set. Falling back to mock-store for demo stability.')
+    return null
   }
 
   return postgres(url, {
@@ -25,7 +22,21 @@ function createClient() {
 }
 
 // Singleton — reuse across hot-reloads in dev
-const sql = globalThis._pgClient ?? createClient()
-if (process.env.NODE_ENV !== 'production') globalThis._pgClient = sql
+const _rawSql = globalThis._pgClient ?? createNeonClient()
+if (process.env.NODE_ENV !== 'production' && _rawSql) globalThis._pgClient = _rawSql
 
-export default sql
+// Define a safe query function that handles null/undefined sql client
+const query: any = (template: any, ...args: any[]) => {
+  if (!_rawSql) return Promise.resolve([])
+  // Handle both tagged template and direct call
+  if (Array.isArray(template)) {
+    return (_rawSql as any)(template, ...args)
+  }
+  return (_rawSql as any)(template, ...args)
+}
+
+// Attach the 'json' and 'unsafe' helpers needed by some scripts/routes
+query.json = (val: any) => (_rawSql ? (_rawSql as any).json(val) : JSON.stringify(val))
+query.unsafe = (str: string) => (_rawSql ? (_rawSql as any).unsafe(str) : Promise.resolve([]))
+
+export default query

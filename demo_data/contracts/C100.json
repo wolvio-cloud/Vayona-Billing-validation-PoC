@@ -1,0 +1,97 @@
+{
+  "contract_id": "C100",
+  "contract_type": "LTSA",
+  "base_annual_fee": {
+    "value": 85000000,
+    "source_clause": "The Base Annual Fee shall be INR 8,50,00,000 (Rupees Eight Crore Fifty Lakhs only) per annum, payable in equal monthly installments.",
+    "clause_reference": "Clause 4.1",
+    "page_number": 12,
+    "confidence": "high"
+  },
+  "base_monthly_fee": {
+    "value": 7083333,
+    "source_clause": "Monthly payment shall be 1/12th of the Base Annual Fee.",
+    "clause_reference": "Clause 4.1.2",
+    "page_number": 12,
+    "confidence": "high"
+  },
+  "escalation": {
+    "value": {
+      "type": "WPI",
+      "index_base_month": "January",
+      "effective_date": "April 1",
+      "cap_pct": 7,
+      "floor_pct": 1
+    },
+    "source_clause": "The fee shall escalate annually on April 1st based on the WPI (All Commodities) movement from the previous January. Escalation is capped at 7% and has a floor of 1%.",
+    "clause_reference": "Clause 5.4",
+    "page_number": 22,
+    "confidence": "high"
+  },
+  "variable_component": {
+    "value": {
+      "rate_per_kwh": 0.05,
+      "billing_frequency": "Monthly"
+    },
+    "source_clause": "A variable rate of INR 0.05 per kWh generated shall apply.",
+    "clause_reference": "Clause 6.1",
+    "page_number": 25,
+    "confidence": "high"
+  },
+  "availability_guarantee_pct": {
+    "value": 97,
+    "source_clause": "The guaranteed availability is 97.0%.",
+    "clause_reference": "Clause 7.2",
+    "page_number": 32,
+    "confidence": "high"
+  },
+  "ld_rate_per_pp": {
+    "value": 1.5,
+    "source_clause": "Penalty of 1.5% of Annual Fee applies for every 1% availability shortfall.",
+    "clause_reference": "Clause 8.1",
+    "page_number": 35,
+    "confidence": "high"
+  },
+  "ld_cap_pct": {
+    "value": 15,
+    "source_clause": "Maximum Liquidated Damages capped at 15% of Base Annual Fee.",
+    "clause_reference": "Clause 8.3",
+    "page_number": 36,
+    "confidence": "high"
+  },
+  "bonus_threshold_pct": {
+    "value": 98.5,
+    "source_clause": "Performance bonus applies above 98.5% availability.",
+    "clause_reference": "Clause 9.1",
+    "page_number": 40,
+    "confidence": "high"
+  },
+  "bonus_rate_per_pp": {
+    "value": 0.75,
+    "source_clause": "Bonus of 0.75% of Annual Fee per 1% outperformance.",
+    "clause_reference": "Clause 9.2",
+    "page_number": 40,
+    "confidence": "high"
+  },
+  "payment_terms_days": {
+    "value": 60,
+    "source_clause": "Invoices shall be paid within 60 days of submission.",
+    "clause_reference": "Clause 10.4",
+    "page_number": 42,
+    "confidence": "high"
+  },
+  "late_payment_interest": {
+    "value": "15% p.a.",
+    "source_clause": "Late payments attract interest at 15% per annum.",
+    "clause_reference": "Clause 10.6",
+    "page_number": 43,
+    "confidence": "high"
+  },
+  "renewal_notice_months": {
+    "value": 6,
+    "source_clause": "6 months notice required for renewal.",
+    "clause_reference": "Clause 15.1",
+    "page_number": 48,
+    "confidence": "high"
+  }
+}

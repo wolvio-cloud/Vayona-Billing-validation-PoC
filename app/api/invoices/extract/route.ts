@@ -55,8 +55,11 @@ export async function POST(request: Request) {
     }
 
     return Response.json(validated.data)
-  } catch (err) {
+  } catch (err: any) {
     logger.error('Invoice extraction failed', err)
-    return Response.json({ error: 'Internal server error' }, { status: 500 })
+    return Response.json({ 
+      error: err.message || 'Internal server error',
+      detail: err.statusText || 'AI engine failed to respond'
+    }, { status: 500 })
   }
 }

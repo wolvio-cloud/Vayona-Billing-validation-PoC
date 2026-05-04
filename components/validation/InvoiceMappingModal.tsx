@@ -33,7 +33,7 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
         amount: typeof li.amount === 'number' ? li.amount : 0
       })))
     }
-  }, [isOpen, rawInvoice])
+  }, [isOpen, rawInvoice?.line_items])
 
   const handleCategoryChange = (itemId: string, category: string) => {
     setLineItems(prev => prev.map(item => 
@@ -46,8 +46,8 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
     const gstAmount = Math.round(subtotal * 0.18)
     
     // Save mapping template if we have a counterparty context
-    if (rawInvoice.counterparty || rawInvoice.contract_id) {
-      const key = `mapping_template_${rawInvoice.counterparty || rawInvoice.contract_id}`
+    if (rawInvoice?.counterparty || rawInvoice?.contract_id) {
+      const key = `mapping_template_${rawInvoice?.counterparty || rawInvoice?.contract_id}`
       const template = lineItems.reduce((acc: any, item) => {
         acc[item.description] = item.category
         return acc
@@ -59,9 +59,9 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
       ...rawInvoice,
       line_items: lineItems,
       subtotal,
-      gst_rate: rawInvoice.gst_rate || 18,
-      gst_amount: rawInvoice.gst_amount || gstAmount,
-      total: rawInvoice.total || (subtotal + gstAmount),
+      gst_rate: rawInvoice?.gst_rate || 18,
+      gst_amount: rawInvoice?.gst_amount || gstAmount,
+      total: rawInvoice?.total || (subtotal + gstAmount),
       status: 'Pending'
     }
     onMappingComplete(mapped)
@@ -70,8 +70,8 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
 
   // Effect to load templates
   useEffect(() => {
-    if (isOpen && lineItems.length > 0 && (rawInvoice.counterparty || rawInvoice.contract_id)) {
-      const key = `mapping_template_${rawInvoice.counterparty || rawInvoice.contract_id}`
+    if (isOpen && lineItems.length > 0 && (rawInvoice?.counterparty || rawInvoice?.contract_id)) {
+      const key = `mapping_template_${rawInvoice?.counterparty || rawInvoice?.contract_id}`
       const stored = localStorage.getItem(key)
       if (stored) {
         try {
@@ -83,7 +83,7 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
         } catch (e) { /* ignore */ }
       }
     }
-  }, [isOpen, rawInvoice.counterparty, rawInvoice.contract_id, lineItems.length])
+  }, [isOpen, rawInvoice?.counterparty, rawInvoice?.contract_id, lineItems.length])
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -93,7 +93,7 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
             <ListFilter className="text-[--color-wolvio-orange]" /> Smart Mapping Workbench
           </DialogTitle>
           <DialogDescription className="text-[--color-wolvio-mid] font-medium">
-            {rawInvoice.counterparty ? `Source: ${rawInvoice.counterparty} | Learning active` : 'Categorize line items to ensure audit accuracy.'}
+            {rawInvoice?.counterparty ? `Source: ${rawInvoice.counterparty} | Learning active` : 'Categorize line items to ensure audit accuracy.'}
           </DialogDescription>
         </DialogHeader>
 

@@ -183,13 +183,13 @@ export function ValidationReport({ result }: ValidationReportProps) {
       )}
 
       {/* ── Main Grid ─────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-[360px,1fr] gap-12 items-start overflow-visible">
+      <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-12 lg:gap-20 items-start overflow-visible relative">
 
         {/* Executive Summary Panel */}
-        <div className="relative xl:sticky xl:top-40 space-y-6 animate-fade-in-up z-20 xl:w-[360px]">
-          <div className="glass rounded-[32px] p-8 border-none shadow-[0_32px_64px_-20px_rgba(0,0,0,0.6)] bg-[#030A14]/95 backdrop-blur-2xl flex flex-col items-center text-center relative overflow-hidden">
-            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[--color-wolvio-orange] to-transparent opacity-50" />
-            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[--color-wolvio-mid] mb-8">Executive Audit</h2>
+        <div className="lg:sticky lg:top-32 space-y-8 animate-fade-in-up z-10 lg:w-[400px]">
+          <div className="glass rounded-[40px] p-10 border border-white/5 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)] bg-[#030A14]/98 backdrop-blur-3xl flex flex-col items-center text-center relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[--color-wolvio-orange] to-transparent opacity-40" />
+            <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-[--color-wolvio-mid] mb-10">Executive Audit</h2>
             <div className="mb-10 w-full">
               <div className={`font-mono text-5xl font-black tracking-tighter transition-all duration-700 ${showTotals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} ${result.total_gap_amount > 0 ? 'text-[--color-wolvio-red]' : 'text-[--color-wolvio-green]'}`}>
                 {formatINR(gapCount)}

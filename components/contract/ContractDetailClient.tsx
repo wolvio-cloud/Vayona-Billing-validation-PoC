@@ -23,9 +23,10 @@ import { QuickFixModal } from './QuickFixModal'
 interface ContractDetailClientProps {
   initialContract: ContractParameters
   contractId: string
+  displayName: string
 }
 
-export function ContractDetailClient({ initialContract, contractId }: ContractDetailClientProps) {
+export function ContractDetailClient({ initialContract, contractId, displayName }: ContractDetailClientProps) {
   const [contract, setContract] = useState(initialContract)
   const [showQuickFix, setShowQuickFix] = useState(false)
   const router = useRouter()
@@ -63,7 +64,7 @@ export function ContractDetailClient({ initialContract, contractId }: ContractDe
             </div>
 
             <h1 className="text-6xl md:text-8xl font-heading font-black text-white tracking-tighter leading-none">
-              {(contract as any).display_name || 'Service Agreement'}
+              {displayName}
             </h1>
 
             <div className="flex flex-wrap items-center gap-10">
@@ -93,7 +94,10 @@ export function ContractDetailClient({ initialContract, contractId }: ContractDe
           
           <div className="flex flex-col gap-6">
             <Button 
-              onClick={() => router.push(`/contracts/${contractId}/validate`)}
+              onClick={() => {
+                window.scrollTo(0, 0)
+                router.push(`/contracts/${contractId}/validate`)
+              }}
               className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white px-16 py-10 rounded-[32px] text-2xl font-black shadow-[0_30px_60px_-15px_rgba(242,102,48,0.5)] group transition-all hover:scale-105 active:scale-95"
             >
               Start Audit <ArrowRight className="ml-6 w-8 h-8 group-hover:translate-x-4 transition-transform" />

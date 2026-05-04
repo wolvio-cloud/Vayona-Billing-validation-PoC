@@ -13,26 +13,36 @@ export default async function ContractDetailPage({
 }) {
   const { id } = await params
   
-  let contract: ContractParameters | null = null
+  let displayName = 'Service Agreement'
   
   // Try demo JSON files first (C001–C008 all have JSON files)
   if (id.startsWith('C')) {
     contract = await getDemoContractParameters(id)
+    if (id === 'C100') displayName = 'Adani Green — Mega Wind Portfolio'
+    else if (id === 'C001') displayName = 'Wind Farm Alpha — LTSA'
+    else if (id === 'C002') displayName = 'ReNew Power Mega-LTSA'
   }
 
   // If not found in demo data, check database / mockStore (for uploaded contracts)
   if (!contract) {
     try {
-      const [row] = await sql`SELECT parameters FROM contracts WHERE contract_id = ${id} LIMIT 1`
+      const [row] = await sql`SELECT parameters, display_name FROM contracts WHERE contract_id = ${id} LIMIT 1`
       if (row?.parameters) {
         contract = row.parameters as unknown as ContractParameters
+        displayName = row.display_name || displayName
       } else {
         const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
-        if (mockData?.parameters) contract = mockData.parameters as unknown as ContractParameters
+        if (mockData?.parameters) {
+          contract = mockData.parameters as unknown as ContractParameters
+          displayName = mockData.display_name || displayName
+        }
       }
     } catch {
       const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
-      if (mockData?.parameters) contract = mockData.parameters as unknown as ContractParameters
+      if (mockData?.parameters) {
+        contract = mockData.parameters as unknown as ContractParameters
+        displayName = mockData.display_name || displayName
+      }
     }
   }
 
@@ -48,6 +58,7 @@ export default async function ContractDetailPage({
       <ContractDetailClient 
         initialContract={contract} 
         contractId={id} 
+        displayName={displayName}
       />
     </div>
   )

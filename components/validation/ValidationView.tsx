@@ -21,7 +21,7 @@ interface ValidationViewProps {
 }
 
 export function ValidationView({ contract, initialInvoice, initialGeneration, contractId }: ValidationViewProps) {
-  const [currentInvoice, setCurrentInvoice] = useState<Invoice>(initialInvoice)
+  const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(initialInvoice)
   const [isProcessing, setIsProcessing] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
   const [result, setResult] = useState<ValidationResult | null>(null)
@@ -32,6 +32,12 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
 
   // Re-run validation whenever invoice changes
   useEffect(() => {
+    if (!currentInvoice) {
+      setResult(null)
+      setIsComputing(false)
+      return
+    }
+    
     setIsComputing(true)
     setParseError(null)
     runValidation(contract, currentInvoice, initialGeneration).then((rawChecks) => {
@@ -71,18 +77,25 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
       const res = await fetch('/api/invoices/extract', { method: 'POST', body: formData })
       
       const data = await res.json()
+      
+      // Clear legacy audit data before showing new result
+      setResult(null)
+      setParseError(null)
+      
       if (res.status === 206) {
         // Mapping required
         setMappingData(data.partial_data)
         return
       }
       
-      if (!res.ok) throw new Error('Extraction failed')
+      if (!res.ok) {
+        throw new Error(data.error || 'Extraction failed')
+      }
       setCurrentInvoice(data)
       setShowUpload(false)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      alert('Failed to process invoice. Ensure it is a valid digital PDF.')
+      alert(`Failed to process invoice: ${err.message}`)
     } finally {
       setIsProcessing(false)
     }
@@ -111,28 +124,36 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
       )}
 
       {/* Invoice Banner Card */}
-      <div className="relative overflow-hidden glass rounded-[32px] border-none shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)]">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-[--color-wolvio-orange]/10 pointer-events-none" />
-        <div className="p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-          <div className="space-y-2">
-            <div className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.3em]">Billing Document</div>
-            <h2 className="text-4xl font-heading font-black text-white tracking-tight">
-              Invoice {currentInvoice.invoice_id}
-            </h2>
-            <div className="flex items-center gap-4 text-sm font-semibold text-[--color-wolvio-mid]">
-              <span>{currentInvoice.period_start}</span>
-              <ArrowRight size={14} className="opacity-30" />
-              <span>{currentInvoice.period_end}</span>
+      {currentInvoice ? (
+        <div className="relative overflow-hidden glass rounded-[32px] border-none shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)]">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-[--color-wolvio-orange]/10 pointer-events-none" />
+          <div className="p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+            <div className="space-y-2">
+              <div className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.3em]">Billing Document</div>
+              <h2 className="text-4xl font-heading font-black text-white tracking-tight">
+                Invoice {currentInvoice.invoice_id}
+              </h2>
+              <div className="flex items-center gap-4 text-sm font-semibold text-[--color-wolvio-mid]">
+                <span>{currentInvoice.period_start}</span>
+                <ArrowRight size={14} className="opacity-30" />
+                <span>{currentInvoice.period_end}</span>
+              </div>
             </div>
-          </div>
-          <div className="bg-white/5 border border-white/10 px-8 py-6 rounded-[24px] text-right">
-            <div className="text-[10px] font-black text-[--color-wolvio-orange] uppercase tracking-[0.3em] mb-2">Invoice Amount</div>
-            <div className="text-4xl font-mono font-bold text-white tracking-tighter">
-              ₹{currentInvoice.total.toLocaleString('en-IN')}
+            <div className="bg-white/5 border border-white/10 px-8 py-6 rounded-[24px] text-right">
+              <div className="text-[10px] font-black text-[--color-wolvio-orange] uppercase tracking-[0.3em] mb-2">Invoice Amount</div>
+              <div className="text-4xl font-mono font-bold text-white tracking-tighter">
+                ₹{currentInvoice.total.toLocaleString('en-IN')}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="glass rounded-[32px] p-20 text-center border-dashed border-2 border-white/10">
+          <div className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.4em] mb-4">Awaiting Document</div>
+          <h2 className="text-3xl font-heading font-black text-white/40">Ready for Audit</h2>
+          <p className="text-sm text-[--color-wolvio-mid] mt-4">Upload a billing document to begin the deterministic audit.</p>
+        </div>
+      )}
 
       {/* Validation Result */}
       {isComputing ? (

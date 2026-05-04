@@ -22,8 +22,11 @@ export default async function ValidatePage({
   searchParams: Promise<{ invoice?: string }>
 }) {
   const { id } = await params
-  const allInvoices = await getDemoInvoiceList(id)
-  const defaultInvoice = allInvoices[1] ?? allInvoices[0]  // default to [1] (gap scenario) if available
+  
+  // Only show the demo selector for seeded IDs (C001-C008)
+  const isDemoContract = id.startsWith('C00') && id.length <= 4
+  const allInvoices = isDemoContract ? await getDemoInvoiceList(id) : []
+  const defaultInvoice = allInvoices.length > 0 ? (allInvoices[1] ?? allInvoices[0]) : null
   const { invoice = defaultInvoice } = await searchParams
 
   let contract = await getDemoContractParameters(id)
@@ -45,9 +48,10 @@ export default async function ValidatePage({
     }
   }
 
-  // Load invoice — contract-specific first (C002-INV-001), then flat (INV-001)
-  const invData = await getDemoInvoice(invoice, id)
-  if (!contract || !invData) return notFound()
+  // Load invoice if provided
+  const invData = invoice ? await getDemoInvoice(invoice, id) : null
+  
+  if (!contract) return notFound()
 
   const genMonthly = await getDemoGenerationData(id)
   let generation: GenerationData | undefined
