@@ -253,9 +253,17 @@ export async function POST(
 
     // STAGE 7: Report Generation
     await updateProgress('Stage 7/7: Generating audit report...', 7, '~2s')
+    
+    // Check if we found ANY critical commercial data
+    const criticalFields = ['base_annual_fee', 'base_monthly_fee', 'availability_guarantee_pct']
+    const hasCriticalData = criticalFields.some(f => sanitized[f]?.value !== null)
+    
+    const finalStatus = mode === 'full' && hasCriticalData ? 'completed' : 'partial'
+    const qualityIssue = !hasCriticalData ? 'sparse_data_detected' : null
+
     await updateDB({
-      parameters: { ...validated.data, _extraction_meta: { mode, confidence, truncated, page_count: pageCount } },
-      extraction_status: mode === 'full' ? 'completed' : 'partial',
+      parameters: { ...validated.data, _extraction_meta: { mode, confidence, truncated, page_count: pageCount, quality_issue: qualityIssue } },
+      extraction_status: finalStatus,
       raw_text: text.substring(0, 50000),
       page_count: pageCount,
       confidence_score: confidence.score,
