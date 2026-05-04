@@ -46,7 +46,12 @@ export async function POST(request: Request) {
 
     const validated = InvoiceSchema.safeParse(parsed)
     if (!validated.success) {
-      return Response.json({ error: 'Schema mismatch', details: validated.error.message }, { status: 422 })
+      logger.warn('Invoice schema validation failed', { errors: validated.error.issues })
+      return Response.json({ 
+        error: 'Schema mapping required', 
+        partial_data: parsed,
+        validation_errors: validated.error.issues 
+      }, { status: 206 }) // Partial content
     }
 
     return Response.json(validated.data)

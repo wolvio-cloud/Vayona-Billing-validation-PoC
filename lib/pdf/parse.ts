@@ -92,19 +92,21 @@ export async function parsePDF(buffer: Buffer): Promise<ParsedPDF> {
   if (!pdfParse) {
     const { createRequire } = await import('module')
     const require = createRequire(import.meta.url)
-    pdfParse = require('pdf-parse')
+    const mod = require('pdf-parse')
+    pdfParse = mod.PDFParse
   }
 
   return logger.timed('parsePDF', async () => {
-    const result = await pdfParse(buffer)
+    const parser = new pdfParse({ data: buffer, verbosity: 0 })
+    const result = await parser.getText()
+    
     const rawText: string = result.text
-    const pageCount: number = result.numpages
+    const pageCount: number = result.total
 
-    // Split by form feed (pdf-parse page separator)
-    const pages = rawText
-      .split('\f')
-      .map((p: string) => p.replace(/\s+/g, ' ').trim())
-      .filter((p: string) => p.length > 0)
+    // Use structured pages from the new API
+    const pages = result.pages.map((p: any) => 
+      p.text.replace(/\s+/g, ' ').trim()
+    ).filter((p: string) => p.length > 0)
 
     const text = pages.join(' ')
 

@@ -6,28 +6,18 @@
   "period_end": "2025-01-31",
   "line_items": [
     {
-      "item_id": "LI-001",
-      "description": "Monthly O&M Fee (Jan 2025 — CPI escalated)",
+      "item_id": "LI-1",
+      "description": "Monthly Fee (Correct CPI)",
       "category": "BaseFee",
       "quantity": 1,
       "unit": "Month",
-      "unit_rate": 3086902,
-      "amount": 3086902
-    },
-    {
-      "item_id": "LI-002",
-      "description": "Variable Component Jan 2025 (7200K kWh × ₹0.02)",
-      "category": "Variable",
-      "quantity": 7200000,
-      "unit": "kWh",
-      "unit_rate": 0.02,
-      "amount": 144000
+      "unit_rate": 3150000,
+      "amount": 3150000
     }
   ],
-  "subtotal": 3230902,
+  "subtotal": 3150000,
   "gst_rate": 18,
-  "gst_amount": 581562,
-  "total": 3812464,
-  "status": "Paid",
-  "note": "CLEAN — CPI escalation applied, variable correct"
+  "gst_amount": 567000,
+  "total": 3717000,
+  "status": "Paid"
 }

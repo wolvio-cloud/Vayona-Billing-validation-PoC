@@ -6,28 +6,18 @@
   "period_end": "2024-01-31",
   "line_items": [
     {
-      "item_id": "LI-001",
-      "description": "Base O&M Monthly Fee (Jan 2024)",
+      "item_id": "LI-1",
+      "description": "Base Fee",
       "category": "BaseFee",
       "quantity": 1,
       "unit": "Month",
       "unit_rate": 12000000,
       "amount": 12000000
-    },
-    {
-      "item_id": "LI-002",
-      "description": "WPI Escalation (not yet effective — April base)",
-      "category": "Escalation",
-      "quantity": 1,
-      "unit": "Month",
-      "unit_rate": 0,
-      "amount": 0
     }
   ],
   "subtotal": 12000000,
   "gst_rate": 18,
   "gst_amount": 2160000,
   "total": 14160000,
-  "status": "Paid",
-  "note": "CLEAN — pre-escalation period, base fee correct"
+  "status": "Paid"
 }

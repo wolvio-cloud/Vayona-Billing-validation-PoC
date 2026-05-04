@@ -37,6 +37,18 @@ function fail(msg) { console.log(`  ${RED}✗${RESET} ${msg}`); failed++ }
 function warn(msg) { console.log(`  ${AMBER}⚠${RESET} ${msg}`); warnings++ }
 function section(title) { console.log(`\n${BOLD}${BLUE}── ${title} ──────────────────────────${RESET}`) }
 
+// Load .env.local if it exists (for standalone script execution)
+const envLocalPath = path.join(ROOT, '.env.local')
+if (fs.existsSync(envLocalPath)) {
+  const envLocal = fs.readFileSync(envLocalPath, 'utf-8')
+  envLocal.split('\n').forEach(line => {
+    const [key, ...value] = line.split('=')
+    if (key && value.length) {
+      process.env[key.trim()] = value.join('=').trim()
+    }
+  })
+}
+
 async function run() {
   console.log(`\n${BOLD}╔══════════════════════════════════════════╗`)
   console.log(`║  Vayona Billing Validation — Preflight   ║`)

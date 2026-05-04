@@ -39,9 +39,8 @@ export function UploadFlow() {
       const extractRes = await fetch(`/api/contracts/${newContractId}/extract`, { method: 'POST' })
       if (!extractRes.ok) {
         const body = await extractRes.json().catch(() => ({}))
-        // Extraction errors are non-fatal for the animation — log and continue
-        console.error('[UploadFlow] Extraction error:', body)
-        // Still navigate — contract page shows the error state gracefully
+        const msg = body.error || body.detail || `Extraction failed (HTTP ${extractRes.status})`
+        throw new Error(msg)
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Upload failed. Please try again.'

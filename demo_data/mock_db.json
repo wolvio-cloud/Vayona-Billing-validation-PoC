@@ -257,5 +257,59 @@
       "stage_eta": "~10s"
     },
     "extraction_error": "PDF parse failed: pdfParse is not a function"
+  },
+  "C1777865786603": {
+    "contract_id": "C1777865786603",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777865786603.pdf",
+    "extraction_status": "failed",
+    "created_at": "2026-05-04T03:36:26.614Z",
+    "parameters": {
+      "current_step": "Stage 2/7: Extracting text from PDF...",
+      "stage_index": 2,
+      "stage_eta": "~10s"
+    },
+    "extraction_error": "PDF parse failed: pdfParse is not a function"
+  },
+  "C1777866168355": {
+    "contract_id": "C1777866168355",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777866168355.pdf",
+    "extraction_status": "failed",
+    "created_at": "2026-05-04T03:42:48.370Z",
+    "parameters": {
+      "current_step": "Stage 4/7: Extracting commercial parameters (AI)...",
+      "stage_index": 4,
+      "stage_eta": "~60s"
+    },
+    "extraction_error": "404 {\"type\":\"error\",\"error\":{\"type\":\"not_found_error\",\"message\":\"model: claude-3-5-sonnet-20241022\"},\"request_id\":\"req_011CagqYgzgVVYv3oHfMg8Ew\"}"
+  },
+  "C1777867303746": {
+    "contract_id": "C1777867303746",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777867303746.pdf",
+    "extraction_status": "failed",
+    "created_at": "2026-05-04T04:01:43.761Z",
+    "parameters": {
+      "current_step": "Stage 4/7: Extracting commercial parameters (AI)...",
+      "stage_index": 4,
+      "stage_eta": "~30s"
+    },
+    "extraction_error": "404 {\"type\":\"error\",\"error\":{\"type\":\"not_found_error\",\"message\":\"model: claude-3-5-sonnet-20241022\"},\"request_id\":\"req_011CagrzSDXEsSEYGvbPdUph\"}"
+  },
+  "C1777868204944": {
+    "contract_id": "C1777868204944",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777868204944.pdf",
+    "extraction_status": "partial",
+    "created_at": "2026-05-04T04:16:44.953Z",
+    "parameters": {
+      "contract_id": "C1777868204944",
+      "_error": "404 {\"type\":\"error\",\"error\":{\"type\":\"not_found_error\",\"message\":\"model: claude-3-5-sonnet-20241022\"},\"request_id\":\"req_011Cagt8tEXwV7auLLhmYPR5\"}",
+      "confidence": "low"
+    },
+    "extraction_error": "[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"LTSA\",\n      \"TSA\",\n      \"Service\",\n      \"Supply\",\n      \"Hybrid\",\n      \"Fixed-Fee\"\n    ],\n    \"path\": [\n      \"contract_type\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"LTSA\\\"|\\\"TSA\\\"|\\\"Service\\\"|\\\"Supply\\\"|\\\"Hybrid\\\"|\\\"Fixed-Fee\\\"\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_annual_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"base_monthly_fee\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"escalation\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"variable_component\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"availability_guarantee_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"ld_cap_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_threshold_pct\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"bonus_rate_per_pp\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"payment_terms_days\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"late_payment_interest\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  },\n  {\n    \"expected\": \"object\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"renewal_notice_months\"\n    ],\n    \"message\": \"Invalid input: expected object, received undefined\"\n  }\n]",
+    "page_count": 87,
+    "confidence_score": 0
   }
 }

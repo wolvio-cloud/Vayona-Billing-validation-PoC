@@ -8,8 +8,10 @@ import { Invoice } from '@/lib/schemas/invoice'
 import { runValidation, GenerationData } from '@/lib/validation/engine'
 import { ValidationResultSchema, ValidationResult } from '@/lib/schemas/validation'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ArrowRight, Loader2 } from 'lucide-react'
+import { ChevronLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { InvoiceMappingModal } from './InvoiceMappingModal'
+import { useDemoMode } from '@/components/DemoModeBadge'
 
 interface ValidationViewProps {
   contract: ContractParameters
@@ -25,6 +27,8 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
   const [result, setResult] = useState<ValidationResult | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
   const [isComputing, setIsComputing] = useState(true)
+  const [mappingData, setMappingData] = useState<any | null>(null)
+  const { mode } = useDemoMode()
 
   // Re-run validation whenever invoice changes
   useEffect(() => {
@@ -59,14 +63,21 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
     }).finally(() => setIsComputing(false))
   }, [contract, currentInvoice, initialGeneration, contractId])
 
-  const handleUpload = async (file: File) => {
+  const handleFetchInvoice = async (file: File) => {
     setIsProcessing(true)
     try {
       const formData = new FormData()
       formData.append('file', file)
       const res = await fetch('/api/invoices/extract', { method: 'POST', body: formData })
-      if (!res.ok) throw new Error('Extraction failed')
+      
       const data = await res.json()
+      if (res.status === 206) {
+        // Mapping required
+        setMappingData(data.partial_data)
+        return
+      }
+      
+      if (!res.ok) throw new Error('Extraction failed')
       setCurrentInvoice(data)
       setShowUpload(false)
     } catch (err) {
@@ -95,7 +106,7 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
 
       {showUpload && (
         <div className="animate-in fade-in slide-in-from-top-6 duration-700">
-          <InvoiceUpload onUpload={handleUpload} isProcessing={isProcessing} />
+          <InvoiceUpload onUpload={handleFetchInvoice} isProcessing={isProcessing} />
         </div>
       )}
 
@@ -157,6 +168,17 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
           <ValidationReport result={result} />
         </div>
       )}
+
+      <InvoiceMappingModal 
+        isOpen={!!mappingData}
+        onClose={() => setMappingData(null)}
+        rawInvoice={mappingData}
+        onMappingComplete={(mapped) => {
+          setCurrentInvoice(mapped)
+          setShowUpload(false)
+          setMappingData(null)
+        }}
+      />
     </div>
   )
 }

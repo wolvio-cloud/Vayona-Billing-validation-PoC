@@ -120,9 +120,21 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
                 </p>
 
                 <div className="bg-white/5 rounded-2xl p-6">
-                  <p className="text-base font-semibold text-white/90 leading-relaxed">
-                  {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
-                  </p>
+                  {showFormula && check.explanation?.includes('FORMULA:') ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Terminal size={14} className="text-blue-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Formula Proof (Traceable)</span>
+                      </div>
+                      <div className="font-mono text-xs text-white/80 bg-black/40 p-4 rounded-xl border border-white/5 whitespace-pre-wrap leading-relaxed">
+                        {check.explanation}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-base font-semibold text-white/90 leading-relaxed">
+                      {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
+                    </p>
+                  )}
                 </div>
 
                 {(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY') && (

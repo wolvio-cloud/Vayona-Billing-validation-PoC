@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createLogger } from '@/lib/logger'
 
 const logger = createLogger('claude-extraction')
-const MODEL = 'claude-3-5-sonnet-20241022'
+const MODEL = 'claude-3-5-sonnet-20240620'
 const MAX_TOKENS = 4000
 const COST_PER_INPUT_TOKEN = 0.000003
 const COST_PER_OUTPUT_TOKEN = 0.000015

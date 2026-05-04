@@ -12,14 +12,14 @@ const logger = createLogger('api/contracts/extract')
 
 export const dynamic = 'force-dynamic'
 
-// ── Timeout budgets (Live Intake Mode) ──────────────────────────
-const BUDGET_PARSE_MS   = 30_000
-const BUDGET_EXTRACT_MS = 90_000
-const BUDGET_TOTAL_MS   = 150_000
+// ── Timeout budgets (Enterprise Mode) ──────────────────────────
+const BUDGET_PARSE_MS   = 60_000
+const BUDGET_EXTRACT_MS = 180_000
+const BUDGET_TOTAL_MS   = 300_000
 
 // ── Quality thresholds ───────────────────────────────────────────
-const MIN_TEXT_LENGTH       = 800   // chars — below this = scanned/empty PDF
-const HIGH_CONFIDENCE_RATIO = 0.6   // 60%+ fields must be high-confidence for FULL report
+const MIN_TEXT_LENGTH       = 800   
+const HIGH_CONFIDENCE_RATIO = 0.6   
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
@@ -103,7 +103,7 @@ export async function POST(
     }
 
     // STAGE 2: Text Extraction
-    await updateProgress('Stage 2/7: Extracting text from PDF...', 2, '~10s')
+    await updateProgress('Stage 2/7: Extracting text from PDF...', 2, '~15s')
     let parsed: Awaited<ReturnType<typeof parsePDF>>
     try {
       parsed = await withTimeout(parsePDF(buffer), BUDGET_PARSE_MS, 'pdf-parse')
@@ -133,8 +133,8 @@ export async function POST(
     }
 
     // STAGE 3: Clause Detection (assemble payload)
-    await updateProgress('Stage 3/7: Detecting clause structure...', 3, '~15s')
-    const MAX_CHARS = 100_000
+    await updateProgress('Stage 3/7: Detecting clause structure...', 3, '~20s')
+    const MAX_CHARS = 400_000
     let safePayload = ''
     let truncated = false
     for (let i = 0; i < pages.length; i++) {
@@ -152,33 +152,69 @@ export async function POST(
     const remainingBudget = Math.max(10_000, BUDGET_TOTAL_MS - elapsed)
     const extractBudget = Math.min(BUDGET_EXTRACT_MS, remainingBudget - 5000)
 
-    // STAGE 4: Parameter Extraction
-    await updateProgress('Stage 4/7: Extracting commercial parameters (AI)...', 4, '~60s')
-    let rawResponse: string
+    // STAGE 4: Parameter Extraction (Parallel Optimized)
+    await updateProgress('Stage 4/7: Extracting commercial parameters (AI)...', 4, '~30s')
+    
+    // Group 1: Identity & Fees
+    const p1 = callClaude({ 
+      systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT + '\nFocus ONLY on identifying: contract_type, base_annual_fee, base_monthly_fee, and payment_terms.', 
+      userMessage: `Extract Identity & Fees from:\n\n${safePayload}` 
+    })
+
+    // Group 2: Escalation & Variable
+    const p2 = callClaude({ 
+      systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT + '\nFocus ONLY on identifying: escalation and variable_component details.', 
+      userMessage: `Extract Escalation & Variables from:\n\n${safePayload}` 
+    })
+
+    // Group 3: Performance & LDs
+    const p3 = callClaude({ 
+      systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT + '\nFocus ONLY on identifying: availability_guarantee, ld_rate_per_pp, ld_cap, bonus_threshold, and bonus_rate.', 
+      userMessage: `Extract Performance & LDs from:\n\n${safePayload}` 
+    })
+
+    // Helper to wrap parallel calls
+    const safeExtract = async (p: Promise<string>, label: string) => {
+      try { return await p }
+      catch (e: any) { 
+        logger.error(`${label} failed`, e)
+        return JSON.stringify({ _error: e.message, confidence: 'low' })
+      }
+    }
+
+    let results: any[]
     try {
-      rawResponse = await withTimeout(
-        callClaude({ systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT, userMessage: `Extract commercial parameters from this contract:\n\n${safePayload}` }),
+      results = await withTimeout(
+        Promise.all([
+          safeExtract(p1, 'Group 1'),
+          safeExtract(p2, 'Group 2'),
+          safeExtract(p3, 'Group 3')
+        ]),
         extractBudget,
-        'claude-extraction'
+        'parallel-extraction'
       )
     } catch (err: any) {
       const isTimeout = err.message?.startsWith('TIMEOUT')
-      await updateDB({
-        extraction_status: isTimeout ? 'partial' : 'failed',
-        extraction_error: err.message
-      })
-      return Response.json({
-        error: isTimeout ? 'Extraction timed out. Switching to Rapid Assessment mode.' : `LLM error: ${err.message}`,
-        mode: isTimeout ? 'rapid_assessment' : 'failed',
-        action: 'Use Manual Override to confirm 5–8 critical parameters and run partial validation.',
-        stage: 4
-      }, { status: isTimeout ? 206 : 500 })
+      await updateDB({ extraction_status: isTimeout ? 'partial' : 'failed', extraction_error: err.message })
+      return Response.json({ error: isTimeout ? 'Extraction timed out.' : `LLM error: ${err.message}`, stage: 4 }, { status: isTimeout ? 206 : 500 })
     }
 
-    // STAGE 5: Invoice Mapping / Schema Validation
+    // Merge results defensively
+    const mergedRaw = results.reduce((acc, res) => {
+      try {
+        const parsed = safeParseJSON<any>(res)
+        if (parsed && typeof parsed === 'object') {
+          return { ...acc, ...parsed }
+        }
+      } catch (e) {
+        logger.error('Failed to parse partial extraction result', e)
+      }
+      return acc
+    }, { contract_id: id })
+
+    // STAGE 5: Normalizing extracted schema
     await updateProgress('Stage 5/7: Normalizing extracted schema...', 5, '~5s')
-    const rawParsed = safeParseJSON<any>(rawResponse)
-    const sanitized = sanitizeExtractedData(rawParsed)
+    const sanitized = sanitizeExtractedData(mergedRaw)
     const validated = ContractParametersSchema.safeParse(sanitized)
 
     // STAGE 6: Confidence Assessment
