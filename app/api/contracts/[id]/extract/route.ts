@@ -120,21 +120,21 @@ export async function POST(
     }
     const { text, pageCount, pages } = parsed
 
-    // QUALITY GATE: Detect scanned/empty PDFs
-    if (text.length < MIN_TEXT_LENGTH) {
-      const qualityError = `Document text too short (${text.length} chars). Likely a scanned/image-based PDF. Please provide a digital PDF or use the Manual Override form.`
+    // QUALITY GATE: Relaxed for demo, but still warns for empty files
+    const totalChars = text.length
+    if (totalChars < 100) {
+      const qualityError = `Document appears to be empty or unreadable (found only ${totalChars} chars). If this is a scanned document, please use the Manual Override form.`
       await updateDB({
         extraction_status: 'failed',
         extraction_error: qualityError,
         page_count: pageCount,
-        quality_issue: 'scanned_or_empty'
+        quality_issue: 'unreadable_or_empty'
       })
       return Response.json({
         error: qualityError,
-        quality_issue: 'scanned_or_empty',
+        quality_issue: 'unreadable_or_empty',
         page_count: pageCount,
-        char_count: text.length,
-        action: 'Use Manual Override form to input key parameters directly.',
+        char_count: totalChars,
         stage: 2
       }, { status: 422 })
     }
