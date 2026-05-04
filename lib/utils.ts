@@ -37,3 +37,25 @@ export function formatDate(dateStr: string): string {
   }
 }
 
+/**
+ * Safely extract JSON from an LLM response.
+ * Strips markdown code fences (```json ... ```) before parsing.
+ * Returns null instead of throwing on parse failure.
+ */
+export function safeExtractJSON(raw: string): unknown | null {
+  try {
+    // Strip ```json ... ``` or ``` ... ``` wrappers
+    const stripped = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim()
+    return JSON.parse(stripped)
+  } catch {
+    try {
+      // Last resort: find first { or [ and last } or ]
+      const start = raw.search(/[{[]/)
+      const end = Math.max(raw.lastIndexOf('}'), raw.lastIndexOf(']'))
+      if (start !== -1 && end > start) {
+        return JSON.parse(raw.slice(start, end + 1))
+      }
+    } catch { /* no-op */ }
+    return null
+  }
+}

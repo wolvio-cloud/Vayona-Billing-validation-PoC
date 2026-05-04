@@ -1,35 +1,33 @@
 {
   "invoice_id": "INV-001",
   "contract_id": "C001",
-  "invoice_date": "2025-01-05",
-  "period_start": "2025-01-01",
-  "period_end": "2025-01-31",
+  "invoice_date": "2024-01-31",
+  "period_start": "2024-01-01",
+  "period_end": "2024-01-31",
   "line_items": [
     {
       "item_id": "LI-001",
-      "description": "Monthly O&M Service Fee — January 2025 (Clause 4.1)",
+      "description": "Base O&M Monthly Fee (Jan 2024)",
       "category": "BaseFee",
       "quantity": 1,
-      "unit": "month",
+      "unit": "Month",
       "unit_rate": 12000000,
       "amount": 12000000
     },
     {
       "item_id": "LI-002",
-      "description": "Variable O&M Component — Q3 FY2024-25 (Oct–Dec 2024) @ ₹0.04/kWh × 2,61,00,000 kWh (Clause 6.3)",
-      "category": "Variable",
-      "quantity": 26100000,
-      "unit": "kWh",
-      "unit_rate": 0.04,
-      "amount": 1044000
+      "description": "WPI Escalation (not yet effective — April base)",
+      "category": "Escalation",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 0,
+      "amount": 0
     }
   ],
-  "subtotal": 13044000,
+  "subtotal": 12000000,
   "gst_rate": 18,
-  "gst_amount": 2347920,
-  "total": 15391920,
+  "gst_amount": 2160000,
+  "total": 14160000,
   "status": "Paid",
-  "engineered_gap": "none",
-  "expected_gap": 0,
-  "note": "CLEAN invoice. Base fee correct. Variable component correctly billed for Q3 FY2024-25. No escalation applicable — effective date is April 1."
+  "note": "CLEAN — pre-escalation period, base fee correct"
 }

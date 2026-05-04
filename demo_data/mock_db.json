@@ -231,5 +231,31 @@
       "stage_eta": "~10s"
     },
     "extraction_error": "PDF parse failed: DOMMatrix is not defined"
+  },
+  "C1777861936984": {
+    "contract_id": "C1777861936984",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777861936984.pdf",
+    "extraction_status": "failed",
+    "created_at": "2026-05-04T02:32:17.004Z",
+    "parameters": {
+      "current_step": "Stage 2/7: Extracting text from PDF...",
+      "stage_index": 2,
+      "stage_eta": "~10s"
+    },
+    "extraction_error": "PDF parse failed: pdfParse is not a function"
+  },
+  "C1777861966214": {
+    "contract_id": "C1777861966214",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777861966214.pdf",
+    "extraction_status": "failed",
+    "created_at": "2026-05-04T02:32:46.220Z",
+    "parameters": {
+      "current_step": "Stage 2/7: Extracting text from PDF...",
+      "stage_index": 2,
+      "stage_eta": "~10s"
+    },
+    "extraction_error": "PDF parse failed: pdfParse is not a function"
   }
 }

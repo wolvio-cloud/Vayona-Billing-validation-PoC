@@ -1,0 +1,33 @@
+{
+  "invoice_id": "C002-INV-003",
+  "contract_id": "C002",
+  "invoice_date": "2025-05-31",
+  "period_start": "2025-05-01",
+  "period_end": "2025-05-31",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Base O&M Monthly Fee (May 2025 — escalated)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 41158690,
+      "amount": 41158690
+    },
+    {
+      "item_id": "LI-002",
+      "description": "Variable Component May 2025 (120M kWh × ₹0.035)",
+      "category": "Variable",
+      "quantity": 120000000,
+      "unit": "kWh",
+      "unit_rate": 0.035,
+      "amount": 4200000
+    }
+  ],
+  "subtotal": 45358690,
+  "gst_rate": 18,
+  "gst_amount": 8164564,
+  "total": 53523254,
+  "status": "Paid",
+  "note": "CLEAN — escalation applied, variable correct"
+}

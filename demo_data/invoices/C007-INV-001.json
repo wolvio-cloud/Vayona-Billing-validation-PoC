@@ -1,0 +1,24 @@
+{
+  "invoice_id": "C007-INV-001",
+  "contract_id": "C007",
+  "invoice_date": "2025-03-31",
+  "period_start": "2025-03-01",
+  "period_end": "2025-03-31",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Fixed-Fee Monthly Maintenance (Mar 2025)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 5666667,
+      "amount": 5666667
+    }
+  ],
+  "subtotal": 5666667,
+  "gst_rate": 18,
+  "gst_amount": 1020000,
+  "total": 6686667,
+  "status": "Paid",
+  "note": "CLEAN — fixed fee, no escalation, no variable component"
+}

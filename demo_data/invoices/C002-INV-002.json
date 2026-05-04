@@ -1,0 +1,44 @@
+{
+  "invoice_id": "C002-INV-002",
+  "contract_id": "C002",
+  "invoice_date": "2025-04-30",
+  "period_start": "2025-04-01",
+  "period_end": "2025-04-30",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Base O&M Monthly Fee (Apr 2025 — escalation missing)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 40000000,
+      "amount": 40000000
+    },
+    {
+      "item_id": "LI-002",
+      "description": "Variable Component Apr 2025 (120M kWh × ₹0.035)",
+      "category": "Variable",
+      "quantity": 120000000,
+      "unit": "kWh",
+      "unit_rate": 0.035,
+      "amount": 4200000
+    },
+    {
+      "item_id": "LI-003",
+      "description": "LD Deduction for availability shortfall (not applied)",
+      "category": "LD",
+      "quantity": 0,
+      "unit": "PP",
+      "unit_rate": 0,
+      "amount": 0
+    }
+  ],
+  "subtotal": 44200000,
+  "gst_rate": 18,
+  "gst_amount": 7956000,
+  "total": 52156000,
+  "status": "Pending",
+  "engineered_gap": "WPI_MISSING_AND_LD_NOT_NETTED",
+  "expected_gap": 9558690,
+  "note": "GAP1: WPI escalation missing (gap ₹11,58,690). GAP2: Availability 96.8% vs 97.5%, LD 0.7PP × 2.5% × ₹48Cr = ₹84,00,000"
+}

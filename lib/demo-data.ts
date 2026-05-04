@@ -46,14 +46,36 @@ export async function getDemoContractParameters(contractId: string): Promise<Con
 }
 
 
-export async function getDemoInvoice(invoiceId: string): Promise<Invoice | null> {
+export async function getDemoInvoice(invoiceId: string, contractId?: string): Promise<Invoice | null> {
   try {
+    // Try contract-specific invoice first: e.g. C002-INV-001
+    if (contractId && contractId !== 'C001') {
+      const prefixed = path.join(process.cwd(), 'demo_data', 'invoices', `${contractId}-${invoiceId}.json`)
+      try {
+        const content = await fs.readFile(prefixed, 'utf-8')
+        return JSON.parse(content)
+      } catch {
+        // fall through to flat lookup
+      }
+    }
+    // Flat lookup (C001 invoices, or any explicitly named file)
     const p = path.join(process.cwd(), 'demo_data', 'invoices', `${invoiceId}.json`)
     const content = await fs.readFile(p, 'utf-8')
     return JSON.parse(content)
   } catch {
     return null
   }
+}
+
+/** Returns the list of invoice IDs available for a given contract */
+export async function getDemoInvoiceList(contractId: string): Promise<string[]> {
+  const perContract: Record<string, string[]> = {
+    'C001': ['INV-001', 'INV-002', 'INV-003', 'INV-004', 'INV-005', 'INV-006'],
+    'C002': ['INV-001', 'INV-002', 'INV-003'],
+    'C004': ['INV-001', 'INV-002'],
+    'C007': ['INV-001', 'INV-002'],
+  }
+  return perContract[contractId] ?? ['INV-001', 'INV-002']
 }
 
 export async function getDemoGenerationData(contractId: string) {

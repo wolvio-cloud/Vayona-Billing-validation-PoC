@@ -1,18 +1,36 @@
 {
   "invoice_id": "INV-002",
   "contract_id": "C001",
-  "invoice_date": "2025-04-05",
+  "invoice_date": "2025-04-30",
   "period_start": "2025-04-01",
   "period_end": "2025-04-30",
   "line_items": [
     {
       "item_id": "LI-001",
-      "description": "Monthly O&M Service Fee — April 2025 (Clause 4.1)",
+      "description": "Base O&M Monthly Fee (Apr 2025)",
       "category": "BaseFee",
       "quantity": 1,
-      "unit": "month",
+      "unit": "Month",
       "unit_rate": 12000000,
       "amount": 12000000
+    },
+    {
+      "item_id": "LI-002",
+      "description": "WPI Escalation (omitted by counterparty)",
+      "category": "Escalation",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 0,
+      "amount": 0
+    },
+    {
+      "item_id": "LI-003",
+      "description": "Variable Component (not billed — quarterly)",
+      "category": "Variable",
+      "quantity": 0,
+      "unit": "kWh",
+      "unit_rate": 0.04,
+      "amount": 0
     }
   ],
   "subtotal": 12000000,
@@ -20,7 +38,7 @@
   "gst_amount": 2160000,
   "total": 14160000,
   "status": "Paid",
-  "engineered_gap": "wpi_escalation_not_applied",
-  "expected_gap": 684000,
-  "note": "CRITICAL GAP: Invoice raised on April 2025 (escalation effective April 1). WPI Jan-2025 = 155.0, WPI Jan-2024 = 148.3. Escalation rate = 4.52%, capped at 8%. Escalated fee = ₹1,25,42,400/month. Vendor billed pre-escalation rate of ₹1,20,00,000. Gap = ₹5,42,400 for April."
+  "engineered_gap": "WPI_ESCALATION_MISSING",
+  "expected_gap": 347607,
+  "note": "GAP: WPI escalation for Apr 2025 not applied. Correct monthly fee = ₹1,23,47,607. Billed = ₹1,20,00,000. Gap = ₹3,47,607"
 }
