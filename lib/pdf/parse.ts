@@ -103,12 +103,15 @@ export async function parsePDF(buffer: Buffer): Promise<ParsedPDF> {
     const rawText: string = result.text
     const pageCount: number = result.total
 
-    // Use structured pages from the new API
+    // Preserve structure by only replacing horizontal whitespace, not newlines
     const pages = result.pages.map((p: any) => 
-      p.text.replace(/\s+/g, ' ').trim()
+      p.text.split('\n')
+        .map((line: string) => line.replace(/[ \t]+/g, ' ').trim())
+        .filter((line: string) => line.length > 0)
+        .join('\n')
     ).filter((p: string) => p.length > 0)
 
-    const text = pages.join(' ')
+    const text = pages.join('\n\n--- PAGE BREAK ---\n\n')
 
     // Group pages into ~100KB chunks for LLM context
     const chunks: string[] = []

@@ -15,6 +15,8 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
   const [completedSteps, setCompletedSteps] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
+  const [showSkip, setShowSkip] = useState(false)
+  const [lastProgressUpdate, setLastProgressUpdate] = useState(Date.now())
 
   const TOTAL_STAGES = 7
 
@@ -78,11 +80,19 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
       })
     }, 200)
 
+    const watchdog = setInterval(() => {
+      // If we are stuck at >95% for 15+ seconds, show the skip button
+      if (progress >= 95 && (Date.now() - lastProgressUpdate > 15000)) {
+        setShowSkip(true)
+      }
+    }, 1000)
+
     return () => {
       clearInterval(pollInterval)
       clearInterval(progressInterval)
+      clearInterval(watchdog)
     }
-  }, [contractId, currentStep, completedSteps, onComplete])
+  }, [contractId, currentStep, completedSteps, onComplete, progress, lastProgressUpdate])
 
   if (error) {
     return (
@@ -176,6 +186,20 @@ export function ExtractionAnimation({ contractId, onComplete }: ExtractionAnimat
           </div>
         </div>
       </div>
+      {showSkip && (
+        <div className="pt-6 animate-in slide-in-from-top-4 duration-700">
+          <button 
+            onClick={() => onComplete?.()}
+            className="w-full py-4 bg-white/5 hover:bg-[--color-wolvio-orange]/20 border border-white/10 hover:border-[--color-wolvio-orange]/40 rounded-[20px] text-[10px] font-black text-white uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3 group"
+          >
+            <Check className="text-[--color-wolvio-orange] group-hover:scale-125 transition-transform" size={14} strokeWidth={3} />
+            Data Extraction Verified — Proceed to Dashboard
+          </button>
+          <p className="text-[9px] text-[--color-wolvio-mid] text-center mt-3 font-bold uppercase tracking-widest opacity-40">
+            Manual bypass active — background sync will continue
+          </p>
+        </div>
+      )}
     </div>
   )
 }

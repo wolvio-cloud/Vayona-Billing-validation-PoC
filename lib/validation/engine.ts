@@ -96,7 +96,8 @@ export async function runValidation(
         const expectedEscalation = escalatedFee - params.base_monthly_fee.value
         const actualEscalation = sumByCategory(invoice, 'Escalation')
         const diff = Math.abs(actualEscalation - expectedEscalation)
-        const verdict = actualEscalation === 0 && expectedEscalation > 1000 ? 'GAP' : diff > 1000 ? 'GAP' : 'MATCH'
+        // Tolerance set to ₹500 to handle different indexation rounding methods in the field
+        const verdict = actualEscalation === 0 && expectedEscalation > 500 ? 'GAP' : diff > 500 ? 'GAP' : 'MATCH'
 
         checks.push({
           check_id: 'CHECK_2_ESCALATION',

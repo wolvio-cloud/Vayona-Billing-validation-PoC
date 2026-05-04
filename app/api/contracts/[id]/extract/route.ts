@@ -60,11 +60,18 @@ export async function POST(
     const payload: any = { current_step: step }
     if (stageIndex !== undefined) payload.stage_index = stageIndex
     if (eta) payload.stage_eta = eta
+    
+    const dbUpdate = sql`UPDATE contracts SET parameters = jsonb_set(COALESCE(parameters, '{}'::jsonb), '{current_step}', ${JSON.stringify(step)}) WHERE contract_id = ${id}`
+    
     try {
-      await sql`UPDATE contracts SET parameters = jsonb_set(COALESCE(parameters, '{}'::jsonb), '{current_step}', ${JSON.stringify(step)}) WHERE contract_id = ${id}`
+      // 2s limit for status updates — if DB is slow, we skip and use mock
+      await Promise.race([
+        dbUpdate,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('DB Slow')), 2000))
+      ])
     } catch {
       const existing = mockStore.get(id)?.parameters || {}
-      mockStore.set(id, { parameters: { ...existing, ...payload } })
+      mockStore.set(id, { ...mockStore.get(id), parameters: { ...existing, ...payload } })
     }
   }
 
@@ -246,9 +253,17 @@ export async function POST(
 
     // STAGE 7: Report Generation
     await updateProgress('Stage 7/7: Generating audit report...', 7, '~2s')
+    
+    // Check if we found ANY critical commercial data
+    const criticalFields = ['base_annual_fee', 'base_monthly_fee', 'availability_guarantee_pct']
+    const hasCriticalData = criticalFields.some(f => sanitized[f]?.value !== null)
+    
+    const finalStatus = mode === 'full' && hasCriticalData ? 'completed' : 'partial'
+    const qualityIssue = !hasCriticalData ? 'sparse_data_detected' : null
+
     await updateDB({
-      parameters: { ...validated.data, _extraction_meta: { mode, confidence, truncated, page_count: pageCount } },
-      extraction_status: mode === 'full' ? 'completed' : 'partial',
+      parameters: { ...validated.data, _extraction_meta: { mode, confidence, truncated, page_count: pageCount, quality_issue: qualityIssue } },
+      extraction_status: finalStatus,
       raw_text: text.substring(0, 50000),
       page_count: pageCount,
       confidence_score: confidence.score,

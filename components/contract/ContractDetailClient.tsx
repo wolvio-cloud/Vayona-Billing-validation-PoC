@@ -63,7 +63,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               </div>
             </div>
 
-            <h1 className="text-6xl md:text-8xl font-heading font-black text-white tracking-tighter leading-none">
+            <h1 className="text-6xl md:text-7xl font-heading font-black text-white tracking-tighter leading-tight max-w-3xl break-words">
               {displayName}
             </h1>
 
@@ -78,7 +78,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               <div className="space-y-1">
                 <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Data Fidelity</div>
                 <div className="text-2xl font-mono font-black text-[--color-wolvio-green] tracking-tighter">
-                  {Math.round((foundCount / totalCount) * 100)}%
+                  {totalCount > 0 ? Math.round((foundCount / totalCount) * 100) : 0}%
                 </div>
               </div>
               <div className="w-[1px] h-10 bg-white/10 hidden md:block" />
@@ -92,7 +92,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
             </div>
           </div>
           
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 shrink-0 lg:w-72">
             <Button 
               onClick={() => {
                 window.scrollTo(0, 0)
