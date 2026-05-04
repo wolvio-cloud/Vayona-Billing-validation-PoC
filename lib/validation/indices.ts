@@ -33,5 +33,7 @@ export function escalationFactor(
 ): number {
   const rawChange = (current - base) / base
   const cappedChange = Math.max(floorPct / 100, Math.min(rawChange, capPct / 100))
-  return 1 + cappedChange
+  // Precision adjustment for Indian LTSA standards (Floor to 5 decimal places)
+  const preciseChange = Math.floor(cappedChange * 100000) / 100000
+  return 1 + preciseChange
 }

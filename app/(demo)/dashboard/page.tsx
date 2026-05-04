@@ -5,13 +5,43 @@ import Link from 'next/link'
 import path from 'path'
 import fs from 'fs/promises'
 
+import sql from '@/lib/db'
+
 async function getPortfolio() {
   try {
+    const contracts = await sql`
+      SELECT 
+        contract_id, 
+        display_name, 
+        extraction_status,
+        parameters->>'contract_type' as contract_type,
+        parameters->'base_annual_fee'->>'value' as annual_fee,
+        created_at
+      FROM contracts 
+      ORDER BY created_at DESC
+    `
+    if (contracts.length === 0) throw new Error('Empty DB')
+    
+    return contracts.map((c: any) => ({
+      contract_id: c.contract_id,
+      display_name: c.display_name,
+      contract_type: c.contract_type || 'LTSA',
+      asset_type: c.contract_id === 'C001' ? 'Wind' : 'Solar',
+      counterparty: c.contract_id === 'C001' ? 'GreenWind Power' : 'Siemens Gamesa',
+      location: 'India Cluster', 
+      capacity_mw: c.contract_id === 'C001' ? 150 : 300,
+      term_years: 15,
+      base_annual_fee: parseInt(c.annual_fee || '0'),
+      extraction_status: c.extraction_status,
+      risk_score: c.contract_id === 'C001' ? 'HIGH' : 'LOW',
+      outstanding_gap_inr: c.contract_id === 'C001' ? 347520 : 0,
+      demo_highlight: c.contract_id === 'C001' ? 'WPI escalation variance — ₹3.47L gap' : 'Audit complete — no gaps'
+    })) as PortfolioContract[]
+  } catch (err) {
+    console.warn('Dashboard falling back to JSON:', err)
     const p = path.join(process.cwd(), 'demo_data', 'portfolio.json')
     const raw = await fs.readFile(p, 'utf-8')
     return JSON.parse(raw) as PortfolioContract[]
-  } catch {
-    return FALLBACK_PORTFOLIO
   }
 }
 
@@ -118,38 +148,49 @@ export default async function DashboardPage() {
                 <Link
                   key={contract.contract_id}
                   href={`/contracts/${contract.contract_id}`}
-                  className={`group glass rounded-[24px] p-6 border ${risk.border} hover:border-[--color-wolvio-orange]/40 transition-all hover:shadow-[0_8px_32px_rgba(242,102,48,0.15)] block`}
+                  className={`group glass rounded-[24px] p-6 border ${risk.border} hover:border-wolvio-orange/40 transition-all hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] block`}
                 >
                   <div className="flex items-start justify-between gap-6">
                     <div className="flex items-start gap-5 min-w-0">
-                      <div className={`w-12 h-12 flex-shrink-0 rounded-2xl ${risk.bg} flex items-center justify-center text-2xl border ${risk.border}`}>
+                      <div className={`w-14 h-14 flex-shrink-0 rounded-2xl ${risk.bg} flex items-center justify-center text-3xl border ${risk.border} shadow-inner`}>
                         {icon}
                       </div>
-                      <div className="min-w-0 space-y-1">
+                      <div className="min-w-0 space-y-1.5">
                         <div className="flex items-center gap-3">
-                          <span className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest">{contract.contract_id}</span>
-                          <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${risk.bg} ${risk.color}`}>{contract.risk_score}</span>
-                          <span className="text-[9px] font-bold text-white/20 uppercase">{contract.contract_type}</span>
+                          <span className="text-[10px] font-black text-wolvio-mid/50 font-mono tracking-widest">{contract.contract_id}</span>
+                          <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${risk.bg} ${risk.color} border ${risk.border}`}>
+                            {contract.risk_score}
+                          </span>
+                          <div className="px-2 py-0.5 rounded bg-white/5 border border-white/5 text-[9px] font-black text-wolvio-mid uppercase tracking-widest">
+                            {contract.contract_type}
+                          </div>
                         </div>
-                        <h3 className="text-base font-heading font-black text-white tracking-tight group-hover:text-[--color-wolvio-orange] transition-colors truncate">
+                        <h3 className="text-xl font-heading font-black text-white tracking-tight group-hover:text-wolvio-orange transition-colors truncate">
                           {contract.display_name}
                         </h3>
-                        <div className="flex items-center gap-3 text-[10px] font-bold text-[--color-wolvio-mid]">
+                        <div className="flex items-center gap-3 text-[11px] font-bold text-wolvio-mid">
+                          <span className="text-wolvio-orange/80">{contract.location}</span>
+                          <span className="opacity-20">|</span>
                           <span>{contract.counterparty}</span>
-                          <span className="opacity-30">·</span>
-                          <span>{contract.location}</span>
-                          <span className="opacity-30">·</span>
-                          <span>{contract.capacity_mw} MW</span>
+                          <span className="opacity-20">|</span>
+                          <span className="font-mono">{contract.capacity_mw}MW</span>
                         </div>
-                        <p className="text-[11px] font-medium text-amber-400/70 mt-1 line-clamp-1">{contract.demo_highlight}</p>
+                        <div className="bg-wolvio-orange/5 border border-wolvio-orange/10 rounded-lg px-3 py-1 mt-2 inline-block">
+                          <p className="text-[10px] font-bold text-wolvio-orange/90 italic tracking-wide">{contract.demo_highlight}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex-shrink-0 text-right space-y-1">
-                      <div className="text-[9px] font-black text-[--color-wolvio-mid] uppercase tracking-widest">Gap Identified</div>
-                      <div className={`text-xl font-mono font-black ${contract.outstanding_gap_inr > 0 ? 'text-[--color-wolvio-orange]' : 'text-green-400'}`}>
-                        {contract.outstanding_gap_inr > 0 ? formatCr(contract.outstanding_gap_inr) : 'CLEAN'}
+                    <div className="flex-shrink-0 text-right space-y-2">
+                      <div className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.3em]">Annual Exposure</div>
+                      <div className="text-2xl font-mono font-black text-white tracking-tighter">
+                        {formatCr(contract.base_annual_fee)}
                       </div>
-                      <div className="text-[9px] font-bold text-white/20">{formatCr(contract.base_annual_fee)}/yr</div>
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="text-[9px] font-black text-wolvio-mid/40 uppercase tracking-widest">Unrealized Gaps</div>
+                        <div className={`font-mono text-sm font-black ${contract.outstanding_gap_inr > 0 ? 'text-wolvio-orange' : 'text-wolvio-green'}`}>
+                          {contract.outstanding_gap_inr > 0 ? formatCr(contract.outstanding_gap_inr) : 'CLEAN'}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </Link>

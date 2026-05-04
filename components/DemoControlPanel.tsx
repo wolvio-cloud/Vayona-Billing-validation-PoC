@@ -11,7 +11,14 @@ export function DemoControlPanel() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'd') {
+      // Trigger on Win+Shift+D (Meta key)
+      if (e.metaKey && e.shiftKey && e.key.toUpperCase() === 'D') {
+        e.preventDefault()
+        setIsConfidential((prev) => !prev)
+      }
+      
+      // Ctrl+Shift+D opens the settings panel for the operator
+      if (e.ctrlKey && e.shiftKey && e.key.toUpperCase() === 'D') {
         e.preventDefault()
         setIsOpen((prev) => !prev)
       }
@@ -34,7 +41,7 @@ export function DemoControlPanel() {
     <div className="fixed bottom-6 right-6 z-[100] w-80 glass rounded-[32px] p-6 shadow-[0_32px_64px_-20px_rgba(0,0,0,0.8)] border border-white/10 animate-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
-          <Settings size={16} className="text-[--color-wolvio-orange]" />
+          <Settings size={16} className="text-wolvio-orange" />
           <h3 className="font-heading font-black text-xs uppercase tracking-[0.2em] text-white">Demo Pilot</h3>
         </div>
         <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white transition-colors p-1">

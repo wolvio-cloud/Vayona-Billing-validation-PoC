@@ -16,17 +16,17 @@ export function ValidationWarnings({ warnings }: { warnings: string[] }) {
         className="w-full flex items-center justify-between p-6 text-left hover:bg-white/5 transition-colors group"
       >
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-[--color-wolvio-orange]/20 rounded-xl flex items-center justify-center border border-[--color-wolvio-orange]/30">
-            <AlertTriangle size={20} className="text-[--color-wolvio-orange] animate-pulse" />
+          <div className="w-10 h-10 bg-wolvio-orange/20 rounded-xl flex items-center justify-center border border-wolvio-orange/30">
+            <AlertTriangle size={20} className="text-wolvio-orange animate-pulse" />
           </div>
           <div className="space-y-0.5">
             <h4 className="text-sm font-black text-white uppercase tracking-tight">Data Quality Alert</h4>
-            <p className="text-[10px] font-bold text-[--color-wolvio-orange] uppercase tracking-widest">
+            <p className="text-[10px] font-bold text-wolvio-orange uppercase tracking-widest">
               {warnings.length} Extraction warning{warnings.length === 1 ? '' : 's'} requiring audit
             </p>
           </div>
         </div>
-        <div className="text-[--color-wolvio-orange]/50 group-hover:text-[--color-wolvio-orange] transition-colors">
+        <div className="text-wolvio-orange/50 group-hover:text-wolvio-orange transition-colors">
           {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </div>
       </button>
@@ -37,7 +37,7 @@ export function ValidationWarnings({ warnings }: { warnings: string[] }) {
             <ul className="space-y-3">
               {warnings.map((warning, i) => (
                 <li key={i} className="flex gap-4 text-sm text-white/70 leading-relaxed">
-                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[--color-wolvio-orange] shrink-0" />
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-wolvio-orange shrink-0" />
                   <span>{warning}</span>
                 </li>
               ))}

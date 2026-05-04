@@ -47,8 +47,8 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
     <div className="space-y-8 animate-in fade-in duration-500">
       
       {/* SCENARIO A */}
-      <div className="bg-[--color-wolvio-surface] rounded-[12px] border border-[--color-wolvio-slate] shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden">
-        <div className="px-6 py-4 bg-[--color-wolvio-navy] border-b border-[--color-wolvio-slate] flex items-center justify-between">
+      <div className="bg-[--color-wolvio-surface] rounded-[12px] border border-wolvio-slate shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden">
+        <div className="px-6 py-4 bg-wolvio-navy border-b border-wolvio-slate flex items-center justify-between">
           <h3 className="font-heading font-bold text-lg text-[--color-wolvio-light]">Scenario A — Availability Drop</h3>
           <span className="px-2.5 py-1 bg-red-500/20 text-[#EF4444] text-[10px] font-bold uppercase tracking-widest rounded-full border border-red-500/30">
             Risk Analysis
@@ -58,7 +58,7 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div>
-              <label className="text-sm font-semibold uppercase tracking-wider text-[--color-wolvio-mid] mb-4 block">
+              <label className="text-sm font-semibold uppercase tracking-wider text-wolvio-mid mb-4 block">
                 If availability drops to {availability}%
               </label>
               <input 
@@ -68,20 +68,20 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
                 step="0.5" 
                 value={availability}
                 onChange={(e) => setAvailability(parseFloat(e.target.value))}
-                className="w-full accent-[--color-wolvio-orange]"
+                className="w-full accent-wolvio-orange"
               />
-              <div className="flex justify-between text-xs text-[--color-wolvio-slate] mt-2 font-mono">
+              <div className="flex justify-between text-xs text-wolvio-slate mt-2 font-mono">
                 <span>90%</span>
                 <span>96% (Guarantee: {guarantee}%)</span>
               </div>
             </div>
 
-            <div className="bg-[--color-wolvio-dark] p-4 rounded-lg border border-[--color-wolvio-slate]">
-              <div className="text-sm text-[--color-wolvio-mid] mb-2 font-mono">Contract Parameters</div>
+            <div className="bg-wolvio-dark p-4 rounded-lg border border-wolvio-slate">
+              <div className="text-sm text-wolvio-mid mb-2 font-mono">Contract Parameters</div>
               <div className="text-sm text-[--color-wolvio-light] leading-relaxed">
-                <span className="text-[--color-wolvio-orange] font-semibold">{contract.ld_rate_per_pp?.clause_reference || 'Clause'}</span> · {ldRate}% per pp shortfall
+                <span className="text-wolvio-orange font-semibold">{contract.ld_rate_per_pp?.clause_reference || 'Clause'}</span> · {ldRate}% per pp shortfall
                 <br/>
-                <span className="text-[--color-wolvio-orange] font-semibold">{contract.ld_cap_pct?.clause_reference || 'Clause'}</span> · Cap: {ldCapPct}% of annual fee ({formatINRShort(ldCapValue)})
+                <span className="text-wolvio-orange font-semibold">{contract.ld_cap_pct?.clause_reference || 'Clause'}</span> · Cap: {ldCapPct}% of annual fee ({formatINRShort(ldCapValue)})
               </div>
             </div>
           </div>
@@ -105,8 +105,8 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
       </div>
 
       {/* SCENARIO B */}
-      <div className="bg-[--color-wolvio-surface] rounded-[12px] border border-[--color-wolvio-slate] shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden">
-        <div className="px-6 py-4 bg-[--color-wolvio-navy] border-b border-[--color-wolvio-slate] flex items-center justify-between">
+      <div className="bg-[--color-wolvio-surface] rounded-[12px] border border-wolvio-slate shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden">
+        <div className="px-6 py-4 bg-wolvio-navy border-b border-wolvio-slate flex items-center justify-between">
           <h3 className="font-heading font-bold text-lg text-[--color-wolvio-light]">Scenario B — Escalation Impact</h3>
           <span className="px-2.5 py-1 bg-amber-500/20 text-[#F59E0B] text-[10px] font-bold uppercase tracking-widest rounded-full border border-amber-500/30">
             Financial Forecast
@@ -116,7 +116,7 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div>
-              <label className="text-sm font-semibold uppercase tracking-wider text-[--color-wolvio-mid] mb-4 block">
+              <label className="text-sm font-semibold uppercase tracking-wider text-wolvio-mid mb-4 block">
                 If WPI increases by {wpiIncrease}% annually
               </label>
               <input 
@@ -126,16 +126,16 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
                 step="0.5" 
                 value={wpiIncrease}
                 onChange={(e) => setWpiIncrease(parseFloat(e.target.value))}
-                className="w-full accent-[--color-wolvio-orange]"
+                className="w-full accent-wolvio-orange"
               />
-              <div className="flex justify-between text-xs text-[--color-wolvio-slate] mt-2 font-mono">
+              <div className="flex justify-between text-xs text-wolvio-slate mt-2 font-mono">
                 <span>1%</span>
                 <span>8%</span>
               </div>
             </div>
 
-            <div className="bg-[--color-wolvio-dark] p-4 rounded-lg border border-[--color-wolvio-slate]">
-              <div className="text-sm text-[--color-wolvio-mid] mb-2 font-mono">Baseline Values</div>
+            <div className="bg-wolvio-dark p-4 rounded-lg border border-wolvio-slate">
+              <div className="text-sm text-wolvio-mid mb-2 font-mono">Baseline Values</div>
               <div className="text-sm text-[--color-wolvio-light] leading-relaxed">
                 Current Monthly Fee: <span className="font-mono font-bold text-white">{formatINRShort(baseMonthlyFee)}</span>
                 <br/>

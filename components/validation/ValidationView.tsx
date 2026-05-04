@@ -15,12 +15,13 @@ import { useDemoMode } from '@/components/DemoModeBadge'
 
 interface ValidationViewProps {
   contract: ContractParameters
-  initialInvoice: Invoice
+  initialInvoice: Invoice | null
   initialGeneration?: GenerationData
   contractId: string
+  contractDisplayName?: string
 }
 
-export function ValidationView({ contract, initialInvoice, initialGeneration, contractId }: ValidationViewProps) {
+export function ValidationView({ contract, initialInvoice, initialGeneration, contractId, contractDisplayName }: ValidationViewProps) {
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(initialInvoice)
   const [isProcessing, setIsProcessing] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
@@ -105,12 +106,12 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
   return (
     <div className="space-y-12 pb-32 animate-fade-in-up">
       <div className="flex items-center justify-between">
-        <Link href={`/contracts/${contractId}`} className="text-[--color-wolvio-orange] text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all">
+        <Link href={`/contracts/${contractId}`} className="text-wolvio-orange text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all">
           <ChevronLeft size={16} /> Back to Analysis
         </Link>
         <Button 
           variant="outline" 
-          className="glass-button text-[--color-wolvio-light] px-6 py-4 rounded-xl border-white/10"
+          className="glass-button text-wolvio-off px-6 py-4 rounded-xl border-white/10"
           onClick={() => setShowUpload(!showUpload)}
         >
           {showUpload ? 'Cancel' : 'Upload Invoice PDF'}
@@ -126,21 +127,21 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
       {/* Invoice Banner Card */}
       {currentInvoice ? (
         <div className="relative overflow-hidden glass rounded-[32px] border-none shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)]">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-[--color-wolvio-orange]/10 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-wolvio-orange/10 pointer-events-none" />
           <div className="p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
             <div className="space-y-2">
-              <div className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.3em]">Billing Document</div>
+              <div className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.3em]">Billing Document</div>
               <h2 className="text-4xl font-heading font-black text-white tracking-tight">
                 Invoice {currentInvoice.invoice_id}
               </h2>
-              <div className="flex items-center gap-4 text-sm font-semibold text-[--color-wolvio-mid]">
+              <div className="flex items-center gap-4 text-sm font-semibold text-wolvio-mid">
                 <span>{currentInvoice.period_start}</span>
                 <ArrowRight size={14} className="opacity-30" />
                 <span>{currentInvoice.period_end}</span>
               </div>
             </div>
             <div className="bg-white/5 border border-white/10 px-8 py-6 rounded-[24px] text-right">
-              <div className="text-[10px] font-black text-[--color-wolvio-orange] uppercase tracking-[0.3em] mb-2">Invoice Amount</div>
+              <div className="text-[10px] font-black text-wolvio-orange uppercase tracking-[0.3em] mb-2">Invoice Amount</div>
               <div className="text-4xl font-mono font-bold text-white tracking-tighter">
                 ₹{currentInvoice.total.toLocaleString('en-IN')}
               </div>
@@ -149,21 +150,21 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
         </div>
       ) : (
         <div className="glass rounded-[32px] p-20 text-center border-dashed border-2 border-white/10">
-          <div className="text-[10px] font-black text-[--color-wolvio-mid] uppercase tracking-[0.4em] mb-4">Awaiting Document</div>
+          <div className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.4em] mb-4">Awaiting Document</div>
           <h2 className="text-3xl font-heading font-black text-white/40">Ready for Audit</h2>
-          <p className="text-sm text-[--color-wolvio-mid] mt-4">Upload a billing document to begin the deterministic audit.</p>
+          <p className="text-sm text-wolvio-mid mt-4">Upload a billing document to begin the deterministic audit.</p>
         </div>
       )}
 
       {/* Validation Result */}
       {isComputing ? (
         <div className="glass rounded-[32px] p-16 text-center space-y-6 border border-white/5">
-          <div className="w-16 h-16 mx-auto bg-[--color-wolvio-orange]/10 rounded-2xl flex items-center justify-center border border-[--color-wolvio-orange]/20">
-            <Loader2 className="text-[--color-wolvio-orange] animate-spin" size={32} />
+          <div className="w-16 h-16 mx-auto bg-wolvio-orange/10 rounded-2xl flex items-center justify-center border border-wolvio-orange/20">
+            <Loader2 className="text-wolvio-orange animate-spin" size={32} />
           </div>
           <div className="space-y-2">
             <h3 className="text-2xl font-heading font-black text-white uppercase tracking-tight">Running Validation</h3>
-            <p className="text-sm text-[--color-wolvio-mid] max-w-md mx-auto">Executing deterministic checks against contract terms…</p>
+            <p className="text-sm text-wolvio-mid max-w-md mx-auto">Executing deterministic checks against contract terms…</p>
           </div>
         </div>
       ) : (parseError || !result) ? (
@@ -179,14 +180,17 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-8 py-3 bg-[--color-wolvio-orange]/10 hover:bg-[--color-wolvio-orange]/20 border border-[--color-wolvio-orange]/30 rounded-full text-xs font-black uppercase tracking-widest text-[--color-wolvio-orange] transition-all"
+            className="px-8 py-3 bg-wolvio-orange/10 hover:bg-wolvio-orange/20 border border-wolvio-orange/30 rounded-full text-xs font-black uppercase tracking-widest text-wolvio-orange transition-all"
           >
             Refresh Validation
           </button>
         </div>
       ) : (
         <div className="animate-fade-in-up animation-delay-200">
-          <ValidationReport result={result} />
+          <ValidationReport 
+            result={result} 
+            contractName={contractDisplayName}
+          />
         </div>
       )}
 

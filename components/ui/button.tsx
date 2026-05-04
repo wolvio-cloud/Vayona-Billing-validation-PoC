@@ -14,7 +14,7 @@ const buttonVariants = cva(
         secondary: 'bg-[--color-secondary] text-[--color-secondary-foreground] hover:opacity-80',
         ghost: 'hover:bg-[--color-secondary]',
         link: 'text-[--color-accent] underline-offset-4 hover:underline',
-        orange: 'bg-[--color-wolvio-orange] text-white hover:opacity-90',
+        orange: 'bg-wolvio-orange text-white hover:opacity-90',
       },
       size: {
         default: 'h-9 px-4 py-2',

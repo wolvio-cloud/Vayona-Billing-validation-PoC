@@ -484,5 +484,19 @@
     "extraction_status": "failed",
     "created_at": "2026-05-04T08:34:21.809Z",
     "extraction_error": "DATABASE_URL is not set. Please check your environment variables."
+  },
+  "C1777883806814": {
+    "contract_id": "C1777883806814",
+    "display_name": "Break_System_Contract",
+    "pdf_storage_path": "uploads\\C1777883806814.pdf",
+    "extraction_status": "pending",
+    "created_at": "2026-05-04T08:36:46.819Z"
+  },
+  "C1777883824065": {
+    "contract_id": "C1777883824065",
+    "display_name": "ultra_real_contract",
+    "pdf_storage_path": "uploads\\C1777883824065.pdf",
+    "extraction_status": "pending",
+    "created_at": "2026-05-04T08:37:04.071Z"
   }
 }

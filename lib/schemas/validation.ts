@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const ValidationCheckSchema = z.object({
   check_id: z.string(),
   check_name: z.string(),
-  verdict: z.enum(['MATCH', 'GAP', 'OPPORTUNITY', 'INSUFFICIENT_DATA']),
+  verdict: z.enum(['MATCH', 'GAP', 'OPPORTUNITY', 'INSUFFICIENT_DATA', 'ERROR']),
   expected_amount: z.number().nullable(),
   actual_amount: z.number().nullable(),
   gap_amount: z.number().nullable(),

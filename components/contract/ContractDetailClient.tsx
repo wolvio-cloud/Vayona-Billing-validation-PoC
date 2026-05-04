@@ -50,15 +50,15 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
     <div className="space-y-24 pb-40">
       {/* Hero Header Section */}
       <GlassCard className="p-16 border-none shadow-[0_60px_100px_-20px_rgba(0,0,0,0.7)] relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-[--color-wolvio-orange]/20 via-transparent to-blue-600/10 pointer-events-none transition-all duration-1000 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-br from-wolvio-orange/20 via-transparent to-blue-600/10 pointer-events-none transition-all duration-1000 group-hover:opacity-100" />
         
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-16">
           <div className="space-y-8 flex-1">
             <div className="flex items-center gap-4">
-              <div className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[--color-wolvio-orange] text-[10px] font-black tracking-[0.3em] uppercase">
+              <div className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-wolvio-orange text-[10px] font-black tracking-[0.3em] uppercase">
                 {contract.contract_type || 'LTSA'} · ID: {contractId}
               </div>
-              <div className="flex items-center gap-2 text-[--color-wolvio-green] text-[10px] font-black uppercase tracking-[0.3em]">
+              <div className="flex items-center gap-2 text-wolvio-green text-[10px] font-black uppercase tracking-[0.3em]">
                 <ShieldCheck size={14} /> Extraction Validated
               </div>
             </div>
@@ -77,7 +77,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               <div className="w-[1px] h-10 bg-white/10 hidden md:block" />
               <div className="space-y-1">
                 <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Data Fidelity</div>
-                <div className="text-2xl font-mono font-black text-[--color-wolvio-green] tracking-tighter">
+                <div className="text-2xl font-mono font-black text-wolvio-green tracking-tighter">
                   {totalCount > 0 ? Math.round((foundCount / totalCount) * 100) : 0}%
                 </div>
               </div>
@@ -85,7 +85,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               <div className="space-y-1">
                 <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">System Status</div>
                 <div className="flex items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-[--color-wolvio-orange] animate-ping" />
+                   <div className="w-2 h-2 rounded-full bg-wolvio-orange animate-ping" />
                    <div className="text-sm font-black text-white uppercase tracking-widest">Active Engine</div>
                 </div>
               </div>
@@ -98,7 +98,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
                 window.scrollTo(0, 0)
                 router.push(`/contracts/${contractId}/validate`)
               }}
-              className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white px-16 py-10 rounded-[32px] text-2xl font-black shadow-[0_30px_60px_-15px_rgba(242,102,48,0.5)] group transition-all hover:scale-105 active:scale-95"
+              className="bg-wolvio-orange hover:bg-[#d95a2b] text-white px-16 py-10 rounded-[32px] text-2xl font-black shadow-[0_30px_60px_-15px_rgba(242,102,48,0.5)] group transition-all hover:scale-105 active:scale-95"
             >
               Start Audit <ArrowRight className="ml-6 w-8 h-8 group-hover:translate-x-4 transition-transform" />
             </Button>
@@ -130,7 +130,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
             </div>
             <div className="space-y-1">
               <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Commercial Baseline</h2>
-              <p className="text-sm font-bold text-[--color-wolvio-mid] uppercase tracking-widest">Fixed and Variable Fee Structures</p>
+              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Fixed and Variable Fee Structures</p>
             </div>
             <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
           </div>
@@ -173,7 +173,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
             </div>
             <div className="space-y-1">
               <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Indexation & Escalation</h2>
-              <p className="text-sm font-bold text-[--color-wolvio-mid] uppercase tracking-widest">Inflation Adjustments & Cap Mechanisms</p>
+              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Inflation Adjustments & Cap Mechanisms</p>
             </div>
             <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
           </div>
@@ -213,7 +213,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
             </div>
             <div className="space-y-1">
               <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Performance & Risk</h2>
-              <p className="text-sm font-bold text-[--color-wolvio-mid] uppercase tracking-widest">Guarantees, LDs and Penalties</p>
+              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Guarantees, LDs and Penalties</p>
             </div>
             <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
           </div>
@@ -253,7 +253,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
             </div>
             <div className="space-y-1">
               <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Administrative & Legal</h2>
-              <p className="text-sm font-bold text-[--color-wolvio-mid] uppercase tracking-widest">Payment Terms, Interest & Renewal</p>
+              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Payment Terms, Interest & Renewal</p>
             </div>
             <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
           </div>
@@ -293,7 +293,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
             </div>
             <div className="space-y-1">
               <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Predictive Financial Modeling</h2>
-              <p className="text-sm font-bold text-[--color-wolvio-mid] uppercase tracking-widest">Simulate Long-Term Exposure & Risk</p>
+              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Simulate Long-Term Exposure & Risk</p>
             </div>
             <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
           </div>

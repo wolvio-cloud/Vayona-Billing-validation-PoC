@@ -62,7 +62,7 @@ describe('Deterministic Engine Validation (INV-002 Golden Scenario)', () => {
   })
 
   test('Check 2: WPI Escalation must be GAP', () => {
-    const wpiCheck = checks.find(c => c.check_id === 'CHECK_2_WPI_ESCALATION')
+    const wpiCheck = checks.find(c => c.check_id === 'CHECK_2_ESCALATION')
     expect(wpiCheck).toBeDefined()
     // It should flag a gap since billed is 0 and expected is > 0 based on WPI logic
     expect(wpiCheck?.verdict).toBe('GAP')
