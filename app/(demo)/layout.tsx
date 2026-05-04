@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
+import { DemoModeBadge } from '@/components/DemoModeBadge'
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -27,7 +28,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
           </h2>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           {!isDashboard && (
             <Link 
               href="/dashboard" 
@@ -36,6 +37,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
               <ArrowLeft size={14} /> Dashboard
             </Link>
           )}
+          <DemoModeBadge />
           <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer group">
             <div className="w-2 h-2 rounded-full bg-[--color-wolvio-orange] group-hover:scale-150 transition-transform" />
           </div>

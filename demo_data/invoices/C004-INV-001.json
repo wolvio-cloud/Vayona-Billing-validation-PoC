@@ -1,0 +1,23 @@
+{
+  "invoice_id": "C004-INV-001",
+  "contract_id": "C004",
+  "invoice_date": "2025-01-31",
+  "period_start": "2025-01-01",
+  "period_end": "2025-01-31",
+  "line_items": [
+    {
+      "item_id": "LI-1",
+      "description": "Monthly Fee (Correct CPI)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 3150000,
+      "amount": 3150000
+    }
+  ],
+  "subtotal": 3150000,
+  "gst_rate": 18,
+  "gst_amount": 567000,
+  "total": 3717000,
+  "status": "Paid"
+}

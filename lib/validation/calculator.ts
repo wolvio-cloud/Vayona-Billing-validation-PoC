@@ -1,13 +1,19 @@
-import { wpiEscalationFactor } from './wpi-index'
+import { escalationFactor } from './indices'
 
 export function calcEscalatedMonthlyFee(params: {
   baseMonthlyFee: number
-  currentJanWPI: number
-  baseJanWPI: number
+  currentIndexValue: number
+  baseIndexValue: number
   capPct: number
-}): number {
-  const factor = wpiEscalationFactor(params.currentJanWPI, params.baseJanWPI, params.capPct)
-  return Math.round(params.baseMonthlyFee * factor)
+  floorPct?: number
+}): { value: number; factor: number; rawChange: number } {
+  const rawChange = (params.currentIndexValue - params.baseIndexValue) / params.baseIndexValue
+  const factor = escalationFactor(params.currentIndexValue, params.baseIndexValue, params.capPct, params.floorPct || 0)
+  return {
+    value: Math.round(params.baseMonthlyFee * factor),
+    factor,
+    rawChange
+  }
 }
 
 export function calcLiquidatedDamages(params: {
@@ -16,12 +22,19 @@ export function calcLiquidatedDamages(params: {
   ldCapPct: number
   guaranteePct: number
   actualAvailabilityPct: number
-}): number {
+}): { value: number; shortfallPP: number; rawAmount: number; capAmount: number } {
   const shortfallPP = params.guaranteePct - params.actualAvailabilityPct
-  if (shortfallPP <= 0) return 0
-  const raw = params.baseAnnualFee * (params.ldRatePerPP / 100) * shortfallPP
-  const cap = params.baseAnnualFee * (params.ldCapPct / 100)
-  return Math.round(Math.min(raw, cap))
+  if (shortfallPP <= 0) return { value: 0, shortfallPP: 0, rawAmount: 0, capAmount: 0 }
+  
+  const rawAmount = params.baseAnnualFee * (params.ldRatePerPP / 100) * shortfallPP
+  const capAmount = params.baseAnnualFee * (params.ldCapPct / 100)
+  
+  return {
+    value: Math.round(Math.min(rawAmount, capAmount)),
+    shortfallPP,
+    rawAmount,
+    capAmount
+  }
 }
 
 export function calcPerformanceBonus(params: {
@@ -29,12 +42,19 @@ export function calcPerformanceBonus(params: {
   bonusRatePerPP: number
   bonusThresholdPct: number
   actualAvailabilityPct: number
-}): number {
+}): { value: number; excessPP: number; rawAmount: number; capAmount: number } {
   const excessPP = params.actualAvailabilityPct - params.bonusThresholdPct
-  if (excessPP <= 0) return 0
-  const raw = params.baseAnnualFee * (params.bonusRatePerPP / 100) * excessPP
-  const cap = params.baseAnnualFee * 0.05
-  return Math.round(Math.min(raw, cap))
+  if (excessPP <= 0) return { value: 0, excessPP: 0, rawAmount: 0, capAmount: 0 }
+  
+  const rawAmount = params.baseAnnualFee * (params.bonusRatePerPP / 100) * excessPP
+  const capAmount = params.baseAnnualFee * 0.05 // Standard 5% cap if not specified
+  
+  return {
+    value: Math.round(Math.min(rawAmount, capAmount)),
+    excessPP,
+    rawAmount,
+    capAmount
+  }
 }
 
 export function calcVariableComponent(totalKwh: number, ratePerKwh: number): number {

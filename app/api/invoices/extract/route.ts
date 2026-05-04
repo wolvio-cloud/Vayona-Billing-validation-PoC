@@ -5,6 +5,7 @@ import { callClaude } from '@/lib/extraction/claude'
 import { INVOICE_EXTRACTION_SYSTEM_PROMPT } from '@/lib/extraction/invoice-prompt'
 import { InvoiceSchema } from '@/lib/schemas/invoice'
 import { createLogger } from '@/lib/logger'
+import { safeExtractJSON } from '@/lib/utils'
 
 const logger = createLogger('api/invoices/extract')
 const UPLOAD_DIR = './uploads/invoices'
@@ -36,16 +37,21 @@ export async function POST(request: Request) {
       userMessage 
     })
 
-    let parsed: any
-    try {
-      parsed = JSON.parse(rawResponse)
-    } catch {
-      return Response.json({ error: 'Invalid JSON from AI' }, { status: 422 })
+    let parsed: unknown
+    parsed = safeExtractJSON(rawResponse)
+    if (!parsed) {
+      logger.error('Failed to parse JSON from Claude response', { preview: rawResponse.slice(0, 200) })
+      return Response.json({ error: 'Invalid JSON from AI — Claude may have wrapped response in markdown. Check logs.' }, { status: 422 })
     }
 
     const validated = InvoiceSchema.safeParse(parsed)
     if (!validated.success) {
-      return Response.json({ error: 'Schema mismatch', details: validated.error.message }, { status: 422 })
+      logger.warn('Invoice schema validation failed', { errors: validated.error.issues })
+      return Response.json({ 
+        error: 'Schema mapping required', 
+        partial_data: parsed,
+        validation_errors: validated.error.issues 
+      }, { status: 206 }) // Partial content
     }
 
     return Response.json(validated.data)

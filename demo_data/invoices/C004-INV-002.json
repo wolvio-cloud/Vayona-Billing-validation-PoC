@@ -1,0 +1,35 @@
+{
+  "invoice_id": "C004-INV-002",
+  "contract_id": "C004",
+  "invoice_date": "2025-02-28",
+  "period_start": "2025-02-01",
+  "period_end": "2025-02-28",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Monthly O&M Fee (Feb 2025 — CPI escalation not applied)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 3000000,
+      "amount": 3000000
+    },
+    {
+      "item_id": "LI-002",
+      "description": "Variable Component Feb 2025",
+      "category": "Variable",
+      "quantity": 7200000,
+      "unit": "kWh",
+      "unit_rate": 0.02,
+      "amount": 144000
+    }
+  ],
+  "subtotal": 3144000,
+  "gst_rate": 18,
+  "gst_amount": 565920,
+  "total": 3709920,
+  "status": "Pending",
+  "engineered_gap": "CPI_ESCALATION_MISSING",
+  "expected_gap": 86902,
+  "note": "GAP: CPI escalation for 2025 not applied. Correct monthly = ₹30,86,902. Gap = ₹86,902"
+}

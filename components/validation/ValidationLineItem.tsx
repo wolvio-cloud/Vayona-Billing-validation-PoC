@@ -10,6 +10,7 @@ import { SAPPayloadModal } from './SAPPayloadModal'
 
 interface ValidationLineItemProps {
   check: ValidationCheck
+  showFormula?: boolean
 }
 
 const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: any, bg: string }> = {
@@ -19,8 +20,8 @@ const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: a
   INSUFFICIENT_DATA: { color: 'text-[--color-wolvio-mid]', icon: Info, bg: 'bg-white/5' },
 }
 
-export function ValidationLineItem({ check }: ValidationLineItemProps) {
-  const [expanded, setExpanded] = useState(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY')
+export function ValidationLineItem({ check, showFormula = false }: ValidationLineItemProps) {
+  const [expanded, setExpanded] = useState(showFormula || check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY')
   const [showSAP, setShowSAP] = useState(false)
   const [isNotifying, setIsNotifying] = useState(false)
   const [isNotified, setIsNotified] = useState(false)
@@ -119,9 +120,21 @@ export function ValidationLineItem({ check }: ValidationLineItemProps) {
                 </p>
 
                 <div className="bg-white/5 rounded-2xl p-6">
-                  <p className="text-base font-semibold text-white/90 leading-relaxed">
-                  {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
-                  </p>
+                  {showFormula && check.explanation?.includes('FORMULA:') ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Terminal size={14} className="text-blue-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Formula Proof (Traceable)</span>
+                      </div>
+                      <div className="font-mono text-xs text-white/80 bg-black/40 p-4 rounded-xl border border-white/5 whitespace-pre-wrap leading-relaxed">
+                        {check.explanation}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-base font-semibold text-white/90 leading-relaxed">
+                      {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
+                    </p>
+                  )}
                 </div>
 
                 {(check.verdict === 'GAP' || check.verdict === 'OPPORTUNITY') && (

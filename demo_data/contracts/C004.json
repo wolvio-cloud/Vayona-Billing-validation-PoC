@@ -1,0 +1,18 @@
+{
+  "contract_id": "C004",
+  "contract_type": "Service",
+  "display_name": "Tata Solar Kurnool O&M",
+  "base_annual_fee": { "value": 36000000, "source_clause": "Annual O&M Service Fee of INR 3,60,00,000 (Rupees Three Crores Sixty Lakhs only) payable monthly at INR 30,00,000 per month by the 10th of each month.", "clause_reference": "Clause 4.2", "page_number": 7, "confidence": "high" },
+  "base_monthly_fee": { "value": 3000000, "source_clause": "Monthly O&M fee of INR 30,00,000 payable by the 10th of each calendar month.", "clause_reference": "Clause 4.2", "page_number": 7, "confidence": "high" },
+  "escalation": { "value": { "type": "CPI", "index_base_month": "January", "effective_date": "January 1", "cap_pct": 5, "floor_pct": 0 }, "source_clause": "Annual fee escalation based on Consumer Price Index (CPI-Combined), effective January 1 each year, capped at 5% per annum.", "clause_reference": "Clause 5.1", "page_number": 11, "confidence": "high" },
+  "variable_component": { "value": { "rate_per_kwh": 0.02, "billing_frequency": "Monthly" }, "source_clause": "Variable O&M component of INR 0.02 per net kWh generated, billed monthly with the monthly fixed fee.", "clause_reference": "Clause 6.2", "page_number": 14, "confidence": "high" },
+  "availability_guarantee_pct": { "value": 98.5, "source_clause": "Service Provider guarantees minimum Panel Availability of 98.5% annually, computed as (Available MW-hours / Installed MW × 8760) × 100.", "clause_reference": "Clause 8.1", "page_number": 22, "confidence": "high" },
+  "ld_rate_per_pp": { "value": 1.0, "source_clause": "LDs of 1.0% of Annual Fee per percentage point shortfall below 98.5% availability guarantee. LD cap: 10% of Annual Fee.", "clause_reference": "Clause 9.1", "page_number": 25, "confidence": "high" },
+  "ld_cap_pct": { "value": 10, "source_clause": "Maximum LD liability capped at 10% of Annual O&M Fee in any contract year.", "clause_reference": "Clause 9.2", "page_number": 25, "confidence": "high" },
+  "bonus_threshold_pct": { "value": 99.5, "source_clause": "Performance bonus of 0.5% of Annual Fee per PP above 99.5% availability. Maximum bonus 3% of Annual Fee.", "clause_reference": "Clause 10.1", "page_number": 28, "confidence": "high" },
+  "bonus_rate_per_pp": { "value": 0.5, "source_clause": "Bonus rate of 0.5% of Annual O&M Fee per percentage point of outperformance above 99.5%.", "clause_reference": "Clause 10.1", "page_number": 28, "confidence": "high" },
+  "payment_terms_days": { "value": 21, "source_clause": "Payment within 21 days of invoice receipt. Faster payment terms reflect solar asset lower maintenance complexity.", "clause_reference": "Clause 11.1", "page_number": 31, "confidence": "high" },
+  "late_payment_interest": { "value": "RBI Repo Rate + 2%", "source_clause": "Late payments attract interest at prevailing RBI Repo Rate plus 2% per annum, compounded monthly.", "clause_reference": "Clause 11.4", "page_number": 32, "confidence": "high" },
+  "renewal_notice_months": { "value": 6, "source_clause": "6 months advance notice required for termination, non-renewal, or renegotiation.", "clause_reference": "Clause 15.2", "page_number": 40, "confidence": "high" },
+  "validation_warnings": ["NOTE: CPI-based escalation (not WPI) — use CPI-Combined index, not WPI All Commodities.", "NOTE: Effective date January 1, unlike C001 (April 1). Invoice periods Jan–Dec apply new rate from start of year."]
+}

@@ -6,6 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "preflight": "node scripts/preflight.js",
+    "typecheck": "tsc --noEmit",
     "db:migrate": "tsx scripts/migrate.ts"
   },
   "dependencies": {

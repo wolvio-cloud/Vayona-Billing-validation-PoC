@@ -1,0 +1,23 @@
+{
+  "invoice_id": "C002-INV-001",
+  "contract_id": "C002",
+  "invoice_date": "2025-05-31",
+  "period_start": "2025-05-01",
+  "period_end": "2025-05-31",
+  "line_items": [
+    {
+      "item_id": "LI-1",
+      "description": "Escalated Base Fee",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 41158690,
+      "amount": 41158690
+    }
+  ],
+  "subtotal": 41158690,
+  "gst_rate": 18,
+  "gst_amount": 7408564,
+  "total": 48567254,
+  "status": "Paid"
+}

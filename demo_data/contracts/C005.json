@@ -1,0 +1,18 @@
+{
+  "contract_id": "C005",
+  "contract_type": "Service",
+  "display_name": "NTPC Bhadla Solar O&M",
+  "base_annual_fee": { "value": 52000000, "source_clause": "Annual O&M Fee of INR 5,20,00,000 (Five Crores Twenty Lakhs only) per annum, billed monthly at INR 43,33,333 on or before the 5th of each month.", "clause_reference": "Clause 6.1", "page_number": 12, "confidence": "high" },
+  "base_monthly_fee": { "value": 4333333, "source_clause": "Monthly fee of INR 43,33,333 payable by the 5th of each month.", "clause_reference": "Clause 6.1", "page_number": 12, "confidence": "high" },
+  "escalation": { "value": { "type": "WPI", "index_base_month": "January", "effective_date": "April 1", "cap_pct": 6, "floor_pct": 0 }, "source_clause": "Annual escalation at WPI All Commodities for January, effective April 1, capped at 6% per annum.", "clause_reference": "Clause 7.2", "page_number": 18, "confidence": "high" },
+  "variable_component": { "value": { "rate_per_kwh": 0.018, "billing_frequency": "Monthly" }, "source_clause": "Variable cleaning and maintenance charge at INR 0.018 per net kWh exported to grid, billed monthly.", "clause_reference": "Clause 8.1", "page_number": 22, "confidence": "high" },
+  "availability_guarantee_pct": { "value": 97.0, "source_clause": "Panel availability guarantee of 97.0% per annum. Availability = (Available DC Capacity Hours / Installed DC Capacity × 8760) × 100.", "clause_reference": "Clause 10.1", "page_number": 30, "confidence": "high" },
+  "ld_rate_per_pp": { "value": 1.5, "source_clause": "LDs at 1.5% of Annual O&M Fee per PP shortfall below 97.0% availability guarantee. Cap at 15% of Annual Fee.", "clause_reference": "Clause 11.2", "page_number": 33, "confidence": "high" },
+  "ld_cap_pct": { "value": 15, "source_clause": "Maximum annual LD liability capped at 15% of the Base Annual O&M Fee.", "clause_reference": "Clause 11.3", "page_number": 33, "confidence": "high" },
+  "bonus_threshold_pct": { "value": 98.5, "source_clause": "Performance incentive of 1.0% of Annual Fee per PP above 98.5% availability. Maximum 5% of Annual Fee per annum.", "clause_reference": "Clause 12.1", "page_number": 36, "confidence": "high" },
+  "bonus_rate_per_pp": { "value": 1.0, "source_clause": "Incentive rate 1.0% of Annual O&M Fee per percentage point of availability above 98.5%.", "clause_reference": "Clause 12.1", "page_number": 36, "confidence": "high" },
+  "payment_terms_days": { "value": 30, "source_clause": "Net 30 days payment terms from invoice date.", "clause_reference": "Clause 13.1", "page_number": 39, "confidence": "high" },
+  "late_payment_interest": { "value": "SBI base rate + 2%", "source_clause": "Overdue payments carry simple interest at SBI Base Rate + 2% p.a.", "clause_reference": "Clause 13.3", "page_number": 40, "confidence": "high" },
+  "renewal_notice_months": { "value": 12, "source_clause": "12 months written notice required for contract non-renewal.", "clause_reference": "Clause 19.1", "page_number": 55, "confidence": "high" },
+  "validation_warnings": ["RISK: Escalation cap is only 6% — if WPI exceeds 6%, vendor will absorb additional cost risk.", "NOTE: Variable rate INR 0.018/kWh is significantly lower than wind O&M rates."]
+}

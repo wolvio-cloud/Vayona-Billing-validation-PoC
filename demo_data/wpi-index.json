@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-05-04T00:00:00Z",
+  "source": "Office of the Economic Adviser, Ministry of Commerce & Industry, Government of India",
+  "source_url": "https://eaindustry.nic.in/wpi_data.asp",
+  "index_series": "WPI All Commodities (Base Year 2011-12 = 100)",
+  "note": "Snapshot cached for demo stability. Refresh monthly before client demos.",
+  "data": {
+    "2021-01": 124.1,
+    "2022-01": 143.6,
+    "2023-01": 148.3,
+    "2024-01": 155.0,
+    "2025-01": 161.5
+  }
+}

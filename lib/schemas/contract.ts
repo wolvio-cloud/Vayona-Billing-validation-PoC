@@ -13,7 +13,7 @@ export const TracedFieldSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
 
 export const ContractParametersSchema = z.object({
   contract_id: z.string(),
-  contract_type: z.enum(['LTSA', 'TSA', 'Service', 'Supply']),
+  contract_type: z.enum(['LTSA', 'TSA', 'Service', 'Supply', 'Hybrid', 'Fixed-Fee']),
   base_annual_fee: TracedFieldSchema(z.number()),
   base_monthly_fee: TracedFieldSchema(z.number()),
   escalation: TracedFieldSchema(z.object({

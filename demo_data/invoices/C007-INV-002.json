@@ -1,0 +1,26 @@
+{
+  "invoice_id": "C007-INV-002",
+  "contract_id": "C007",
+  "invoice_date": "2025-04-30",
+  "period_start": "2025-04-01",
+  "period_end": "2025-04-30",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Fixed-Fee Monthly Maintenance (Apr 2025)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 5950000,
+      "amount": 5950000
+    }
+  ],
+  "subtotal": 5950000,
+  "gst_rate": 18,
+  "gst_amount": 1071000,
+  "total": 7021000,
+  "status": "Pending",
+  "engineered_gap": "BASE_FEE_OVERBILLED",
+  "expected_gap": -283333,
+  "note": "GAP: Fixed fee contract. Invoiced ₹59,50,000 but contract states ₹56,66,667. Overbilled by ₹2,83,333"
+}

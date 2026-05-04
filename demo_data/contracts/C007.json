@@ -1,0 +1,18 @@
+{
+  "contract_id": "C007",
+  "contract_type": "Service",
+  "display_name": "Suzlon Fixed-Fee Maintenance",
+  "base_annual_fee": { "value": 68000000, "source_clause": "Fixed Annual Maintenance Fee of INR 6,80,00,000 (Rupees Six Crores Eighty Lakhs only) per annum. The fee is FIXED for the entire 5-year term with NO price escalation mechanism.", "clause_reference": "Clause 4.1", "page_number": 8, "confidence": "high" },
+  "base_monthly_fee": { "value": 5666667, "source_clause": "Monthly payment of INR 56,66,667 (1/12 of annual fee) payable by the last working day of each month.", "clause_reference": "Clause 4.2", "page_number": 8, "confidence": "high" },
+  "escalation": { "value": null, "source_clause": "NO ESCALATION: The Annual Maintenance Fee shall remain fixed and shall not be subject to any price adjustment, inflation indexation, or revision during the 5-year term of this Agreement.", "clause_reference": "Clause 4.3", "page_number": 9, "confidence": "high" },
+  "variable_component": { "value": null, "source_clause": "NO VARIABLE COMPONENT: The Fixed Annual Maintenance Fee is inclusive of all O&M services. No separate variable charges shall be raised.", "clause_reference": "Clause 4.4", "page_number": 9, "confidence": "high" },
+  "availability_guarantee_pct": { "value": 94.0, "source_clause": "Minimum availability guarantee of 94.0% per annum (below typical market, reflecting lower fee). Measured annually April to March.", "clause_reference": "Clause 7.1", "page_number": 20, "confidence": "high" },
+  "ld_rate_per_pp": { "value": 0.5, "source_clause": "LDs of 0.5% of Annual Fee per PP shortfall below 94.0%. Capped at 10% of Annual Fee.", "clause_reference": "Clause 8.1", "page_number": 23, "confidence": "high" },
+  "ld_cap_pct": { "value": 10, "source_clause": "Maximum LD liability per year: 10% of Fixed Annual Maintenance Fee.", "clause_reference": "Clause 8.2", "page_number": 23, "confidence": "high" },
+  "bonus_threshold_pct": { "value": null, "source_clause": "NO PERFORMANCE BONUS: Fixed-fee contract does not include a performance bonus mechanism.", "clause_reference": "Clause 9.0", "page_number": 25, "confidence": "high" },
+  "bonus_rate_per_pp": { "value": null, "source_clause": "NO PERFORMANCE BONUS: See Clause 9.0.", "clause_reference": "Clause 9.0", "page_number": 25, "confidence": "high" },
+  "payment_terms_days": { "value": 15, "source_clause": "Strict payment terms: 15 calendar days from invoice date. Failure to pay within 15 days triggers automatic interest.", "clause_reference": "Clause 10.1", "page_number": 28, "confidence": "high" },
+  "late_payment_interest": { "value": "24% per annum", "source_clause": "Overdue amounts attract compound interest at the rate of 24% per annum (2% per month) from the due date. This reflects the high-risk nature of the vendor-customer relationship.", "clause_reference": "Clause 10.3", "page_number": 29, "confidence": "high" },
+  "renewal_notice_months": { "value": 3, "source_clause": "3 months written notice for non-renewal. Short notice period reflects fixed 5-year term with no rollover intent.", "clause_reference": "Clause 14.1", "page_number": 38, "confidence": "high" },
+  "validation_warnings": ["UNIQUE: No escalation and no variable component — simplest contract type in portfolio.", "RISK: Late payment interest at 24% p.a. compound is extremely punitive — flag for FC attention.", "RISK: 15-day payment terms are the shortest in the portfolio — payment process must be tight."]
+}

@@ -1,0 +1,18 @@
+{
+  "contract_id": "C006",
+  "contract_type": "LTSA",
+  "display_name": "Greenko Hybrid Park O&M",
+  "base_annual_fee": { "value": 180000000, "source_clause": "Total Annual O&M Fee of INR 18,00,00,000 (Eighteen Crores only) comprising Wind Component: INR 12,00,00,000 and Solar Component: INR 6,00,00,000, payable monthly.", "clause_reference": "Clause 5.1", "page_number": 9, "confidence": "high" },
+  "base_monthly_fee": { "value": 15000000, "source_clause": "Monthly O&M Fee of INR 1,50,00,000 (Wind: INR 1,00,00,000 + Solar: INR 50,00,000) payable by 5th of each month.", "clause_reference": "Clause 5.2", "page_number": 10, "confidence": "high" },
+  "escalation": { "value": { "type": "WPI", "index_base_month": "January", "effective_date": "April 1", "cap_pct": 8, "floor_pct": 0 }, "source_clause": "The combined Annual Fee (Wind + Solar components) shall be escalated annually on April 1 using WPI All Commodities January index, capped at 8% per annum.", "clause_reference": "Clause 6.1", "page_number": 15, "confidence": "high" },
+  "variable_component": { "value": { "rate_per_kwh": 0.032, "billing_frequency": "Quarterly" }, "source_clause": "Blended variable O&M rate of INR 0.032 per net kWh across wind and solar generation, billed quarterly.", "clause_reference": "Clause 7.3", "page_number": 20, "confidence": "medium" },
+  "availability_guarantee_pct": { "value": 96.5, "source_clause": "Blended Availability Guarantee of 96.5% for the combined Hybrid Park. Wind Turbine Availability ≥ 95.5%; Solar Panel Availability ≥ 98.0% measured separately but aggregated for LD calculation.", "clause_reference": "Clause 9.1", "page_number": 28, "confidence": "high" },
+  "ld_rate_per_pp": { "value": 1.0, "source_clause": "LD rate of 1.0% of Total Annual O&M Fee per PP shortfall below blended 96.5% availability guarantee.", "clause_reference": "Clause 10.3", "page_number": 33, "confidence": "high" },
+  "ld_cap_pct": { "value": 18, "source_clause": "Maximum aggregate LD liability capped at 18% of Total Annual O&M Fee in any Contract Year.", "clause_reference": "Clause 10.4", "page_number": 33, "confidence": "high" },
+  "bonus_threshold_pct": { "value": 98.0, "source_clause": "Performance bonus threshold of blended 98.0% availability. Bonus rate: 1.2% of Total Annual Fee per PP above threshold. Cap: 6% of Annual Fee.", "clause_reference": "Clause 11.2", "page_number": 37, "confidence": "high" },
+  "bonus_rate_per_pp": { "value": 1.2, "source_clause": "Bonus rate of 1.2% of Total Annual O&M Fee per PP outperformance above blended 98.0% threshold.", "clause_reference": "Clause 11.2", "page_number": 37, "confidence": "high" },
+  "payment_terms_days": { "value": 45, "source_clause": "Payment within 45 days of valid invoice receipt. NTPC-style payment terms reflect PSU customer convention.", "clause_reference": "Clause 12.1", "page_number": 41, "confidence": "high" },
+  "late_payment_interest": { "value": "SBI base rate + 2%", "source_clause": "Overdue amounts: SBI Base Rate + 2% p.a., simple interest.", "clause_reference": "Clause 12.4", "page_number": 42, "confidence": "high" },
+  "renewal_notice_months": { "value": 12, "source_clause": "12 months written notice for non-renewal of the Agreement.", "clause_reference": "Clause 20.1", "page_number": 60, "confidence": "high" },
+  "validation_warnings": ["COMPLEXITY: Hybrid contract tracks wind + solar separately for LD purposes. Variable rate INR 0.032 is a blended rate — verify it reflects actual MW split.", "FLAG: medium confidence on variable_component — clause 7.3 uses 'approximately' language. Verify blended rate calculation methodology."]
+}

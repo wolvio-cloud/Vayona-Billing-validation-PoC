@@ -1,44 +1,35 @@
 {
   "invoice_id": "INV-003",
   "contract_id": "C001",
-  "invoice_date": "2025-07-05",
-  "period_start": "2025-04-01",
-  "period_end": "2025-06-30",
+  "invoice_date": "2025-04-15",
+  "period_start": "2025-01-01",
+  "period_end": "2025-03-31",
   "line_items": [
     {
       "item_id": "LI-001",
-      "description": "Monthly O&M Service Fee — April 2025 (Post WPI Escalation, Clause 4.1 + 5.2)",
+      "description": "Base O&M Fee Q1 2025 (3 months × escalated rate)",
       "category": "BaseFee",
-      "quantity": 1,
-      "unit": "month",
-      "unit_rate": 12542400,
-      "amount": 12542400
+      "quantity": 3,
+      "unit": "Month",
+      "unit_rate": 12347607,
+      "amount": 37042821
     },
     {
       "item_id": "LI-002",
-      "description": "Monthly O&M Service Fee — May 2025 (Post WPI Escalation, Clause 4.1 + 5.2)",
-      "category": "BaseFee",
-      "quantity": 1,
-      "unit": "month",
-      "unit_rate": 12542400,
-      "amount": 12542400
-    },
-    {
-      "item_id": "LI-003",
-      "description": "Monthly O&M Service Fee — June 2025 (Post WPI Escalation, Clause 4.1 + 5.2)",
-      "category": "BaseFee",
-      "quantity": 1,
-      "unit": "month",
-      "unit_rate": 12542400,
-      "amount": 12542400
+      "description": "Variable Component Q1 2025 (approx 100M kWh × ₹0.04)",
+      "category": "Variable",
+      "quantity": 100000000,
+      "unit": "kWh",
+      "unit_rate": 0.04,
+      "amount": 4000000
     }
   ],
-  "subtotal": 37627200,
+  "subtotal": 41042821,
   "gst_rate": 18,
-  "gst_amount": 6772896,
-  "total": 44400096,
+  "gst_amount": 7387708,
+  "total": 48430529,
   "status": "Pending",
-  "engineered_gap": "variable_component_missing",
-  "expected_gap": 1494000,
-  "note": "GAP: Q1 FY2025-26 (Apr–Jun) variable component not invoiced. Generation data: Apr=93,50,000 kWh, May=1,28,00,000 kWh, Jun=1,28,50,000 kWh. Total = 3,50,00,000 kWh × ₹0.04 = ₹14,00,000 missing. Base fee is correct at escalated rate."
+  "engineered_gap": "VARIABLE_COMPONENT_UNDER_BILLED",
+  "expected_gap": 1000000,
+  "note": "GAP: Variable billed on 100M kWh; SCADA shows 125M kWh. Missing: 25M × ₹0.04 = ₹10L"
 }

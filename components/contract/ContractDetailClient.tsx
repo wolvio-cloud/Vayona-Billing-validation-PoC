@@ -18,6 +18,8 @@ import {
   BarChart3
 } from 'lucide-react'
 
+import { QuickFixModal } from './QuickFixModal'
+
 interface ContractDetailClientProps {
   initialContract: ContractParameters
   contractId: string
@@ -25,6 +27,7 @@ interface ContractDetailClientProps {
 
 export function ContractDetailClient({ initialContract, contractId }: ContractDetailClientProps) {
   const [contract, setContract] = useState(initialContract)
+  const [showQuickFix, setShowQuickFix] = useState(false)
   const router = useRouter()
 
   const handleManualValue = (key: string, val: any) => {
@@ -88,14 +91,30 @@ export function ContractDetailClient({ initialContract, contractId }: ContractDe
             </div>
           </div>
           
-          <Button 
-            onClick={() => router.push(`/contracts/${contractId}/validate`)}
-            className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white px-16 py-12 rounded-[32px] text-2xl font-black shadow-[0_30px_60px_-15px_rgba(242,102,48,0.5)] group transition-all hover:scale-105 active:scale-95"
-          >
-            Start Audit <ArrowRight className="ml-6 w-8 h-8 group-hover:translate-x-4 transition-transform" />
-          </Button>
+          <div className="flex flex-col gap-6">
+            <Button 
+              onClick={() => router.push(`/contracts/${contractId}/validate`)}
+              className="bg-[--color-wolvio-orange] hover:bg-[#d95a2b] text-white px-16 py-10 rounded-[32px] text-2xl font-black shadow-[0_30px_60px_-15px_rgba(242,102,48,0.5)] group transition-all hover:scale-105 active:scale-95"
+            >
+              Start Audit <ArrowRight className="ml-6 w-8 h-8 group-hover:translate-x-4 transition-transform" />
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setShowQuickFix(true)}
+              className="glass border-white/10 text-white/60 hover:text-white px-8 py-6 rounded-2xl text-xs font-black uppercase tracking-[0.3em] transition-all"
+            >
+              Manual Override <Cpu className="ml-4 w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </GlassCard>
+
+      <QuickFixModal 
+        isOpen={showQuickFix}
+        onClose={() => setShowQuickFix(false)}
+        parameters={contract}
+        onSave={(updated) => setContract(updated)}
+      />
 
       {/* Main Parameters Display */}
       <div className="grid grid-cols-1 gap-32">
