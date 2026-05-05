@@ -13,6 +13,7 @@ export interface MockContract {
   parameters?: any
   raw_text?: string
   page_count?: number
+  stage_index?: number
   created_at: string
 }
 
