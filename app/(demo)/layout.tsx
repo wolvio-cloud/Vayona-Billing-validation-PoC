@@ -12,15 +12,12 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       {/* Premium Light Glass Header */}
-      <header className="sticky top-0 z-[100] w-full glass border-b border-slate-200 px-6 md:px-12 py-5 flex items-center justify-between backdrop-blur-xl">
+      <header className="sticky top-0 z-[100] w-full bg-white border-b border-slate-200 px-6 md:px-12 py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-6">
           <Link href="/dashboard" className="group flex items-center gap-4">
-            <div className="w-10 h-10 bg-wolvio-orange rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(242,102,48,0.2)] transition-transform group-hover:scale-110">
-              <span className="text-white font-black text-sm">W</span>
+            <div className="w-36 h-14 px-5 bg-slate-900 rounded-2xl flex items-center justify-center shadow-md transition-transform group-hover:scale-105">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="font-heading font-black text-2xl tracking-tighter text-slate-900 group-hover:text-wolvio-orange transition-colors">
-              Wolvio
-            </span>
           </Link>
           <div className="hidden lg:block h-6 w-[1px] bg-slate-200" />
           <h2 className="hidden lg:block font-heading font-bold text-xs tracking-[0.3em] uppercase text-slate-400">
