@@ -10,7 +10,7 @@ const MODELS = [
   'claude-3-5-sonnet-20241022',
   'claude-3-5-sonnet-latest',
 ]
-const MAX_TOKENS = 4000
+const MAX_TOKENS = 8192
 const COST_PER_INPUT_TOKEN = 0.000003
 const COST_PER_OUTPUT_TOKEN = 0.000015
 const COST_WARN_THRESHOLD = 0.15

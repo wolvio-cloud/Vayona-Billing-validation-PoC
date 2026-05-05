@@ -16,20 +16,24 @@ export default async function ContractDetailPage({
   let contract: ContractParameters | null = null
   let displayName = 'Service Agreement'
   
+  let extractionStatus = 'pending'
+  
   // Try demo JSON files first (C001–C008 all have JSON files)
   if (id.startsWith('C')) {
     contract = await getDemoContractParameters(id)
-    if (id === 'C100') displayName = 'Adani Green — Mega Wind Portfolio'
-    else if (id === 'C001') displayName = 'Wind Farm Alpha — LTSA'
-    else if (id === 'C002') displayName = 'ReNew Power Mega-LTSA'
+    if (contract) {
+      extractionStatus = 'completed'
+      if (id === 'C100') displayName = 'Adani Green — Mega Wind Portfolio'
+      else if (id === 'C001') displayName = 'Wind Farm Alpha — LTSA'
+      else if (id === 'C002') displayName = 'ReNew Power Mega-LTSA'
+    }
   }
-
-  let extractionStatus = 'completed'
 
   // If not found in demo data, check database / mockStore (for uploaded contracts)
   if (!contract) {
     try {
-      const [row] = await sql`SELECT parameters, display_name, extraction_status FROM contracts WHERE contract_id = ${id} LIMIT 1`
+      const rows = await sql`SELECT parameters, display_name, extraction_status FROM contracts WHERE contract_id::text = ${id} OR id::text = ${id} LIMIT 1`
+      const row = rows[0]
       if (row) {
         extractionStatus = row.extraction_status || 'completed'
       }

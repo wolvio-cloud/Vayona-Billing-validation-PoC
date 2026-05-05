@@ -26,10 +26,12 @@ export async function POST(request: Request) {
     await writeFile(filePath, buffer)
 
     // ── QUALITY CHECKS ──
-    const { text } = await parsePDF(buffer)
-    if (text.length < 800) {
+    const { text, screenshots, pageCount } = await parsePDF(buffer)
+    
+    // Allow scanned PDFs (low text count) if we have screenshots
+    if (text.length < 500 && (!screenshots || screenshots.length === 0)) {
       return Response.json({ 
-        error: "Scanned PDF detected. Upload text-searchable version." 
+        error: "Scanned PDF detected without visual fallback. Upload text-searchable version." 
       }, { status: 422 })
     }
 
@@ -38,14 +40,18 @@ export async function POST(request: Request) {
     const warning = hasKeywords ? null : "Document may not be a service agreement."
 
     const truncatedText = text.length > 100000 ? text.substring(0, 100000) : text
+    const extractionMeta = { 
+      page_count: pageCount,
+      _screenshots: screenshots // Store screenshots for AI vision fallback
+    }
 
     let dbSuccess = false
     let row: any = null
 
     try {
       const result = await sql`
-        INSERT INTO contracts (contract_id, display_name, pdf_storage_path, raw_text, extraction_status)
-        VALUES (${contractId}, ${file.name}, ${filePath}, ${truncatedText}, 'pending')
+        INSERT INTO contracts (contract_id, display_name, pdf_storage_path, raw_text, extraction_status, parameters)
+        VALUES (${contractId}, ${file.name}, ${filePath}, ${truncatedText}, 'pending', ${JSON.stringify(extractionMeta)})
         RETURNING id, contract_id
       `
       row = result[0]
@@ -61,6 +67,8 @@ export async function POST(request: Request) {
         pdf_storage_path: filePath,
         raw_text: truncatedText,
         extraction_status: 'pending',
+        parameters: extractionMeta,
+        page_count: pageCount,
         created_at: new Date().toISOString()
       })
     }

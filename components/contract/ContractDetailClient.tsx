@@ -30,21 +30,54 @@ interface ContractDetailClientProps {
 export function ContractDetailClient({ initialContract, contractId, displayName, extractionStatus }: ContractDetailClientProps) {
   const [contract, setContract] = useState(initialContract)
   const [showQuickFix, setShowQuickFix] = useState(false)
-  const [isExtracting, setIsExtracting] = useState(extractionStatus === 'pending' || extractionStatus === 'processing')
+  const [status, setStatus] = useState(extractionStatus)
+  
+  // Robust extraction detection: poll if status is pending/processing OR if we have no commercial parameters yet
+  // We check for high-value keys to decide if we really have data
+  const coreKeys = ['base_annual_fee', 'base_monthly_fee', 'escalation', 'availability_guarantee_pct']
+  const hasData = coreKeys.some(key => {
+    const val = (contract as any)[key]
+    return val && typeof val === 'object' && val.value !== null && val.value !== undefined
+  })
+
+  const [isExtracting, setIsExtracting] = useState(
+    extractionStatus === 'pending' || 
+    extractionStatus === 'processing' || 
+    (!hasData && extractionStatus !== 'failed')
+  )
   const router = useRouter()
 
   useEffect(() => {
+    console.log('[Polling Debug]', { 
+      contractId, 
+      isExtracting, 
+      extractionStatus, 
+      status, 
+      hasData,
+      paramKeys: Object.keys(contract)
+    })
+    
     if (!isExtracting) return
+    console.log(`[Polling] Starting extraction poll for ${contractId}. Status: ${status}, HasData: ${hasData}`)
 
     const interval = setInterval(async () => {
       try {
         const res = await fetch(`/api/contracts/${contractId}?t=${Date.now()}`)
         if (res.ok) {
           const data = await res.json()
+          
+          if (data.extraction_status) {
+            setStatus(data.extraction_status)
+          }
+
+          // Update local contract data if we got parameters
           if (data.parameters && Object.keys(data.parameters).length > 2) {
             setContract(data.parameters)
           }
-          if (data.extraction_status === 'completed' || data.extraction_status === 'failed') {
+
+          // Stop polling if we reached a terminal state (complete, partial, or failed)
+          const isTerminal = ['completed', 'partial', 'failed'].includes(data.extraction_status)
+          if (isTerminal) {
             setIsExtracting(false)
             router.refresh()
             clearInterval(interval)
@@ -56,7 +89,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName,
     }, 3000)
 
     return () => clearInterval(interval)
-  }, [isExtracting, contractId, router])
+  }, [isExtracting, contractId, router, status, hasData])
 
   const handleManualValue = (key: string, val: any) => {
     setContract(prev => ({
@@ -75,6 +108,24 @@ export function ContractDetailClient({ initialContract, contractId, displayName,
 
   return (
     <div className="space-y-24 pb-40">
+      {/* Extraction Status Banner */}
+      {isExtracting && (
+        <div className="bg-wolvio-orange/10 border border-wolvio-orange/20 rounded-xl p-6 flex items-center justify-between animate-pulse">
+          <div className="flex items-center gap-4">
+            <Loader2 className="animate-spin text-wolvio-orange" size={24} />
+            <div>
+              <h3 className="text-wolvio-orange font-black uppercase tracking-widest text-sm">AI Extraction in Progress</h3>
+              <p className="text-slate-600 text-xs font-bold uppercase tracking-wider mt-1">
+                Currently scanning document structure and identifying commercial terms...
+              </p>
+            </div>
+          </div>
+          <div className="px-4 py-2 bg-wolvio-orange text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-lg">
+            {status?.toUpperCase() || 'PROCESSING'}
+          </div>
+        </div>
+      )}
+
       {/* Hero Header Section */}
       <div className="bg-white rounded-2xl p-12 border border-slate-200 relative overflow-hidden shadow-sm">
         
