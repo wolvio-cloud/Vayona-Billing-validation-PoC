@@ -18,6 +18,7 @@ const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: a
   GAP: { color: 'text-red-600', icon: XCircle, bg: 'bg-red-50' },
   OPPORTUNITY: { color: 'text-amber-600', icon: AlertTriangle, bg: 'bg-amber-50' },
   INSUFFICIENT_DATA: { color: 'text-slate-400', icon: Info, bg: 'bg-slate-100' },
+  ERROR: { color: 'text-slate-600', icon: Info, bg: 'bg-slate-200' },
 }
 
 export function ValidationLineItem({ check, showFormula = false }: ValidationLineItemProps) {

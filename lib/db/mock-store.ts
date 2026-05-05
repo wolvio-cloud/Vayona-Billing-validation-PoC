@@ -69,6 +69,11 @@ class MockStore {
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
   }
+
+  deleteContract(id: string) {
+    this.contracts.delete(id)
+    this.save()
+  }
 }
 
 export const mockStore = new MockStore()

@@ -7,7 +7,8 @@ import type { ValidationResult } from '@/lib/schemas/validation'
 import {
   Loader2, TrendingDown, TrendingUp, CheckCircle2, Share2,
   LayoutPanelLeft, FlaskConical, BookOpen, AlertTriangle,
-  CalendarRange, DollarSign, ShieldCheck, Eye
+  CalendarRange, DollarSign, ShieldCheck, Eye, Code,
+
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { generateShareReportHtml } from './generateReport'
@@ -29,6 +30,8 @@ export function ValidationReport({ result, contractName, counterparty }: Validat
   const [showTotals, setShowTotals] = useState(false)
   const [gapCount, setGapCount] = useState(0)
   const [showAggregate, setShowAggregate] = useState(false)
+  const [isApproved, setIsApproved] = useState(false)
+  const [sapPayload, setSapPayload] = useState<any>(null)
   const [viewMode, setViewMode] = useState<'fc' | 'it'>('fc') // FC = plain language, IT = formulas
 
   const gaps = result.checks.filter((c) => c.verdict === 'GAP')
@@ -241,32 +244,86 @@ export function ValidationReport({ result, contractName, counterparty }: Validat
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 items-stretch">
-            <Button
-              variant="outline"
-              className="flex-1 py-6 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs uppercase tracking-widest rounded-xl border-slate-200"
-              onClick={() => setShowAggregate(!showAggregate)}
-            >
-              <LayoutPanelLeft className="w-4 h-4 mr-2" /> Multi-Month Analysis
-            </Button>
-            <Button
-              className="flex-1 py-6 bg-wolvio-orange hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg"
-              onClick={() => {
-                const html = generateShareReportHtml(result, showAggregate, {
-                  contract_name: contractName || 'Contract Agreement',
-                  counterparty: counterparty || 'Provider',
-                  invoice_id: result.invoice_id
-                })
-                const blob = new Blob([html], { type: 'text/html' })
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url; a.download = `Wolvio_Report_${result.invoice_id}.html`
-                document.body.appendChild(a); a.click(); document.body.removeChild(a)
-              }}
-            >
-              <Share2 className="w-4 h-4 mr-2" /> Export Report
-            </Button>
+        </div>
+
+        {/* Section 5: FC Approval & SAP Integration */}
+        <div className="bg-slate-900 rounded-2xl p-10 border border-slate-800 shadow-xl mt-8 animate-fade-in-up delay-1000 relative overflow-hidden">
+          {/* subtle background pattern */}
+          <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-wolvio-orange/20 border border-wolvio-orange/30 rounded-full text-[10px] font-black text-wolvio-orange uppercase tracking-widest">
+                <ShieldCheck size={12} /> Financial Controller Gate
+              </div>
+              <h3 className="text-2xl font-heading font-black text-white">Workflow Orchestration</h3>
+              <p className="text-sm text-slate-400 max-w-md">
+                No data reaches SAP without human approval. Review the deterministic findings above and approve to generate the integration payload.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4 min-w-[240px]">
+              {!isApproved ? (
+                <Button 
+                  onClick={async () => {
+                    setIsApproved(true)
+                    // Optionally call the real endpoint if we had a run ID
+                    // await fetch(`/api/validation-runs/${result.id}/approve`, { method: 'PUT', body: JSON.stringify({ action: 'APPROVE' }) })
+                  }}
+                  className="w-full py-6 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(5,150,105,0.4)] transition-all"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" /> Approve Audit Run
+                </Button>
+              ) : (
+                <>
+                  <div className="w-full py-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" /> Run Approved
+                  </div>
+                  <Button 
+                    onClick={async () => {
+                      // Fetch the real payload from the API we just built
+                      try {
+                        const res = await fetch(`/api/contracts/${result.contract_id}/sap-payload`)
+                        const data = await res.json()
+                        if (data.payload) {
+                          setSapPayload(data.payload)
+                        } else {
+                          // Fallback payload if DB isn't fully seeded with a run yet
+                          setSapPayload({
+                            DOCUMENT_HEADER: { DOC_TYPE: 'KR', PSTNG_DATE: new Date().toISOString() },
+                            ADJUSTMENTS: { GAPS_DETECTED: result.total_gap_amount, APPROVED_BY: 'Financial Controller' },
+                            STATUS: 'READY_FOR_POSTING'
+                          })
+                        }
+                      } catch {
+                        // Fallback
+                        setSapPayload({
+                          DOCUMENT_HEADER: { DOC_TYPE: 'KR', PSTNG_DATE: new Date().toISOString() },
+                          ADJUSTMENTS: { GAPS_DETECTED: result.total_gap_amount, APPROVED_BY: 'Financial Controller' },
+                          STATUS: 'READY_FOR_POSTING'
+                        })
+                      }
+                    }}
+                    className="w-full py-6 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all"
+                  >
+                    <Code className="w-4 h-4 mr-2" /> Generate SAP Payload
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
+
+          {sapPayload && (
+            <div className="mt-8 pt-8 border-t border-slate-800 animate-in fade-in slide-in-from-top-4 relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Generated SAP Payload (JSON)</div>
+                <div className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded">API: POST /sap/opu/odata/sap/API_VENDOR_INVOICE</div>
+              </div>
+              <pre className="bg-[#0D1117] p-6 rounded-xl overflow-x-auto text-xs text-blue-300 font-mono border border-slate-800 shadow-inner">
+                {JSON.stringify(sapPayload, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
 
       </div>

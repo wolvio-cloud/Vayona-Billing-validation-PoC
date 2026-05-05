@@ -73,7 +73,11 @@ CREATE TABLE IF NOT EXISTS validation_runs (
   checks JSONB,
   total_gap_amount NUMERIC,
   total_opportunity_amount NUMERIC,
-  verdict TEXT
+  verdict TEXT,
+  status TEXT DEFAULT 'PENDING',
+  approved_by TEXT,
+  approved_at TIMESTAMPTZ,
+  fc_notes TEXT
 );
 `
 

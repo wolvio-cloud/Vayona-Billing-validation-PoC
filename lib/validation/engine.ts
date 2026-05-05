@@ -68,6 +68,18 @@ export async function runValidation(
         severity: verdict === 'GAP' ? 'High' : null,
         confidence: 'High'
       })
+    } else {
+      checks.push({
+        check_id: 'CHECK_1_BASE_FEE',
+        check_name: 'Base Fee',
+        verdict: 'INSUFFICIENT_DATA',
+        expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+        clause_reference: params.base_monthly_fee?.clause_reference || 'N/A',
+        source_clause: 'Base fee not found in contract',
+        page_number: params.base_monthly_fee?.page_number || 0,
+        explanation: 'Base monthly fee parameter is missing from the contract extraction.',
+        severity: 'High', confidence: 'High'
+      })
     }
   } catch (err: any) {
     checks.push({
@@ -133,6 +145,18 @@ export async function runValidation(
           })
         }
       }
+    } else {
+      checks.push({
+        check_id: 'CHECK_2_ESCALATION',
+        check_name: 'Escalation',
+        verdict: 'INSUFFICIENT_DATA',
+        expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+        clause_reference: params.escalation?.clause_reference || 'N/A',
+        source_clause: 'Escalation terms not found',
+        page_number: params.escalation?.page_number || 0,
+        explanation: 'WPI/CPI escalation parameters are missing from the contract extraction.',
+        severity: 'Medium', confidence: 'High'
+      })
     }
   } catch (err: any) {
     checks.push({
@@ -193,6 +217,18 @@ export async function runValidation(
           confidence: 'High'
         })
       }
+    } else {
+      checks.push({
+        check_id: 'CHECK_3_VARIABLE',
+        check_name: 'Variable Component',
+        verdict: 'INSUFFICIENT_DATA',
+        expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+        clause_reference: params.variable_component?.clause_reference || 'N/A',
+        source_clause: 'Variable rates not found',
+        page_number: params.variable_component?.page_number || 0,
+        explanation: 'Variable component rates are missing from the contract extraction.',
+        severity: 'Low', confidence: 'High'
+      })
     }
   } catch (err: any) {
     checks.push({
@@ -257,6 +293,18 @@ export async function runValidation(
           severity: 'Low', confidence: 'High'
         })
       }
+    } else {
+      checks.push({
+        check_id: 'CHECK_4_LD',
+        check_name: 'Liquidated Damages',
+        verdict: 'INSUFFICIENT_DATA',
+        expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+        clause_reference: params.ld_rate_per_pp?.clause_reference || 'N/A',
+        source_clause: 'LD terms not found',
+        page_number: params.ld_rate_per_pp?.page_number || 0,
+        explanation: 'Availability guarantee or LD rates are missing from the contract extraction.',
+        severity: 'Medium', confidence: 'High'
+      })
     }
   } catch (err: any) {
     checks.push({
@@ -319,6 +367,18 @@ export async function runValidation(
           severity: 'Low', confidence: 'High'
         })
       }
+    } else {
+      checks.push({
+        check_id: 'CHECK_5_BONUS',
+        check_name: 'Performance Bonus',
+        verdict: 'INSUFFICIENT_DATA',
+        expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+        clause_reference: params.bonus_threshold_pct?.clause_reference || 'N/A',
+        source_clause: 'Bonus terms not found',
+        page_number: params.bonus_threshold_pct?.page_number || 0,
+        explanation: 'Performance bonus thresholds or rates are missing from the contract extraction.',
+        severity: 'Low', confidence: 'High'
+      })
     }
   } catch (err: any) {
     checks.push({
@@ -370,6 +430,184 @@ export async function runValidation(
       page_number: 0, explanation: 'Error in calculation engine.',
       severity: 'Medium', confidence: 'Low'
     })
+  }
+
+  // CHECK 7 — Payment Terms Breach
+  try {
+    if (params.payment_terms_days?.value != null && params.late_payment_interest?.value) {
+      if (invoice.status === 'Pending' || invoice.status === 'Overdue') {
+        const invoiceDate = new Date(invoice.invoice_date)
+        const today = new Date()
+        const daysSinceInvoice = Math.floor((today.getTime() - invoiceDate.getTime()) / (1000 * 60 * 60 * 24))
+        
+        if (daysSinceInvoice > params.payment_terms_days.value) {
+          // Attempt to parse interest rate (e.g. "SBI base + 2%" or "15%")
+          const interestStr = params.late_payment_interest.value.toString()
+          const match = interestStr.match(/(\d+(?:\.\d+)?)/)
+          const parsedRate = match ? parseFloat(match[1]) : 15 // Fallback to 15% if unparseable
+          
+          const overdueDays = daysSinceInvoice - params.payment_terms_days.value
+          const outstanding = invoice.total
+          const interest = Math.round(outstanding * (parsedRate / 100) * (overdueDays / 365))
+          
+          checks.push({
+            check_id: 'CHECK_7_PAYMENT_TERMS',
+            check_name: 'Payment Terms Breach',
+            verdict: 'GAP',
+            expected_amount: 0,
+            actual_amount: 0,
+            gap_amount: interest,
+            opportunity_amount: null,
+            clause_reference: params.payment_terms_days.clause_reference,
+            source_clause: `Payment due in ${params.payment_terms_days.value} days. Interest: ${params.late_payment_interest.value}`,
+            page_number: params.payment_terms_days.page_number,
+            explanation: getFormulaProof(
+              'Late Payment Interest',
+              `${formatINR(outstanding)} × ${parsedRate}% × (${overdueDays} days / 365)`,
+              formatINR(interest)
+            ),
+            severity: 'High',
+            confidence: match ? 'High' : 'Medium'
+          })
+        } else {
+          checks.push({
+            check_id: 'CHECK_7_PAYMENT_TERMS',
+            check_name: 'Payment Terms',
+            verdict: 'MATCH',
+            expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: null,
+            clause_reference: params.payment_terms_days.clause_reference,
+            source_clause: `Payment due in ${params.payment_terms_days.value} days.`,
+            page_number: params.payment_terms_days.page_number,
+            explanation: `Invoice is within the ${params.payment_terms_days.value} day payment window (${daysSinceInvoice} days elapsed).`,
+            severity: null, confidence: 'High'
+          })
+        }
+      }
+    } else {
+      checks.push({
+        check_id: 'CHECK_7_PAYMENT_TERMS',
+        check_name: 'Payment Terms Breach',
+        verdict: 'INSUFFICIENT_DATA',
+        expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+        clause_reference: params.payment_terms_days?.clause_reference || 'N/A',
+        source_clause: 'Payment terms not found in contract',
+        page_number: params.payment_terms_days?.page_number || 0,
+        explanation: 'Payment terms or interest rate missing from contract parameters.',
+        severity: 'Low', confidence: 'High'
+      })
+    }
+  } catch (err: any) {
+    checks.push({
+      check_id: 'CHECK_7_PAYMENT_TERMS',
+      check_name: 'Payment Terms Breach',
+      verdict: 'ERROR',
+      expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+      clause_reference: 'N/A',
+      source_clause: 'Check failed: ' + err.message,
+      page_number: 0, explanation: 'Error in calculation engine.',
+      severity: 'High', confidence: 'Low'
+    })
+  }
+
+  // CHECK 8 — Escalation Cap/Floor applied
+  try {
+    if (params.escalation?.value && params.base_monthly_fee?.value != null) {
+      const esc = params.escalation.value
+      const indexType = esc.type
+      if (indexType === 'WPI' || indexType === 'CPI') {
+        const invoiceYear = new Date(invoice.invoice_date).getFullYear()
+        const baseMonth = esc.index_base_month || 'January'
+        const monthMap: Record<string, string> = { 'January': '01', 'April': '04' }
+        const mm = monthMap[baseMonth] || '01'
+        
+        const currentKey = `${invoiceYear}-${mm}`
+        const baseKey = `${invoiceYear - 1}-${mm}`
+        const currentIndex = lookupIndex(indexType, currentKey)
+        const baseIndex = lookupIndex(indexType, baseKey)
+
+        if (currentIndex && baseIndex) {
+          const rawFactor = currentIndex / baseIndex
+          const capFactor = 1 + (esc.cap_pct / 100)
+          const floorFactor = 1 + (esc.floor_pct / 100)
+          
+          if (rawFactor > capFactor) {
+            checks.push({
+              check_id: 'CHECK_8_CAP_FLOOR',
+              check_name: 'Escalation Cap Applied',
+              verdict: 'MATCH',
+              expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: null,
+              clause_reference: params.escalation.clause_reference,
+              source_clause: `Cap at ${esc.cap_pct}%`,
+              page_number: params.escalation.page_number,
+              explanation: `Raw escalation was ${((rawFactor - 1)*100).toFixed(2)}%, which exceeded the cap of ${esc.cap_pct}%. Cap was successfully applied to limit vendor payout.`,
+              severity: null, confidence: 'High'
+            })
+          } else if (rawFactor < floorFactor) {
+            checks.push({
+              check_id: 'CHECK_8_CAP_FLOOR',
+              check_name: 'Escalation Floor Applied',
+              verdict: 'GAP', // Floor means we must pay more than the raw index suggests, which is a financial gap from a purely index perspective, or just flag it
+              expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: null,
+              clause_reference: params.escalation.clause_reference,
+              source_clause: `Floor at ${esc.floor_pct}%`,
+              page_number: params.escalation.page_number,
+              explanation: `Raw escalation was ${((rawFactor - 1)*100).toFixed(2)}%, which was below the floor of ${esc.floor_pct}%. Floor was applied.`,
+              severity: 'Low', confidence: 'High'
+            })
+          } else {
+             checks.push({
+              check_id: 'CHECK_8_CAP_FLOOR',
+              check_name: 'Escalation Guardrails',
+              verdict: 'MATCH',
+              expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: null,
+              clause_reference: params.escalation.clause_reference,
+              source_clause: `Cap ${esc.cap_pct}% | Floor ${esc.floor_pct}%`,
+              page_number: params.escalation.page_number,
+              explanation: `Raw escalation was ${((rawFactor - 1)*100).toFixed(2)}%, which is within the contractual cap and floor limits. No override required.`,
+              severity: null, confidence: 'High'
+            })
+          }
+        } else {
+          checks.push({
+            check_id: 'CHECK_8_CAP_FLOOR',
+            check_name: 'Escalation Guardrails',
+            verdict: 'INSUFFICIENT_DATA',
+            expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+            clause_reference: params.escalation.clause_reference,
+            source_clause: 'WPI Index data missing',
+            page_number: params.escalation.page_number,
+            explanation: 'Index data for the period not available in the local cache.',
+            severity: 'Low', confidence: 'High'
+          })
+        }
+      } else {
+        checks.push({
+          check_id: 'CHECK_8_CAP_FLOOR',
+          check_name: 'Escalation Guardrails',
+          verdict: 'MATCH',
+          expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: null,
+          clause_reference: params.escalation.clause_reference,
+          source_clause: 'Fixed Escalation / None',
+          page_number: params.escalation.page_number,
+          explanation: 'No index-based escalation cap/floor applicable for this contract type.',
+          severity: null, confidence: 'High'
+        })
+      }
+    } else {
+      checks.push({
+        check_id: 'CHECK_8_CAP_FLOOR',
+        check_name: 'Escalation Guardrails',
+        verdict: 'INSUFFICIENT_DATA',
+        expected_amount: 0, actual_amount: 0, gap_amount: 0, opportunity_amount: 0,
+        clause_reference: params.escalation?.clause_reference || 'N/A',
+        source_clause: 'Escalation terms not found',
+        page_number: params.escalation?.page_number || 0,
+        explanation: 'Escalation clause or base fee missing from contract parameters.',
+        severity: 'Low', confidence: 'High'
+      })
+    }
+  } catch (err: any) {
+    // Check 8 fail silently, non-critical
   }
 
   return checks

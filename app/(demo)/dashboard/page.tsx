@@ -1,7 +1,6 @@
-import { ContractCard } from '@/components/contract/ContractCard'
+import { PortfolioBoard } from '@/components/dashboard/PortfolioBoard'
 import { UploadFlow } from '@/components/upload/UploadFlow'
-import { LayoutGrid, Zap, ShieldCheck, BarChart3, TrendingUp, AlertTriangle } from 'lucide-react'
-import Link from 'next/link'
+import { BarChart3, ShieldCheck, AlertTriangle } from 'lucide-react'
 import path from 'path'
 import fs from 'fs/promises'
 
@@ -15,7 +14,7 @@ async function getPortfolio() {
         display_name, 
         extraction_status,
         parameters->>'contract_type' as contract_type,
-        parameters->'base_annual_fee'->>'value' as annual_fee,
+        parameters->'base_annual_fee'->'value' as annual_fee,
         created_at
       FROM contracts 
       ORDER BY created_at DESC
@@ -40,8 +39,15 @@ async function getPortfolio() {
   } catch (err) {
     console.warn('Dashboard falling back to JSON:', err)
     const p = path.join(process.cwd(), 'demo_data', 'portfolio.json')
-    const raw = await fs.readFile(p, 'utf-8')
-    return JSON.parse(raw) as PortfolioContract[]
+    if (path.extname(p) === '.json') {
+      try {
+        const raw = await fs.readFile(p, 'utf-8')
+        return JSON.parse(raw) as PortfolioContract[]
+      } catch (e) {
+         return []
+      }
+    }
+    return []
   }
 }
 
@@ -60,22 +66,6 @@ interface PortfolioContract {
   outstanding_gap_inr: number
   demo_highlight: string
 }
-
-const RISK_CONFIG = {
-  LOW:      { color: 'text-emerald-600', bg: 'bg-emerald-50',  border: 'border-emerald-100', dot: 'bg-emerald-500' },
-  MEDIUM:   { color: 'text-amber-600',  bg: 'bg-amber-50',    border: 'border-amber-100',   dot: 'bg-amber-500' },
-  HIGH:     { color: 'text-orange-600', bg: 'bg-orange-50',   border: 'border-orange-100',  dot: 'bg-orange-500' },
-  CRITICAL: { color: 'text-red-600',    bg: 'bg-red-50',      border: 'border-red-100',     dot: 'bg-red-500 animate-pulse' },
-}
-
-const ASSET_ICON: Record<string, string> = {
-  Wind: '🌀', Solar: '☀️', Hybrid: '⚡', Default: '🏭',
-}
-
-const FALLBACK_PORTFOLIO: PortfolioContract[] = [
-  { contract_id: 'C001', display_name: 'Wind Farm Alpha — LTSA', contract_type: 'LTSA', asset_type: 'Wind', counterparty: 'GreenWind Power Pvt. Ltd.', location: 'Jaisalmer, Rajasthan', capacity_mw: 150, term_years: 15, base_annual_fee: 144000000, extraction_status: 'completed', risk_score: 'HIGH', outstanding_gap_inr: 5424000, demo_highlight: 'WPI escalation not applied — ₹5.42L gap' },
-  { contract_id: 'C002', display_name: 'ReNew Power Mega-LTSA', contract_type: 'LTSA', asset_type: 'Wind', counterparty: 'Siemens Gamesa India', location: 'Kutch, Gujarat', capacity_mw: 300, term_years: 25, base_annual_fee: 480000000, extraction_status: 'completed', risk_score: 'CRITICAL', outstanding_gap_inr: 19200000, demo_highlight: 'LD rate 2.5%/PP — highest exposure' },
-]
 
 function formatCr(val: number): string {
   if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)} Cr`
@@ -133,63 +123,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {portfolio.map((contract) => {
-              const risk = RISK_CONFIG[contract.risk_score]
-              const icon = ASSET_ICON[contract.asset_type] || ASSET_ICON.Default
-              return (
-                <Link
-                  key={contract.contract_id}
-                  href={`/contracts/${contract.contract_id}`}
-                  className={`group bg-white rounded-xl p-6 border ${risk.border} hover:border-wolvio-orange/30 transition-all block shadow-sm`}
-                >
-                  <div className="flex items-start justify-between gap-6">
-                    <div className="flex items-start gap-5 min-w-0">
-                      <div className={`w-12 h-12 flex-shrink-0 rounded-xl ${risk.bg} flex items-center justify-center text-2xl border ${risk.border}`}>
-                        {icon}
-                      </div>
-                      <div className="min-w-0 space-y-1.5">
-                        <div className="flex items-center gap-3">
-                          <span className="text-[10px] font-black text-black font-mono tracking-widest">{contract.contract_id}</span>
-                          <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${risk.bg} ${risk.color} border ${risk.border}`}>
-                            {contract.risk_score}
-                          </span>
-                          <div className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                            {contract.contract_type}
-                          </div>
-                        </div>
-                        <h3 className="text-xl font-heading font-black text-slate-900 tracking-tight group-hover:text-wolvio-orange transition-colors truncate">
-                          {contract.display_name}
-                        </h3>
-                        <div className="flex items-center gap-3 text-[11px] font-bold text-slate-500">
-                          <span className="text-wolvio-orange">{contract.location}</span>
-                          <span className="opacity-20">|</span>
-                          <span>{contract.counterparty}</span>
-                          <span className="opacity-20">|</span>
-                          <span className="font-mono">{contract.capacity_mw}MW</span>
-                        </div>
-                        <div className="bg-wolvio-orange/5 border border-wolvio-orange/10 rounded-lg px-3 py-1 mt-2 inline-block">
-                          <p className="text-[10px] font-bold text-wolvio-orange/90 italic tracking-wide">{contract.demo_highlight}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex-shrink-0 text-right space-y-2">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Annual Exposure</div>
-                      <div className="text-xl font-mono font-bold text-slate-900 tracking-tight">
-                        {formatCr(contract.base_annual_fee)}
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Unrealized Gaps</div>
-                        <div className={`font-mono text-sm font-black ${contract.outstanding_gap_inr > 0 ? 'text-wolvio-orange' : 'text-wolvio-green'}`}>
-                          {contract.outstanding_gap_inr > 0 ? formatCr(contract.outstanding_gap_inr) : 'CLEAN'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
+          <PortfolioBoard initialContracts={portfolio} />
 
           {/* Data Provenance Banner */}
           <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 flex items-center justify-between gap-4">
