@@ -33,8 +33,8 @@ export default function LoginPage() {
       <div className="w-full max-w-[450px] z-10">
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-10 animate-in fade-in slide-in-from-top-4 duration-1000">
-          <div className="w-16 h-16 bg-wolvio-orange rounded-[20px] flex items-center justify-center mb-6 shadow-lg shadow-orange-500/20">
-            <Lock className="text-white w-8 h-8" />
+          <div className="w-44 h-16 px-8 bg-slate-900 rounded-[28px] flex items-center justify-center mb-8 shadow-2xl shadow-slate-900/30">
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-heading font-extrabold text-slate-900 tracking-tight">Wolvio Analytics</h1>
           <p className="text-slate-400 font-medium mt-2">Enterprise Contract Intelligence</p>
