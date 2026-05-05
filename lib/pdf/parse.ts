@@ -8,117 +8,71 @@ export interface ParsedPDF {
   pageCount: number
   chunks: string[]
   pages: string[]
+  screenshots?: string[] // base64 images
 }
 
-/**
- * Polyfill browser globals required by pdfjs-dist v5 in Node.js.
- * Must be called before any pdfjs/pdf-parse import.
- */
-function polyfillForNode() {
-  const g = globalThis as any
-  if (typeof g.DOMMatrix === 'undefined') {
-    // Minimal DOMMatrix stub — pdfjs uses this for canvas transforms.
-    // We don't need real math here since we're only extracting text.
-    g.DOMMatrix = class DOMMatrix {
-      a=1; b=0; c=0; d=1; e=0; f=0
-      m11=1; m12=0; m13=0; m14=0
-      m21=0; m22=1; m23=0; m24=0
-      m31=0; m32=0; m33=1; m34=0
-      m41=0; m42=0; m43=0; m44=1
-      is2D=true; isIdentity=true
-      constructor(_init?: string | number[]) {}
-      static fromMatrix(m: any) { return new g.DOMMatrix() }
-      static fromFloat32Array(a: Float32Array) { return new g.DOMMatrix() }
-      static fromFloat64Array(a: Float64Array) { return new g.DOMMatrix() }
-      multiply() { return this }
-      translate() { return this }
-      scale() { return this }
-      rotate() { return this }
-      inverse() { return this }
-      flipX() { return this }
-      flipY() { return this }
-      skewX() { return this }
-      skewY() { return this }
-      transformPoint(p: any) { return p }
-      toFloat32Array() { return new Float32Array(16) }
-      toFloat64Array() { return new Float64Array(16) }
-      toString() { return 'matrix(1, 0, 0, 1, 0, 0)' }
-    }
-  }
-  if (typeof g.DOMPoint === 'undefined') {
-    g.DOMPoint = class DOMPoint {
-      x=0; y=0; z=0; w=1
-      constructor(x=0, y=0, z=0, w=1) { this.x=x; this.y=y; this.z=z; this.w=w }
-      static fromPoint(p: any) { return new g.DOMPoint(p?.x, p?.y, p?.z, p?.w) }
-      matrixTransform() { return this }
-      toJSON() { return {x:this.x,y:this.y,z:this.z,w:this.w} }
-    }
-  }
-  if (typeof g.Path2D === 'undefined') {
-    g.Path2D = class Path2D {
-      constructor(_path?: any) {}
-      addPath() {}
-      closePath() {}
-      moveTo() {}
-      lineTo() {}
-      bezierCurveTo() {}
-      quadraticCurveTo() {}
-      arc() {}
-      arcTo() {}
-      ellipse() {}
-      rect() {}
-    }
-  }
-  if (typeof g.ImageData === 'undefined') {
-    g.ImageData = class ImageData {
-      data: Uint8ClampedArray
-      width: number
-      height: number
-      constructor(w: number, h: number) {
-        this.width = w; this.height = h
-        this.data = new Uint8ClampedArray(w * h * 4)
-      }
-    }
-  }
-}
-
-// Lazy-loaded pdf-parse (avoids static analysis crash during Next.js build)
+// Lazy-loaded pdf-parse
 let pdfParse: any = null
 
 export async function parsePDF(buffer: Buffer): Promise<ParsedPDF> {
-  // Apply polyfills before any pdfjs code runs
-  polyfillForNode()
-
   if (!pdfParse) {
     const { createRequire } = await import('module')
     const require = createRequire(import.meta.url)
     const mod = require('pdf-parse')
-    pdfParse = mod.PDFParse
+    logger.info('Lazy-loaded pdf-parse module keys:', Object.keys(mod))
+    pdfParse = mod.PDFParse || mod.default?.PDFParse || mod.default
+    if (!pdfParse) {
+      logger.error('Failed to find PDFParse in module', { keys: Object.keys(mod) })
+      throw new Error('pdf-parse module initialization failed')
+    }
   }
 
   return logger.timed('parsePDF', async () => {
     const parser = new pdfParse({ data: buffer, verbosity: 0 })
-    const result = await parser.getText()
     
-    const rawText: string = result.text
-    const pageCount: number = result.total
+    // 1. Get Text
+    const textResult = await parser.getText()
+    const rawText: string = textResult.text
+    const pageCount: number = textResult.total
 
-    // Use result.pages if available, otherwise fallback to raw text split
     let pages: string[] = []
-    if (result.pages && Array.isArray(result.pages)) {
-      pages = result.pages.map((p: any) => 
+    if (textResult.pages && Array.isArray(textResult.pages)) {
+      pages = textResult.pages.map((p: any) => 
         p.text.split('\n')
           .map((line: string) => line.replace(/[ \t]+/g, ' ').trim())
           .filter((line: string) => line.length > 0)
           .join('\n')
       ).filter((p: string) => p.length > 0)
-    } else {
+    }
+
+    // Fallback if structured pages is empty but rawText has content
+    if (pages.length === 0 && rawText.trim().length > 0) {
       pages = [rawText]
     }
 
     const text = pages.join('\n\n--- PAGE BREAK ---\n\n')
 
-    // Group pages into ~100KB chunks for LLM context
+    // 2. Get Screenshots for the first 3 pages (as fallback for OCR)
+    const screenshots: string[] = []
+    try {
+      const screenshotResult = await parser.getScreenshot({ 
+        first: 1, 
+        last: Math.min(pageCount, 3), 
+        scale: 1.5 // Good balance of quality vs token cost
+      })
+      
+      if (screenshotResult.pages) {
+        for (const p of screenshotResult.pages) {
+          if (p.dataUrl) {
+            screenshots.push(p.dataUrl)
+          }
+        }
+      }
+    } catch (err) {
+      logger.warn('Failed to extract screenshots from PDF', err)
+    }
+
+    // Group pages into ~100KB chunks
     const chunks: string[] = []
     let currentChunk = ''
     for (const pageText of pages) {
@@ -130,7 +84,12 @@ export async function parsePDF(buffer: Buffer): Promise<ParsedPDF> {
     }
     if (currentChunk.length > 0) chunks.push(currentChunk)
 
-    logger.info('Parsed PDF (page-aware)', { pageCount, chars: text.length, chunks: chunks.length })
-    return { text, pageCount, chunks, pages }
+    logger.info('Parsed PDF', { 
+      pageCount, 
+      chars: text.length, 
+      screenshots: screenshots.length 
+    })
+    
+    return { text, pageCount, chunks, pages, screenshots }
   })
 }

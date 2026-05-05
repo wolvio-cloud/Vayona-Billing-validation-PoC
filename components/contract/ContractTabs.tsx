@@ -14,16 +14,16 @@ export function ContractTabs({ children, contract, termYears }: ContractTabsProp
   return (
     <Tabs defaultValue="parameters" className="w-full">
       <div className="flex justify-center mb-8">
-        <TabsList className="bg-[--color-wolvio-surface] border border-wolvio-slate p-1.5 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
+        <TabsList className="bg-white border border-slate-200 p-1.5 rounded-full shadow-sm">
           <TabsTrigger 
             value="parameters" 
-            className="rounded-full px-6 py-2.5 text-sm font-semibold tracking-wide data-[state=active]:bg-wolvio-orange data-[state=active]:text-white text-wolvio-mid transition-all"
+            className="rounded-full px-6 py-2.5 text-sm font-semibold tracking-wide data-[state=active]:bg-wolvio-orange data-[state=active]:text-white text-slate-400 transition-all hover:text-slate-900"
           >
             Extracted Parameters
           </TabsTrigger>
           <TabsTrigger 
             value="simulate" 
-            className="rounded-full px-6 py-2.5 text-sm font-semibold tracking-wide data-[state=active]:bg-wolvio-orange data-[state=active]:text-white text-wolvio-mid transition-all"
+            className="rounded-full px-6 py-2.5 text-sm font-semibold tracking-wide data-[state=active]:bg-wolvio-orange data-[state=active]:text-white text-slate-400 transition-all hover:text-slate-900"
           >
             Simulate Scenarios
           </TabsTrigger>

@@ -11,11 +11,11 @@ interface ContractHeaderProps {
 
 export function ContractHeader({ displayName, contractType, isDemo, annualFee, termYears, counterparty }: ContractHeaderProps) {
   return (
-    <div className="bg-[--color-wolvio-surface] rounded-[12px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center justify-between border border-wolvio-slate">
+    <div className="bg-white rounded-[12px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center justify-between border border-wolvio-slate">
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <h1 className="font-heading font-extrabold text-2xl text-[--color-wolvio-light]">{displayName}</h1>
-          <span className="px-2 py-1 bg-wolvio-navy border border-wolvio-slate text-[--color-wolvio-light] text-xs font-bold uppercase tracking-wider rounded-md">{contractType ?? 'LTSA'}</span>
+          <h1 className="font-heading font-extrabold text-2xl text-slate-900">{displayName}</h1>
+          <span className="px-2 py-1 bg-wolvio-navy border border-wolvio-slate text-slate-900 text-xs font-bold uppercase tracking-wider rounded-md">{contractType ?? 'LTSA'}</span>
           {isDemo && <span className="px-2 py-1 bg-orange-500/20 text-wolvio-orange border border-orange-500/30 text-xs font-bold uppercase tracking-wider rounded-md">Demo</span>}
         </div>
         <div className="flex items-center gap-4 text-sm font-medium text-wolvio-mid">

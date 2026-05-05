@@ -6,7 +6,6 @@ import { ContractParameters } from '@/lib/schemas/contract'
 import { ParameterField } from './ParameterField'
 import { ContractSimulator } from './ContractSimulator'
 import { Button } from '@/components/ui/button'
-import { GlassCard } from '@/components/ui/glass-card'
 import { 
   ShieldCheck, 
   FileText, 
@@ -49,44 +48,43 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
   return (
     <div className="space-y-24 pb-40">
       {/* Hero Header Section */}
-      <GlassCard className="p-16 border-none shadow-[0_60px_100px_-20px_rgba(0,0,0,0.7)] relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-wolvio-orange/20 via-transparent to-blue-600/10 pointer-events-none transition-all duration-1000 group-hover:opacity-100" />
+      <div className="bg-white rounded-2xl p-12 border border-slate-200 relative overflow-hidden shadow-sm">
         
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-16">
           <div className="space-y-8 flex-1">
             <div className="flex items-center gap-4">
-              <div className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-wolvio-orange text-[10px] font-black tracking-[0.3em] uppercase">
+              <div className="px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-wolvio-orange text-[10px] font-black tracking-[0.3em] uppercase">
                 {contract.contract_type || 'LTSA'} · ID: {contractId}
               </div>
-              <div className="flex items-center gap-2 text-wolvio-green text-[10px] font-black uppercase tracking-[0.3em]">
+              <div className="flex items-center gap-2 text-emerald-600 text-[10px] font-black uppercase tracking-[0.3em]">
                 <ShieldCheck size={14} /> Extraction Validated
               </div>
             </div>
 
-            <h1 className="text-6xl md:text-7xl font-heading font-black text-white tracking-tighter leading-tight max-w-3xl break-words">
+            <h1 className="text-6xl md:text-5xl font-heading font-black text-slate-900 tracking-tighter leading-tight max-w-3xl break-words">
               {displayName}
             </h1>
 
             <div className="flex flex-wrap items-center gap-10">
               <div className="space-y-1">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Annual Commitment</div>
-                <div className="text-2xl font-mono font-black text-white tracking-tighter">
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Annual Commitment</div>
+                <div className="text-2xl font-mono font-black text-slate-900 tracking-tighter">
                   {contract.base_annual_fee?.value ? `₹${(contract.base_annual_fee.value / 10000000).toFixed(2)} Cr` : 'N/A'}
                 </div>
               </div>
-              <div className="w-[1px] h-10 bg-white/10 hidden md:block" />
+              <div className="w-[1px] h-10 bg-slate-200 hidden md:block" />
               <div className="space-y-1">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Data Fidelity</div>
-                <div className="text-2xl font-mono font-black text-wolvio-green tracking-tighter">
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Data Fidelity</div>
+                <div className="text-2xl font-mono font-black text-emerald-600 tracking-tighter">
                   {totalCount > 0 ? Math.round((foundCount / totalCount) * 100) : 0}%
                 </div>
               </div>
-              <div className="w-[1px] h-10 bg-white/10 hidden md:block" />
+              <div className="w-[1px] h-10 bg-slate-200 hidden md:block" />
               <div className="space-y-1">
-                <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">System Status</div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Status</div>
                 <div className="flex items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-wolvio-orange animate-ping" />
-                   <div className="text-sm font-black text-white uppercase tracking-widest">Active Engine</div>
+                   <div className="w-1.5 h-1.5 rounded-full bg-wolvio-orange" />
+                   <div className="text-xs font-bold text-slate-900 uppercase tracking-widest">Active Engine</div>
                 </div>
               </div>
             </div>
@@ -98,20 +96,20 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
                 window.scrollTo(0, 0)
                 router.push(`/contracts/${contractId}/validate`)
               }}
-              className="bg-wolvio-orange hover:bg-[#d95a2b] text-white px-16 py-10 rounded-[32px] text-2xl font-black shadow-[0_30px_60px_-15px_rgba(242,102,48,0.5)] group transition-all hover:scale-105 active:scale-95"
+              className="bg-wolvio-orange hover:bg-orange-700 text-white px-8 py-6 rounded-xl text-lg font-bold shadow-lg transition-all"
             >
-              Start Audit <ArrowRight className="ml-6 w-8 h-8 group-hover:translate-x-4 transition-transform" />
+              Start Audit <ArrowRight className="ml-3 w-5 h-5" />
             </Button>
             <Button 
               variant="outline"
               onClick={() => setShowQuickFix(true)}
-              className="glass border-white/10 text-white/60 hover:text-white px-8 py-6 rounded-2xl text-xs font-black uppercase tracking-[0.3em] transition-all"
+              className="bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 px-6 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
             >
-              Manual Override <Cpu className="ml-4 w-4 h-4" />
+              Manual Override
             </Button>
           </div>
         </div>
-      </GlassCard>
+      </div>
 
       <QuickFixModal 
         isOpen={showQuickFix}
@@ -123,16 +121,16 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
       {/* Main Parameters Display */}
       <div className="grid grid-cols-1 gap-32">
         {/* CATEGORY: COMMERCIAL */}
-        <section className="space-y-12">
-          <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-blue-500/10 rounded-[24px] flex items-center justify-center border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-              <BarChart3 className="text-blue-400" size={32} />
+        <section className="space-y-8">
+          <div className="flex items-center gap-6">
+            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100">
+              <BarChart3 className="text-blue-600" size={24} />
             </div>
             <div className="space-y-1">
-              <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Commercial Baseline</h2>
-              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Fixed and Variable Fee Structures</p>
+              <h2 className="text-2xl font-heading font-black text-slate-900 tracking-tight uppercase">Commercial Baseline</h2>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Fixed and Variable Fee Structures</p>
             </div>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+            <div className="flex-1 h-[1px] bg-slate-200" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <ParameterField 
@@ -166,16 +164,16 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
         </section>
 
         {/* CATEGORY: ESCALATION */}
-        <section className="space-y-12">
-          <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-purple-500/10 rounded-[24px] flex items-center justify-center border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
-              <TrendingUp className="text-purple-400" size={32} />
+        <section className="space-y-8">
+          <div className="flex items-center gap-6">
+            <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center border border-purple-100">
+              <TrendingUp className="text-purple-600" size={24} />
             </div>
             <div className="space-y-1">
-              <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Indexation & Escalation</h2>
-              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Inflation Adjustments & Cap Mechanisms</p>
+              <h2 className="text-2xl font-heading font-black text-slate-900 tracking-tight uppercase">Indexation & Escalation</h2>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Inflation Adjustments & Cap Mechanisms</p>
             </div>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+            <div className="flex-1 h-[1px] bg-slate-200" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <ParameterField 
@@ -206,16 +204,16 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
         </section>
 
         {/* CATEGORY: PERFORMANCE */}
-        <section className="space-y-12">
-          <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-green-500/10 rounded-[24px] flex items-center justify-center border border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
-              <Cpu className="text-green-400" size={32} />
+        <section className="space-y-8">
+          <div className="flex items-center gap-6">
+            <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center border border-emerald-100">
+              <Cpu className="text-emerald-600" size={24} />
             </div>
             <div className="space-y-1">
-              <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Performance & Risk</h2>
-              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Guarantees, LDs and Penalties</p>
+              <h2 className="text-2xl font-heading font-black text-slate-900 tracking-tight uppercase">Performance & Risk</h2>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Guarantees, LDs and Penalties</p>
             </div>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+            <div className="flex-1 h-[1px] bg-slate-200" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <ParameterField 
@@ -246,16 +244,16 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
         </section>
 
         {/* CATEGORY: LEGAL & ADMIN */}
-        <section className="space-y-12 pb-20">
-          <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-amber-500/10 rounded-[24px] flex items-center justify-center border border-amber-500/20 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
-              <FileText className="text-amber-400" size={32} />
+        <section className="space-y-8 pb-10">
+          <div className="flex items-center gap-6">
+            <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
+              <FileText className="text-amber-600" size={24} />
             </div>
             <div className="space-y-1">
-              <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Administrative & Legal</h2>
-              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Payment Terms, Interest & Renewal</p>
+              <h2 className="text-2xl font-heading font-bold text-slate-900 tracking-tight uppercase">Administrative & Legal</h2>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Payment Terms & Interest</p>
             </div>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+            <div className="flex-1 h-[1px] bg-slate-200" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             <ParameterField 
@@ -286,16 +284,16 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
         </section>
 
         {/* CATEGORY: PREDICTIVE FORECASTING */}
-        <section className="space-y-12 pb-20">
-          <div className="flex items-center gap-8">
-            <div className="w-16 h-16 bg-red-500/10 rounded-[24px] flex items-center justify-center border border-red-500/20 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-              <TrendingUp className="text-red-400" size={32} />
+        <section className="space-y-8 pb-20">
+          <div className="flex items-center gap-6">
+            <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center border border-red-100">
+              <TrendingUp className="text-red-600" size={24} />
             </div>
             <div className="space-y-1">
-              <h2 className="text-2xl font-heading font-black text-white tracking-tight uppercase">Predictive Financial Modeling</h2>
-              <p className="text-sm font-bold text-wolvio-mid uppercase tracking-widest">Simulate Long-Term Exposure & Risk</p>
+              <h2 className="text-2xl font-heading font-bold text-slate-900 tracking-tight uppercase">Financial Modeling</h2>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Simulate Exposure & Risk</p>
             </div>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+            <div className="flex-1 h-[1px] bg-slate-200" />
           </div>
           <ContractSimulator contract={contract} termYears={(contract as any).termYears || 15} />
         </section>

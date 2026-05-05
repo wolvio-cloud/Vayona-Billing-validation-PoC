@@ -87,40 +87,40 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="glass border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] sm:max-w-[800px] text-white">
+      <DialogContent className="bg-white border border-slate-200 shadow-2xl sm:max-w-[800px] text-slate-900">
         <DialogHeader>
           <DialogTitle className="text-2xl font-heading font-black uppercase tracking-tight flex items-center gap-3">
             <ListFilter className="text-wolvio-orange" /> Smart Mapping Workbench
           </DialogTitle>
-          <DialogDescription className="text-wolvio-mid font-medium">
+          <DialogDescription className="text-slate-500 font-medium">
             {rawInvoice?.counterparty ? `Source: ${rawInvoice.counterparty} | Learning active` : 'Categorize line items to ensure audit accuracy.'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-6 space-y-4 max-h-[60vh] overflow-y-auto px-1 scrollbar-hide">
-          <div className="grid grid-cols-[1fr,120px,180px] gap-4 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white/30 border-b border-white/5">
+          <div className="grid grid-cols-[1fr,120px,180px] gap-4 px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-300 border-b border-slate-100">
             <div>Line Item Description</div>
             <div className="text-right">Amount</div>
             <div>Category Mapping</div>
           </div>
           
           {lineItems.map((item) => (
-            <div key={item.item_id} className="grid grid-cols-[1fr,120px,180px] gap-4 items-center p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+            <div key={item.item_id} className="grid grid-cols-[1fr,120px,180px] gap-4 items-center p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
               <div className="space-y-1">
-                <p className="text-xs font-bold text-white leading-snug">{item.description}</p>
-                <p className="text-[9px] text-white/40 uppercase tracking-widest">{item.quantity} {item.unit} @ {formatINR(item.unit_rate)}</p>
+                <p className="text-xs font-bold text-slate-900 leading-snug">{item.description}</p>
+                <p className="text-[9px] text-slate-400 uppercase tracking-widest">{item.quantity} {item.unit} @ {formatINR(item.unit_rate)}</p>
               </div>
-              <div className="text-right font-mono text-sm font-bold text-white">
+              <div className="text-right font-mono text-sm font-bold text-slate-900">
                 {formatINR(item.amount)}
               </div>
               <Select 
                 value={item.category} 
                 onValueChange={(val) => handleCategoryChange(item.item_id, val)}
               >
-                <SelectTrigger className="bg-black/20 border-white/10 text-[10px] font-black uppercase h-10 focus:ring-1 focus:ring-wolvio-orange/50">
+                <SelectTrigger className="bg-white border-slate-200 text-[10px] font-black uppercase h-10 focus:ring-1 focus:ring-wolvio-orange/50">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#0A101F] border-white/10 text-white">
+                <SelectContent className="bg-white border-slate-200 text-slate-900">
                   {CATEGORIES.map(cat => (
                     <SelectItem key={cat} value={cat} className="text-[10px] font-black uppercase tracking-widest focus:bg-wolvio-orange focus:text-white">
                       {cat}
@@ -132,12 +132,12 @@ export function InvoiceMappingModal({ isOpen, onClose, rawInvoice, onMappingComp
           ))}
         </div>
 
-        <DialogFooter className="pt-6 border-t border-white/5 gap-4">
-          <div className="flex-1 flex items-center gap-3 text-amber-400/60">
+        <DialogFooter className="pt-6 border-t border-slate-100 gap-4">
+          <div className="flex-1 flex items-center gap-3 text-amber-600">
             <AlertTriangle size={14} />
             <span className="text-[10px] font-bold uppercase tracking-widest">Calculations will auto-update</span>
           </div>
-          <Button variant="ghost" onClick={onClose} className="text-wolvio-mid hover:text-white font-black text-xs uppercase tracking-widest">
+          <Button variant="ghost" onClick={onClose} className="text-slate-400 hover:text-slate-900 font-black text-xs uppercase tracking-widest">
             Cancel
           </Button>
           <Button 

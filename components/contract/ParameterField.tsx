@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Edit2, Check, X, ChevronDown, ChevronUp } from 'lucide-react'
-import { GlassCard } from '@/components/ui/glass-card'
+import { Edit2, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface ParameterFieldProps {
   label: string
@@ -33,22 +32,19 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
   }
 
   return (
-    <GlassCard 
-      hover={!isEditing}
-      className={`transition-all duration-500 group overflow-hidden flex flex-col ${
-        isEditing ? 'border-wolvio-orange ring-1 ring-wolvio-orange' : 'border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)]'
+    <div 
+      className={`bg-white rounded-xl border transition-all flex flex-col shadow-sm ${
+        isEditing ? 'border-wolvio-orange' : 'border-slate-200'
       }`}
     >
-      <div className="p-8 flex-1 flex flex-col justify-between relative overflow-hidden">
-        {/* Subtle accent glow */}
-        <div className={`absolute top-0 right-0 w-32 h-32 blur-[40px] opacity-10 rounded-full translate-x-16 -translate-y-16 ${confidenceColor}`} />
+      <div className="p-6 flex-1 flex flex-col justify-between relative overflow-hidden">
         
         <div className="space-y-6 relative z-10">
           <div className="flex items-center justify-between">
-            <h4 className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.3em]">{label}</h4>
-            <div className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full ${confidenceColor} ${confidence !== 'manual_input' ? 'shadow-[0_0_10px_currentColor]' : ''}`} />
-              <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{confidence} confidence</span>
+            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</h4>
+            <div className="flex items-center gap-2">
+              <div className={`w-1.5 h-1.5 rounded-full ${confidenceColor}`} />
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{confidence}</span>
             </div>
           </div>
           
@@ -57,7 +53,7 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
               <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
                 <input 
                   autoFocus
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xl font-mono font-bold text-white outline-none focus:border-wolvio-orange transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xl font-mono font-bold text-slate-900 outline-none focus:border-wolvio-orange transition-colors"
                   value={tempValue}
                   onChange={(e) => setTempValue(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSave()}
@@ -65,13 +61,13 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
                 <div className="flex gap-2">
                   <button 
                     onClick={handleSave}
-                    className="flex-1 bg-wolvio-orange text-white py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#d95a2b] transition-colors"
+                    className="flex-1 bg-wolvio-orange text-white py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-orange-700 transition-colors"
                   >
                     Confirm
                   </button>
                   <button 
                     onClick={() => { setIsEditing(false); setTempValue(value || '') }}
-                    className="px-4 bg-white/5 text-white/60 py-2 rounded-lg text-xs font-bold uppercase hover:bg-white/10 transition-colors"
+                    className="px-4 bg-slate-100 text-slate-400 py-2 rounded-lg text-xs font-bold uppercase hover:bg-slate-200 transition-colors"
                   >
                     Cancel
                   </button>
@@ -82,7 +78,7 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
                 className="group/val cursor-pointer relative"
                 onClick={() => setIsEditing(true)}
               >
-                <div className={`text-3xl font-heading font-black tracking-tighter transition-colors ${isNotFound ? 'text-red-500/60' : 'text-white group-hover/val:text-wolvio-orange'}`}>
+                <div className={`text-2xl font-heading font-bold tracking-tight transition-colors ${isNotFound ? 'text-red-500/60' : 'text-slate-900'}`}>
                   {value || 'NOT FOUND'}
                 </div>
                 <div className="absolute -right-2 top-0 opacity-0 group-hover/val:opacity-100 transition-opacity">
@@ -97,14 +93,14 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
         
         <div className="mt-8 flex items-center justify-between">
           <div 
-            className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-wolvio-orange border border-white/10 uppercase tracking-widest cursor-pointer hover:bg-white/10 transition-colors"
+            className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 rounded-lg text-[9px] font-bold text-wolvio-orange border border-slate-100 uppercase tracking-widest cursor-pointer hover:bg-slate-100 transition-colors"
             onClick={() => setExpanded(!expanded)}
           >
             {clauseReference} · Pg {pageNumber}
           </div>
           <button 
             onClick={() => setExpanded(!expanded)}
-            className="text-white/20 hover:text-white transition-colors"
+            className="text-slate-300 hover:text-slate-500 transition-colors"
           >
             {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
           </button>
@@ -113,14 +109,14 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
       
       {expanded && (
         <div className="px-8 pb-8 animate-in slide-in-from-top-2 duration-300">
-          <div className="bg-white/5 rounded-2xl p-6 border border-white/5">
-            <div className="text-[10px] font-black text-white/20 mb-3 uppercase tracking-widest">Source Clause</div>
-            <p className="text-sm italic text-wolvio-mid leading-relaxed border-l-2 border-white/10 pl-4">
+          <div className="bg-slate-50 rounded-lg p-5 border border-slate-100">
+            <div className="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Source Clause</div>
+            <p className="text-sm italic text-slate-500 leading-relaxed border-l-2 border-slate-200 pl-4">
               {confidence === 'manual_input' ? 'Manual entry by controller. Verify against original contract.' : `"${sourceClause}"`}
             </p>
           </div>
         </div>
       )}
-    </GlassCard>
+    </div>
   )
 }

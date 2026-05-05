@@ -8,6 +8,7 @@ const MODELS = [
   'claude-opus-4-7',
   'claude-haiku-4-5',
   'claude-3-5-sonnet-20241022',
+  'claude-3-5-sonnet-latest',
 ]
 const MAX_TOKENS = 4000
 const COST_PER_INPUT_TOKEN = 0.000003
@@ -21,10 +22,11 @@ function computeCost(inputTokens: number, outputTokens: number): number {
 export async function callClaude(params: {
   systemPrompt: string
   userMessage: string
+  images?: string[] // base64 or data URLs
   timeoutMs?: number
 }): Promise<string> {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-  const { systemPrompt, userMessage, timeoutMs = 90_000 } = params
+  const { systemPrompt, userMessage, images = [], timeoutMs = 90_000 } = params
 
   let lastError: any
   
@@ -32,13 +34,34 @@ export async function callClaude(params: {
   for (const modelId of MODELS) {
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
+        const content: Anthropic.Messages.ContentBlockParam[] = [
+          { type: 'text', text: userMessage }
+        ]
+
+        // Add images if provided
+        for (const img of images) {
+          // Anthropic expects base64 without the "data:image/png;base64," prefix
+          const base64Match = img.match(/^data:([^;]+);base64,(.+)$/)
+          const mediaType = base64Match ? base64Match[1] : 'image/png'
+          const data = base64Match ? base64Match[2] : img
+
+          content.push({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: mediaType as any,
+              data: data
+            }
+          })
+        }
+
         const response = await Promise.race([
           client.messages.create({
             model: modelId,
             max_tokens: MAX_TOKENS,
             temperature: 0,
             system: systemPrompt,
-            messages: [{ role: 'user', content: userMessage }],
+            messages: [{ role: 'user', content }],
           }),
           new Promise<never>((_, reject) =>
             setTimeout(() => reject(new Error('Claude request timed out')), timeoutMs)
@@ -49,9 +72,9 @@ export async function callClaude(params: {
         const cost = computeCost(input_tokens, output_tokens)
         logger.info(`Extraction success with ${modelId} [Attempt ${attempt}]`, { cost: `$${cost.toFixed(4)}` })
 
-        const content = (response as Anthropic.Message).content[0]
-        if (content.type !== 'text') throw new Error('Unexpected response type from Claude')
-        return content.text
+        const responseContent = (response as Anthropic.Message).content[0]
+        if (responseContent.type !== 'text') throw new Error('Unexpected response type from Claude')
+        return responseContent.text
       } catch (err: any) {
         lastError = err
         

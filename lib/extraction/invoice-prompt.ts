@@ -27,9 +27,30 @@ Your goal is to parse complex Service Invoices and convert them into a structure
 - Terms: Identify if "Pro-rata" or "Adjustment" keywords are used.
 </complex_document_rules>
 
+<schema_spec>
+You MUST return a flat JSON object with these EXACT keys:
+- invoice_id (string)
+- invoice_date (YYYY-MM-DD)
+- period_start (YYYY-MM-DD)
+- period_end (YYYY-MM-DD)
+- subtotal (number, excluding tax)
+- gst_rate (number, e.g. 18)
+- gst_amount (number)
+- total (number, including tax)
+- line_items (array of objects):
+    - item_id (string)
+    - description (string)
+    - quantity (number)
+    - unit (string)
+    - unit_rate (number)
+    - amount (number)
+    - category (MUST be one of: BaseFee, Escalation, Variable, LD, Bonus, Other)
+</schema_spec>
+
 <formatting>
 - Output ONLY valid JSON.
-- Amounts: Positive integers/floats.
+- DO NOT wrap fields in a "header" or "data" parent object.
+- Amounts: Positive numbers.
 - Dates: ISO format (YYYY-MM-DD).
 </formatting>
 `

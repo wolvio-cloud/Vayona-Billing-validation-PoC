@@ -16,7 +16,6 @@ export function UploadFlow() {
     setError(null)
 
     try {
-      // Step 1: Upload the file
       const formData = new FormData()
       formData.append('file', file)
 
@@ -34,8 +33,6 @@ export function UploadFlow() {
       const newContractId: string = uploadData.contract_id
       setContractId(newContractId)
 
-      // Step 2: Trigger extraction — awaited so errors surface in the UI
-      // ExtractionAnimation polls the contract endpoint, so we fire and track
       const extractRes = await fetch(`/api/contracts/${newContractId}/extract`, { method: 'POST' })
       if (!extractRes.ok) {
         const body = await extractRes.json().catch(() => ({}))
@@ -64,7 +61,7 @@ export function UploadFlow() {
 
   if (isExtracting) {
     return (
-      <div className="rounded-xl border border-wolvio-slate bg-[--color-wolvio-surface] p-8 shadow-[0_4px_20px_rgba(0,0,0,0.3)] max-w-xl mx-auto">
+      <div className="rounded-2xl border border-slate-200 bg-white p-8 max-w-xl mx-auto shadow-sm">
         <ExtractionAnimation contractId={contractId} onComplete={handleComplete} />
       </div>
     )
@@ -74,15 +71,15 @@ export function UploadFlow() {
     <div className="space-y-4">
       <DropZone onFile={handleFile} />
       {error && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-          <span className="text-red-400 font-black text-lg">✕</span>
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-100">
+          <span className="text-red-500 font-black text-lg flex-shrink-0">✕</span>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-red-400">{error}</p>
-            <p className="text-xs text-red-400/60 mt-0.5">Check that the file is a valid PDF and try again.</p>
+            <p className="text-sm font-semibold text-red-700">{error}</p>
+            <p className="text-xs text-red-500 mt-0.5">Check that the file is a valid PDF and try again.</p>
           </div>
           <button
             onClick={handleReset}
-            className="text-[10px] font-black uppercase tracking-widest text-red-400/60 hover:text-red-400 transition-colors"
+            className="px-4 py-2 rounded-lg bg-white border border-red-200 text-[10px] font-bold uppercase tracking-widest text-red-600 hover:bg-red-50 transition-colors"
           >
             Retry
           </button>

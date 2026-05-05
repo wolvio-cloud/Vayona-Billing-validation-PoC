@@ -25,29 +25,29 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
       <div 
         className="absolute inset-0" 
         onClick={onClose} 
       />
       
       <div className="relative w-full max-w-2xl animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
-        <GlassCard className="border-white/10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
-          <div className="flex items-center justify-between p-8 border-b border-white/5">
+        <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between p-8 border-b border-slate-100">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-wolvio-orange/10 flex items-center justify-center border border-wolvio-orange/20 text-wolvio-orange">
                 <Terminal size={20} />
               </div>
               <div>
-                <h3 className="text-xl font-heading font-black text-white tracking-tight">SAP Corrective Payload</h3>
-                <p className="text-xs font-bold text-wolvio-mid uppercase tracking-widest mt-1">
+                <h3 className="text-xl font-heading font-black text-slate-900 tracking-tight">SAP Corrective Payload</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
                   Correcting: {checkName}
                 </p>
               </div>
             </div>
             <button 
               onClick={onClose}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-wolvio-mid hover:text-white hover:bg-white/10 transition-all"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all"
             >
               <X size={24} />
             </button>
@@ -56,7 +56,7 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
           <div className="p-8 space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.3em]">JSON Structure (BAPI_INCOMINGINVOICE)</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">JSON Structure (BAPI_INCOMINGINVOICE)</span>
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -75,8 +75,8 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
                 </Button>
               </div>
               
-              <div className="bg-black/40 rounded-2xl p-6 border border-white/5 font-mono text-[13px] leading-relaxed overflow-auto max-h-[350px] scrollbar-thin scrollbar-thumb-white/10">
-                <pre className="text-blue-400">
+              <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 font-mono text-[13px] leading-relaxed overflow-auto max-h-[350px] scrollbar-thin scrollbar-thumb-white/10">
+                <pre className="text-emerald-400">
                   {JSON.stringify(payload, null, 2)}
                 </pre>
               </div>
@@ -87,7 +87,7 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
                 <div className="text-wolvio-orange mt-1">
                   <Check size={18} />
                 </div>
-                <p className="text-sm text-white/80 leading-relaxed font-medium">
+                <p className="text-sm text-slate-600 leading-relaxed font-medium">
                   This payload is pre-formatted for direct integration with **SAP BAPI** or **Oracle ERP Cloud**. 
                   It includes the specific variance amount and cites the contract clause in the header text for auditor clearance.
                 </p>
@@ -95,11 +95,11 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
             </div>
           </div>
 
-          <div className="p-8 border-t border-white/5 flex justify-end gap-4 bg-white/[0.02]">
+          <div className="p-8 border-t border-slate-100 flex justify-end gap-4 bg-slate-50">
             <Button 
               variant="outline" 
               onClick={onClose}
-              className="py-6 px-8 border-white/10 text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-white/5"
+              className="py-6 px-8 border-slate-200 text-slate-600 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-slate-100"
             >
               Close
             </Button>
@@ -110,7 +110,7 @@ export function SAPPayloadModal({ isOpen, onClose, payload, checkName }: SAPPayl
               Push to SAP (Dev Only)
             </Button>
           </div>
-        </GlassCard>
+        </div>
       </div>
     </div>
   )

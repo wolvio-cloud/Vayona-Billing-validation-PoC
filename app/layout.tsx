@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   await ensureSeeded()
   return (
     <html lang="en" className={`${montserrat.variable} ${jetbrainsMono.variable} antialiased font-sans`}>
-      <body className="bg-[--color-wolvio-dark] text-white font-sans">
+      <body className="bg-slate-50 text-slate-900 font-sans">
         <ConfidentialBanner />
         <main className="w-full relative overflow-visible">
           {children}

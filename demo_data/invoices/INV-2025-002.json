@@ -1,0 +1,41 @@
+{
+  "invoice_id": "INV-2025-002",
+  "contract_id": "C-3a96364a",
+  "invoice_date": "2025-04-05",
+  "period_start": "2025-03-01",
+  "period_end": "2025-03-31",
+  "line_items": [
+    {
+      "item_id": "LI-001",
+      "description": "Monthly Fixed O&M Fee (LTSA Clause 8.1)",
+      "category": "BaseFee",
+      "quantity": 1,
+      "unit": "Month",
+      "unit_rate": 4500000,
+      "amount": 4500000
+    },
+    {
+      "item_id": "LI-002",
+      "description": "Variable O&M Component",
+      "category": "Variable",
+      "quantity": 2240000,
+      "unit": "kWh",
+      "unit_rate": 0.15,
+      "amount": 336000
+    },
+    {
+      "item_id": "LI-003",
+      "description": "Reactive Power Charges",
+      "category": "Variable",
+      "quantity": 84000,
+      "unit": "kVARh",
+      "unit_rate": 0.05,
+      "amount": 4200
+    }
+  ],
+  "subtotal": 4840200,
+  "gst_rate": 18,
+  "gst_amount": 871236,
+  "total": 5711436,
+  "status": "Pending"
+}
