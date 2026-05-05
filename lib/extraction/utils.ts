@@ -49,6 +49,21 @@ export function sanitizeExtractedData(data: any): any {
   }
   if (Array.isArray(data)) return data.map(sanitizeExtractedData)
   if (typeof data === 'object') {
+    // If this object is a TracedField and its value is missing
+    if (
+      'value' in data && 
+      (data.value === null || data.flag === 'NOT_FOUND' || data.source_clause === 'NOT FOUND')
+    ) {
+      return {
+        value: null,
+        flag: 'NOT_FOUND',
+        confidence: 'low',
+        source_clause: 'Not found in document',
+        clause_reference: data.clause_reference && data.clause_reference !== 'N/A' ? data.clause_reference : 'N/A',
+        page_number: data.page_number || 0
+      }
+    }
+
     const obj: any = {}
     for (const [k, v] of Object.entries(data)) {
       obj[k] = sanitizeExtractedData(v)

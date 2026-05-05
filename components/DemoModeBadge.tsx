@@ -29,17 +29,17 @@ export function DemoModeBadge() {
     <div className="flex items-center gap-3">
       {/* Live mode warning */}
       {mode === 'live' && (
-        <div className="text-[9px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+        <div className="text-[9px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
           ⚠️ Live Mode: Results depend on document quality
         </div>
       )}
-      <div className="flex items-center gap-1 glass rounded-full px-1 py-1 border border-white/10">
+      <div className="flex items-center gap-1 bg-slate-100 rounded-full px-1 py-1 border border-slate-200">
         <button
           onClick={() => setMode('demo')}
           className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
             mode === 'demo'
-              ? 'bg-green-500 text-white shadow-md shadow-green-500/30'
-              : 'text-white/40 hover:text-white'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'text-slate-400 hover:text-slate-900'
           }`}
         >
           🎯 Demo
@@ -48,8 +48,8 @@ export function DemoModeBadge() {
           onClick={() => setMode('live')}
           className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
             mode === 'live'
-              ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30'
-              : 'text-white/40 hover:text-white'
+              ? 'bg-amber-600 text-white shadow-sm'
+              : 'text-slate-400 hover:text-slate-900'
           }`}
         >
           ⚡ Live

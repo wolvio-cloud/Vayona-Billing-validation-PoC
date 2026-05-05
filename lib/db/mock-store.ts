@@ -59,13 +59,20 @@ class MockStore {
   }
 
   get(id: string) {
+    this.load() // Force reload from disk to sync across Next.js workers/isolates
     return this.contracts.get(id)
   }
 
   list() {
+    this.load() // Force reload
     return Array.from(this.contracts.values()).sort((a, b) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
+  }
+
+  deleteContract(id: string) {
+    this.contracts.delete(id)
+    this.save()
   }
 }
 

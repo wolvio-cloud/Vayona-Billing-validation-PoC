@@ -8,10 +8,12 @@ import { Invoice } from '@/lib/schemas/invoice'
 import { runValidation, GenerationData } from '@/lib/validation/engine'
 import { ValidationResultSchema, ValidationResult } from '@/lib/schemas/validation'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react'
+import { ChevronLeft, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { InvoiceMappingModal } from './InvoiceMappingModal'
 import { useDemoMode } from '@/components/DemoModeBadge'
+import { InvoiceSelector } from './InvoiceSelector'
 
 interface ValidationViewProps {
   contract: ContractParameters
@@ -19,9 +21,17 @@ interface ValidationViewProps {
   initialGeneration?: GenerationData
   contractId: string
   contractDisplayName?: string
+  allInvoices?: string[]
 }
 
-export function ValidationView({ contract, initialInvoice, initialGeneration, contractId, contractDisplayName }: ValidationViewProps) {
+export function ValidationView({ 
+  contract, 
+  initialInvoice, 
+  initialGeneration, 
+  contractId, 
+  contractDisplayName,
+  allInvoices = []
+}: ValidationViewProps) {
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(initialInvoice)
   const [isProcessing, setIsProcessing] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
@@ -30,10 +40,14 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
   const [isComputing, setIsComputing] = useState(true)
   const [mappingData, setMappingData] = useState<any | null>(null)
   const { mode } = useDemoMode()
+  const router = useRouter()
 
-  // Re-run validation whenever invoice changes
   useEffect(() => {
-    if (!currentInvoice) {
+    setCurrentInvoice(initialInvoice)
+  }, [initialInvoice])
+
+  useEffect(() => {
+    if (!currentInvoice || !currentInvoice.invoice_id) {
       setResult(null)
       setIsComputing(false)
       return
@@ -75,25 +89,26 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('contract_id', contractId)
       const res = await fetch('/api/invoices/extract', { method: 'POST', body: formData })
-      
       const data = await res.json()
-      
-      // Clear legacy audit data before showing new result
+      console.log('[ValidationView] Extraction result:', data)
       setResult(null)
       setParseError(null)
-      
       if (res.status === 206) {
-        // Mapping required
+        console.warn('[ValidationView] Partial data returned, opening mapping workbench')
         setMappingData(data.partial_data)
         return
       }
-      
-      if (!res.ok) {
-        throw new Error(data.error || 'Extraction failed')
-      }
+      if (!res.ok) throw new Error(data.error || 'Extraction failed')
       setCurrentInvoice(data)
       setShowUpload(false)
+      // Refresh the server-side invoice list
+      router.refresh()
+      // Smooth scroll to validation content
+      setTimeout(() => {
+        document.getElementById('validation-content')?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
     } catch (err: any) {
       console.error(err)
       alert(`Failed to process invoice: ${err.message}`)
@@ -102,16 +117,25 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
     }
   }
 
-
   return (
     <div className="space-y-12 pb-32 animate-fade-in-up">
+      {allInvoices.length > 0 && (
+        <div className="sticky top-0 z-50 bg-slate-50/80 backdrop-blur-md py-4 -mx-6 px-6 border-b border-slate-200">
+          <InvoiceSelector 
+            contractId={contractId} 
+            allInvoices={allInvoices} 
+            currentInvoiceId={currentInvoice?.invoice_id || ''} 
+          />
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <Link href={`/contracts/${contractId}`} className="text-wolvio-orange text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all">
           <ChevronLeft size={16} /> Back to Analysis
         </Link>
         <Button 
           variant="outline" 
-          className="glass-button text-wolvio-off px-6 py-4 rounded-xl border-white/10"
+          className="bg-white px-6 py-4 rounded-xl border-slate-200 text-slate-900 shadow-sm"
           onClick={() => setShowUpload(!showUpload)}
         >
           {showUpload ? 'Cancel' : 'Upload Invoice PDF'}
@@ -124,86 +148,79 @@ export function ValidationView({ contract, initialInvoice, initialGeneration, co
         </div>
       )}
 
-      {/* Invoice Banner Card */}
-      {currentInvoice ? (
-        <div className="relative overflow-hidden glass rounded-[32px] border-none shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)]">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-wolvio-orange/10 pointer-events-none" />
-          <div className="p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-            <div className="space-y-2">
-              <div className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.3em]">Billing Document</div>
-              <h2 className="text-4xl font-heading font-black text-white tracking-tight">
-                Invoice {currentInvoice.invoice_id}
-              </h2>
-              <div className="flex items-center gap-4 text-sm font-semibold text-wolvio-mid">
-                <span>{currentInvoice.period_start}</span>
-                <ArrowRight size={14} className="opacity-30" />
-                <span>{currentInvoice.period_end}</span>
+      <div id="validation-content" className="scroll-mt-32">
+        {currentInvoice ? (
+          <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div className="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Billing Document</div>
+                <h2 className="text-4xl font-heading font-black text-slate-900 tracking-tight">
+                  Invoice {currentInvoice.invoice_id}
+                </h2>
+                <div className="flex items-center gap-4 text-sm font-semibold text-slate-500">
+                  <span>{currentInvoice.period_start}</span>
+                  <ArrowRight size={14} className="opacity-30" />
+                  <span>{currentInvoice.period_end}</span>
+                </div>
+              </div>
+              <div className="bg-slate-50 border border-slate-200 px-6 py-4 rounded-xl text-right">
+                <div className="text-[10px] font-black text-wolvio-orange uppercase tracking-[0.2em] mb-1">Invoice Amount</div>
+                <div className="text-3xl font-mono font-bold text-slate-900">
+                  ₹{currentInvoice.total.toLocaleString('en-IN')}
+                </div>
               </div>
             </div>
-            <div className="bg-white/5 border border-white/10 px-8 py-6 rounded-[24px] text-right">
-              <div className="text-[10px] font-black text-wolvio-orange uppercase tracking-[0.3em] mb-2">Invoice Amount</div>
-              <div className="text-4xl font-mono font-bold text-white tracking-tighter">
-                ₹{currentInvoice.total.toLocaleString('en-IN')}
-              </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl p-16 text-center border-2 border-dashed border-slate-200">
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Awaiting Document</div>
+            <h2 className="text-2xl font-heading font-black text-slate-400">Ready for Audit</h2>
+            <p className="text-sm text-slate-500 mt-4">Upload a billing document to begin the deterministic audit.</p>
+          </div>
+        )}
+
+        {isComputing ? (
+          <div className="bg-white rounded-2xl p-12 text-center space-y-4 border border-slate-200 mt-8 shadow-sm">
+            <div className="w-12 h-12 mx-auto bg-orange-50 rounded-xl flex items-center justify-center border border-orange-100">
+              <Loader2 className="text-wolvio-orange animate-spin" size={24} />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-heading font-black text-slate-900 uppercase">Running Validation</h3>
+              <p className="text-sm text-slate-500 max-w-md mx-auto">Executing deterministic checks against contract terms…</p>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="glass rounded-[32px] p-20 text-center border-dashed border-2 border-white/10">
-          <div className="text-[10px] font-black text-wolvio-mid uppercase tracking-[0.4em] mb-4">Awaiting Document</div>
-          <h2 className="text-3xl font-heading font-black text-white/40">Ready for Audit</h2>
-          <p className="text-sm text-wolvio-mid mt-4">Upload a billing document to begin the deterministic audit.</p>
-        </div>
-      )}
+        ) : (parseError || !result) ? (
+          <div className="bg-white rounded-2xl p-12 text-center space-y-4 border border-amber-200 mt-8 shadow-sm">
+            <div className="w-12 h-12 mx-auto bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100">
+              <span className="text-amber-600 text-2xl">⏳</span>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-heading font-black text-slate-900 uppercase">Extraction In Progress</h3>
+              <p className="text-sm text-amber-600 max-w-md mx-auto font-medium leading-relaxed">
+                {parseError ?? 'Contract parameters are still being extracted. Please wait a moment and refresh.'}
+              </p>
+            </div>
+            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-full text-xs font-black uppercase tracking-widest text-wolvio-orange transition-all">
+              Refresh Validation
+            </button>
+          </div>
+        ) : (
+          <div className="animate-fade-in-up animation-delay-200 mt-12">
+            <ValidationReport result={result} contractName={contractDisplayName} />
+          </div>
+        )}
 
-      {/* Validation Result */}
-      {isComputing ? (
-        <div className="glass rounded-[32px] p-16 text-center space-y-6 border border-white/5">
-          <div className="w-16 h-16 mx-auto bg-wolvio-orange/10 rounded-2xl flex items-center justify-center border border-wolvio-orange/20">
-            <Loader2 className="text-wolvio-orange animate-spin" size={32} />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-2xl font-heading font-black text-white uppercase tracking-tight">Running Validation</h3>
-            <p className="text-sm text-wolvio-mid max-w-md mx-auto">Executing deterministic checks against contract terms…</p>
-          </div>
-        </div>
-      ) : (parseError || !result) ? (
-        <div className="glass rounded-[32px] p-16 text-center space-y-6 border border-amber-500/20">
-          <div className="w-16 h-16 mx-auto bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20">
-            <span className="text-amber-400 text-3xl">⏳</span>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-2xl font-heading font-black text-white uppercase tracking-tight">Extraction In Progress</h3>
-            <p className="text-sm text-amber-400/80 max-w-md mx-auto font-medium leading-relaxed">
-              {parseError ?? 'Contract parameters are still being extracted. Please wait a moment and refresh.'}
-            </p>
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-8 py-3 bg-wolvio-orange/10 hover:bg-wolvio-orange/20 border border-wolvio-orange/30 rounded-full text-xs font-black uppercase tracking-widest text-wolvio-orange transition-all"
-          >
-            Refresh Validation
-          </button>
-        </div>
-      ) : (
-        <div className="animate-fade-in-up animation-delay-200">
-          <ValidationReport 
-            result={result} 
-            contractName={contractDisplayName}
-          />
-        </div>
-      )}
-
-      <InvoiceMappingModal 
-        isOpen={!!mappingData}
-        onClose={() => setMappingData(null)}
-        rawInvoice={mappingData}
-        onMappingComplete={(mapped) => {
-          setCurrentInvoice(mapped)
-          setShowUpload(false)
-          setMappingData(null)
-        }}
-      />
+        <InvoiceMappingModal 
+          isOpen={!!mappingData}
+          onClose={() => setMappingData(null)}
+          rawInvoice={mappingData}
+          onMappingComplete={(mapped) => {
+            setCurrentInvoice(mapped)
+            setShowUpload(false)
+            setMappingData(null)
+          }}
+        />
+      </div>
     </div>
   )
 }

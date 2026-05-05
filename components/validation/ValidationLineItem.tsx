@@ -14,10 +14,11 @@ interface ValidationLineItemProps {
 }
 
 const VERDICT_THEME: Record<ValidationCheck['verdict'], { color: string, icon: any, bg: string }> = {
-  MATCH: { color: 'text-wolvio-green', icon: CheckCircle2, bg: 'bg-wolvio-green/10' },
-  GAP: { color: 'text-wolvio-red', icon: XCircle, bg: 'bg-wolvio-red/10' },
-  OPPORTUNITY: { color: 'text-wolvio-amber', icon: AlertTriangle, bg: 'bg-wolvio-amber/10' },
-  INSUFFICIENT_DATA: { color: 'text-wolvio-mid', icon: Info, bg: 'bg-white/5' },
+  MATCH: { color: 'text-emerald-600', icon: CheckCircle2, bg: 'bg-emerald-50' },
+  GAP: { color: 'text-red-600', icon: XCircle, bg: 'bg-red-50' },
+  OPPORTUNITY: { color: 'text-amber-600', icon: AlertTriangle, bg: 'bg-amber-50' },
+  INSUFFICIENT_DATA: { color: 'text-slate-400', icon: Info, bg: 'bg-slate-100' },
+  ERROR: { color: 'text-slate-600', icon: Info, bg: 'bg-slate-200' },
 }
 
 export function ValidationLineItem({ check, showFormula = false }: ValidationLineItemProps) {
@@ -56,18 +57,18 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
 
   return (
     <>
-      <GlassCard hover className="border-none shadow-[0_15px_35px_-10px_rgba(0,0,0,0.3)]">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden transition-all hover:border-wolvio-orange/20 shadow-sm">
         <button
           className="w-full flex items-center justify-between px-8 py-7 text-left group"
           onClick={() => setExpanded((e) => !e)}
         >
-          <div className="flex items-center gap-6">
-            <div className={`w-12 h-12 ${theme.bg} rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110`}>
+          <div className="flex items-center gap-8">
+            <div className={`w-12 h-12 ${theme.bg} rounded-xl flex items-center justify-center transition-all`}>
               <Icon className={theme.color} size={24} />
             </div>
-            <div className="space-y-1.5 min-w-0">
-              <h4 className="font-heading font-black text-white text-lg tracking-tight truncate">{check.check_name}</h4>
-              <div className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/5 whitespace-nowrap ${theme.color}`}>
+            <div className="space-y-1 min-w-0">
+              <h4 className="font-heading font-bold text-slate-900 text-lg tracking-tight truncate">{check.check_name}</h4>
+              <div className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-100 whitespace-nowrap bg-slate-50 ${theme.color}`}>
                 {check.verdict}
               </div>
             </div>
@@ -75,14 +76,14 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
           
           <div className="flex items-center gap-10">
             <div className="text-right">
-              <div className={`font-mono text-xl font-black tracking-tighter ${gapValue != null && gapValue > 0 ? theme.color : 'text-white/40'}`}>
+              <div className={`font-mono text-lg font-bold tracking-tight ${gapValue != null && gapValue > 0 ? theme.color : 'text-slate-400'}`}>
                 {formatINR(gapValue || 0)}
               </div>
-              <div className="text-[10px] font-bold text-wolvio-mid uppercase tracking-widest mt-1">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {gapValue != null && gapValue > 0 ? 'Variance' : 'Match'}
               </div>
             </div>
-            <div className="text-white/20 group-hover:text-wolvio-orange transition-colors">
+            <div className="text-slate-300 group-hover:text-wolvio-orange transition-colors">
               {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </div>
           </div>
@@ -90,25 +91,25 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
 
         {expanded && (
           <div className="px-8 pb-8 animate-in slide-in-from-top-4 duration-500">
-            <div className="bg-white/5 rounded-[32px] border border-white/5 overflow-hidden">
+            <div className="bg-slate-50 rounded-xl border border-slate-100 overflow-hidden">
               {/* Row 1: Side-by-Side Comparison */}
-              <div className="grid grid-cols-2 divide-x divide-white/5 bg-white/5 border-b border-white/5">
-                <div className="p-8">
-                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-wolvio-mid mb-3">Expected (Per Contract)</div>
-                  <div className="font-mono text-2xl font-black text-white">{check.expected_amount != null ? formatINR(check.expected_amount) : '-'}</div>
+              <div className="grid grid-cols-2 divide-x divide-slate-200 bg-slate-100/50 border-b border-slate-200">
+                <div className="p-6">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Expected Amount</div>
+                  <div className="font-mono text-xl font-bold text-slate-900">{check.expected_amount != null ? formatINR(check.expected_amount) : '-'}</div>
                 </div>
-                <div className="p-8">
-                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-wolvio-mid mb-3">Actual (Billed)</div>
-                  <div className="font-mono text-2xl font-black text-white">{check.actual_amount != null ? formatINR(check.actual_amount) : '-'}</div>
+                <div className="p-6">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Actual Billed</div>
+                  <div className="font-mono text-xl font-bold text-slate-900">{check.actual_amount != null ? formatINR(check.actual_amount) : '-'}</div>
                 </div>
               </div>
 
               {/* Detail Content */}
-              <div className="p-10 space-y-10">
+              <div className="p-8 space-y-8">
                 {/* Row 2: Gap Amount */}
-                <div className="space-y-2">
-                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-wolvio-red">Identified Variance</div>
-                  <div className="font-mono text-5xl font-black text-wolvio-red tracking-tighter">
+                <div className="space-y-1">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Identified Variance</div>
+                  <div className="font-mono text-5xl font-bold text-red-600 tracking-tighter">
                     {gapValue != null ? formatINR(gapValue) : '₹0'}
                   </div>
                 </div>
@@ -124,8 +125,8 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
 
                     {/* Row 4: Verbatim Source */}
                     <div className="space-y-3">
-                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-wolvio-mid/40">Verbatim Source Clause</div>
-                      <p className="text-sm italic text-wolvio-slate leading-relaxed border-l-2 border-wolvio-orange/30 pl-6 py-1">
+                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Verbatim Source Clause</div>
+                      <p className="text-sm italic text-slate-500 leading-relaxed border-l-2 border-wolvio-orange/30 pl-6 py-1">
                         "{check.source_clause}"
                       </p>
                     </div>
@@ -134,8 +135,8 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
                   <div className="space-y-8">
                     {/* Row 5: Plain English Explanation */}
                     <div className="space-y-3">
-                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-wolvio-mid/40">Audit Findings</div>
-                      <p className="text-base font-bold text-white leading-relaxed">
+                      <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Audit Findings</div>
+                      <p className="text-base font-bold text-slate-900 leading-relaxed">
                         {typeof check.explanation === 'string' ? check.explanation : (check.explanation as any)?.cfo_summary || 'Analysis not available.'}
                       </p>
                     </div>
@@ -143,10 +144,10 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
                     {/* Row 6: Corrective Action */}
                     <div className="flex gap-4">
                       <Button 
-                        className="flex-1 bg-wolvio-orange hover:bg-[#d95a2b] text-white font-black text-xs uppercase tracking-widest px-8 py-7 rounded-2xl shadow-xl shadow-wolvio-orange/10 group"
+                        className="flex-1 bg-wolvio-orange hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-widest px-6 py-5 rounded-xl shadow-md transition-all"
                         onClick={() => setShowSAP(true)}
                       >
-                        Create Corrective Invoice <Terminal className="w-4 h-4 ml-3 group-hover:rotate-12 transition-transform" />
+                        Generate Corrective Action
                       </Button>
                     </div>
                   </div>
@@ -155,7 +156,7 @@ export function ValidationLineItem({ check, showFormula = false }: ValidationLin
             </div>
           </div>
         )}
-      </GlassCard>
+      </div>
 
       <SAPPayloadModal 
         isOpen={showSAP}

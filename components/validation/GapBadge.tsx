@@ -10,6 +10,7 @@ const VERDICT_LABELS: Record<ValidationCheck['verdict'], string> = {
   GAP: 'GAP',
   OPPORTUNITY: 'OPP',
   INSUFFICIENT_DATA: 'N/A',
+  ERROR: 'ERR',
 }
 
 const VERDICT_VARIANTS: Record<ValidationCheck['verdict'], 'match' | 'gap' | 'opportunity' | 'insufficient'> = {
@@ -17,6 +18,7 @@ const VERDICT_VARIANTS: Record<ValidationCheck['verdict'], 'match' | 'gap' | 'op
   GAP: 'gap',
   OPPORTUNITY: 'opportunity',
   INSUFFICIENT_DATA: 'insufficient',
+  ERROR: 'gap',
 }
 
 export function GapBadge({ verdict }: GapBadgeProps) {

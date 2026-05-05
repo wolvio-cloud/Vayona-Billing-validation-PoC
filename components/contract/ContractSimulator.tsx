@@ -47,10 +47,10 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
     <div className="space-y-8 animate-in fade-in duration-500">
       
       {/* SCENARIO A */}
-      <div className="bg-[--color-wolvio-surface] rounded-[12px] border border-wolvio-slate shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden">
-        <div className="px-6 py-4 bg-wolvio-navy border-b border-wolvio-slate flex items-center justify-between">
-          <h3 className="font-heading font-bold text-lg text-[--color-wolvio-light]">Scenario A — Availability Drop</h3>
-          <span className="px-2.5 py-1 bg-red-500/20 text-[#EF4444] text-[10px] font-bold uppercase tracking-widest rounded-full border border-red-500/30">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <h3 className="font-heading font-bold text-lg text-slate-900">Scenario A — Availability Drop</h3>
+          <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-red-100">
             Risk Analysis
           </span>
         </div>
@@ -58,7 +58,7 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div>
-              <label className="text-sm font-semibold uppercase tracking-wider text-wolvio-mid mb-4 block">
+              <label className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 block">
                 If availability drops to {availability}%
               </label>
               <input 
@@ -70,33 +70,33 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
                 onChange={(e) => setAvailability(parseFloat(e.target.value))}
                 className="w-full accent-wolvio-orange"
               />
-              <div className="flex justify-between text-xs text-wolvio-slate mt-2 font-mono">
+              <div className="flex justify-between text-xs text-slate-400 mt-2 font-mono">
                 <span>90%</span>
                 <span>96% (Guarantee: {guarantee}%)</span>
               </div>
             </div>
 
-            <div className="bg-wolvio-dark p-4 rounded-lg border border-wolvio-slate">
-              <div className="text-sm text-wolvio-mid mb-2 font-mono">Contract Parameters</div>
-              <div className="text-sm text-[--color-wolvio-light] leading-relaxed">
-                <span className="text-wolvio-orange font-semibold">{contract.ld_rate_per_pp?.clause_reference || 'Clause'}</span> · {ldRate}% per pp shortfall
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+              <div className="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Contract Parameters</div>
+              <div className="text-sm text-slate-500 leading-relaxed">
+                <span className="text-wolvio-orange font-bold">{contract.ld_rate_per_pp?.clause_reference || 'Clause'}</span> · {ldRate}% per pp shortfall
                 <br/>
-                <span className="text-wolvio-orange font-semibold">{contract.ld_cap_pct?.clause_reference || 'Clause'}</span> · Cap: {ldCapPct}% of annual fee ({formatINRShort(ldCapValue)})
+                <span className="text-wolvio-orange font-bold">{contract.ld_cap_pct?.clause_reference || 'Clause'}</span> · Cap: {ldCapPct}% ({formatINRShort(ldCapValue)})
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col justify-center items-center text-center bg-red-500/5 rounded-[12px] border border-red-500/20 p-6 relative overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#EF4444]" />
-            <div className="text-sm font-semibold uppercase tracking-widest text-[#EF4444] mb-2">Annual LD Exposure</div>
-            <div className="font-mono text-4xl font-extrabold text-[#EF4444] tracking-tight mb-2">
+          <div className="flex flex-col justify-center items-center text-center bg-red-50 rounded-xl border border-red-100 p-6 relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-600" />
+            <div className="text-[10px] font-bold uppercase tracking-widest text-red-600 mb-2">Annual Exposure</div>
+            <div className="font-mono text-3xl font-bold text-red-600 tracking-tight mb-1">
               {formatINRShort(actualLdExposure)}
             </div>
-            <div className="text-sm text-[#EF4444]/80 font-medium">
-              At {availability}% availability ({shortfall.toFixed(1)}% shortfall)
+            <div className="text-[10px] text-red-600/60 font-bold uppercase tracking-widest">
+              At {availability}% availability
             </div>
             {actualLdExposure === ldCapValue && (
-              <div className="mt-3 px-3 py-1 bg-red-500/20 text-[#EF4444] text-xs font-bold rounded-full border border-red-500/30">
+              <div className="mt-3 px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded-lg border border-red-200">
                 CAP REACHED
               </div>
             )}
@@ -105,10 +105,10 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
       </div>
 
       {/* SCENARIO B */}
-      <div className="bg-[--color-wolvio-surface] rounded-[12px] border border-wolvio-slate shadow-[0_4px_20px_rgba(0,0,0,0.3)] overflow-hidden">
-        <div className="px-6 py-4 bg-wolvio-navy border-b border-wolvio-slate flex items-center justify-between">
-          <h3 className="font-heading font-bold text-lg text-[--color-wolvio-light]">Scenario B — Escalation Impact</h3>
-          <span className="px-2.5 py-1 bg-amber-500/20 text-[#F59E0B] text-[10px] font-bold uppercase tracking-widest rounded-full border border-amber-500/30">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <h3 className="font-heading font-bold text-lg text-slate-900">Scenario B — Escalation Impact</h3>
+          <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-widest rounded-lg border border-amber-100">
             Financial Forecast
           </span>
         </div>
@@ -116,7 +116,7 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div>
-              <label className="text-sm font-semibold uppercase tracking-wider text-wolvio-mid mb-4 block">
+              <label className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 block">
                 If WPI increases by {wpiIncrease}% annually
               </label>
               <input 
@@ -128,40 +128,35 @@ export function ContractSimulator({ contract, termYears }: ContractSimulatorProp
                 onChange={(e) => setWpiIncrease(parseFloat(e.target.value))}
                 className="w-full accent-wolvio-orange"
               />
-              <div className="flex justify-between text-xs text-wolvio-slate mt-2 font-mono">
+              <div className="flex justify-between text-xs text-slate-400 mt-2 font-mono">
                 <span>1%</span>
                 <span>8%</span>
               </div>
             </div>
 
-            <div className="bg-wolvio-dark p-4 rounded-lg border border-wolvio-slate">
-              <div className="text-sm text-wolvio-mid mb-2 font-mono">Baseline Values</div>
-              <div className="text-sm text-[--color-wolvio-light] leading-relaxed">
-                Current Monthly Fee: <span className="font-mono font-bold text-white">{formatINRShort(baseMonthlyFee)}</span>
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+              <div className="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Baseline Values</div>
+              <div className="text-sm text-slate-500 leading-relaxed">
+                Current Monthly: <span className="font-mono font-bold text-slate-900">{formatINRShort(baseMonthlyFee)}</span>
                 <br/>
-                Current Annual Fee: <span className="font-mono font-bold text-white">{formatINRShort(baseAnnualFee)}</span>
+                Current Annual: <span className="font-mono font-bold text-slate-900">{formatINRShort(baseAnnualFee)}</span>
                 <br/>
-                Remaining Term: <span className="font-bold text-white">{termYears} years</span>
+                Remaining Term: <span className="font-bold text-slate-900">{termYears} years</span>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col justify-center space-y-4 bg-amber-500/5 rounded-[12px] border border-amber-500/20 p-6 relative overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#F59E0B]" />
+          <div className="flex flex-col justify-center space-y-4 bg-amber-50 rounded-xl border border-amber-100 p-6 relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600" />
             
             <div>
-              <div className="text-xs font-semibold uppercase tracking-widest text-[#F59E0B] mb-1">New Monthly Fee (Year 2)</div>
-              <div className="font-mono text-2xl font-bold text-[#F59E0B]">{formatINRShort(newMonthlyFee)}</div>
-            </div>
-            
-            <div className="pt-3 border-t border-amber-500/20">
-              <div className="text-xs font-semibold uppercase tracking-widest text-[#F59E0B] mb-1">Impact (Year 2)</div>
-              <div className="font-mono text-2xl font-bold text-[#F59E0B]">+{formatINRShort(annualImpact)}</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-1">Impact (Year 2)</div>
+              <div className="font-mono text-2xl font-bold text-amber-600">+{formatINRShort(annualImpact)}</div>
             </div>
 
-            <div className="pt-3 border-t border-amber-500/20">
-              <div className="text-xs font-semibold uppercase tracking-widest text-[#F59E0B] mb-1">Compounded over {termYears} years</div>
-              <div className="font-mono text-2xl font-bold text-[#F59E0B]">+{formatINRShort(compoundedTotal)}</div>
+            <div className="pt-3 border-t border-slate-100">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-1">Term Cumulative</div>
+              <div className="font-mono text-2xl font-bold text-amber-600">+{formatINRShort(compoundedTotal)}</div>
             </div>
           </div>
         </div>

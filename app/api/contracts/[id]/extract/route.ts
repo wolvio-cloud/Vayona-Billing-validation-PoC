@@ -12,47 +12,11 @@ export const dynamic = 'force-dynamic'
 function scoreConfidence(params: Record<string, any>): { score: number; highCount: number; totalCount: number } {
   const fields = Object.values(params).filter(v => v && typeof v === 'object' && 'confidence' in v)
   const highCount = fields.filter((f: any) => f.confidence === 'high').length
-  return { score: fields.length ? highCount / fields.length : 0, highCount, totalCount: fields.length }
+  const score = fields.length ? Math.round((highCount / fields.length) * 100) : 0
+  return { score, highCount, totalCount: fields.length }
 }
 
-const SYSTEM_PROMPT = `You are a senior commercial contract analyst specialising in Indian renewable energy O&M, LTSA, and TSA agreements under Indian law.
-
-Extract the following parameters. For each return:
-  value, source_clause (verbatim ≤50 words),
-  clause_reference (e.g. Clause 5.2),
-  page_number (integer),
-  confidence (high / medium / low)
-
-Parameters:
-  base_annual_fee (full rupee integer)
-  base_monthly_fee (full rupee integer)
-  escalation: {
-    type (WPI/CPI/Fixed/None)
-    index_base_month (exact month named in contract)
-    effective_date (e.g. April 1)
-    cap_pct (number)
-    floor_pct (number, default 0)
-  }
-  variable_component: {
-    rate_per_kwh (number)
-    billing_frequency (Monthly/Quarterly)
-  }
-  availability_guarantee_pct (number)
-  ld_rate_per_pp (number)
-  ld_cap_pct (number)
-  bonus_threshold_pct (number or null)
-  bonus_rate_per_pp (number or null)
-  payment_terms_days (number)
-  late_payment_interest (string, e.g. SBI base + 2%)
-  renewal_notice_months (number)
-
-Rules:
-- Extract ONLY what is explicitly stated
-- If field absent → return null, flag NOT_FOUND
-- Never infer or hallucinate
-- Index base month is critical: January ≠ December
-- All fees in full rupee integers, not Cr shorthand
-- Return valid JSON only, no markdown, no prose`;
+import { CONTRACT_EXTRACTION_SYSTEM_PROMPT } from '@/lib/extraction/contract-prompt'
 
 export async function POST(
   _request: Request,
@@ -139,7 +103,7 @@ export async function POST(
 
     await updateProgress('Extracting commercial parameters...', 3)
     const result = await callClaude({
-      systemPrompt: SYSTEM_PROMPT,
+      systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT,
       userMessage: `Extract parameters from this contract text:\n\n${text}`
     })
 
@@ -153,7 +117,7 @@ export async function POST(
     await updateProgress('Building Digital Twin...', 6)
     
     const finalStatus = validated.success ? 'completed' : 'partial'
-    const paramCount = Object.values(sanitized).filter(v => v && v.value !== null).length
+    const paramCount = Object.values(sanitized).filter((v: any) => v && typeof v === 'object' && 'value' in v && v.value !== null).length
 
     await updateDB({
       parameters: { ...sanitized, _extraction_meta: { confidence, page_count: contract.page_count } },

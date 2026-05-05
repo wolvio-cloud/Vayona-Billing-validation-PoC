@@ -61,7 +61,13 @@ CREATE TABLE IF NOT EXISTS validation_runs (
     total_opportunity_amount NUMERIC(15, 2) DEFAULT 0,
     
     -- Full report data
-    report_data JSONB NOT NULL,
+    checks JSONB NOT NULL,
+    
+    -- Approval Workflow
+    status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, APPROVED, REJECTED
+    approved_by VARCHAR(255),
+    approved_at TIMESTAMP WITH TIME ZONE,
+    fc_notes TEXT,
     
     -- Offline report link
     report_html_path TEXT

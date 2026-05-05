@@ -50,12 +50,12 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="glass border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] sm:max-w-[600px] text-white">
+      <DialogContent className="bg-white border border-slate-200 shadow-2xl sm:max-w-[600px] text-slate-900">
         <DialogHeader>
           <DialogTitle className="text-2xl font-heading font-black uppercase tracking-tight flex items-center gap-3">
             <AlertCircle className="text-wolvio-orange" /> Exception Workbench
           </DialogTitle>
-          <DialogDescription className="text-wolvio-mid font-medium">
+          <DialogDescription className="text-slate-500 font-medium">
             Confirm or manually input critical parameters to enable precise billing validation.
           </DialogDescription>
         </DialogHeader>
@@ -68,15 +68,15 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
             const label = key.replace(/_/g, ' ').toUpperCase()
 
             return (
-              <div key={key} className="space-y-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-wolvio-orange/30 transition-colors">
+              <div key={key} className="space-y-3 p-4 rounded-2xl bg-slate-50 border border-slate-200 hover:border-wolvio-orange/30 transition-colors">
                 <div className="flex items-center justify-between">
-                  <Label className="text-[10px] font-black tracking-widest text-wolvio-mid uppercase">
+                  <Label className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
                     {label}
                   </Label>
                   {isMissing ? (
-                    <span className="text-[9px] font-black text-red-400 uppercase tracking-widest bg-red-400/10 px-2 py-0.5 rounded-full">Missing</span>
+                    <span className="text-[9px] font-black text-red-600 uppercase tracking-widest bg-red-50 px-2 py-0.5 rounded-full">Missing</span>
                   ) : (
-                    <span className="text-[9px] font-black text-green-400 uppercase tracking-widest bg-green-400/10 px-2 py-0.5 rounded-full">Detected</span>
+                    <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded-full">Detected</span>
                   )}
                 </div>
 
@@ -86,13 +86,13 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
                     type={typeof field.value === 'number' ? 'number' : 'text'}
                     value={values[key] ?? ''}
                     onChange={(e) => setValues({ ...values, [key]: e.target.type === 'number' ? parseFloat(e.target.value) : e.target.value })}
-                    className="bg-black/20 border-white/10 text-white font-mono focus:border-wolvio-orange/50 h-12"
+                    className="bg-white border-slate-200 text-slate-900 font-mono focus:border-wolvio-orange/50 h-12"
                     placeholder="Enter value..."
                   />
                 </div>
                 
                 {field.source_clause && (
-                  <p className="text-[9px] text-white/30 italic truncate">
+                  <p className="text-[9px] text-slate-400 italic truncate">
                     &quot;{field.source_clause}&quot;
                   </p>
                 )}
@@ -101,8 +101,8 @@ export function QuickFixModal({ isOpen, onClose, parameters, onSave }: QuickFixM
           })}
         </div>
 
-        <DialogFooter className="pt-6 border-t border-white/5 gap-4">
-          <Button variant="ghost" onClick={onClose} className="text-wolvio-mid hover:text-white font-black text-xs uppercase tracking-widest">
+        <DialogFooter className="pt-6 border-t border-slate-100 gap-4">
+          <Button variant="ghost" onClick={onClose} className="text-slate-400 hover:text-slate-900 font-black text-xs uppercase tracking-widest">
             Cancel
           </Button>
           <Button 

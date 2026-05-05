@@ -22,11 +22,12 @@ export default async function ValidatePage({
   searchParams: Promise<{ invoice?: string }>
 }) {
   const { id } = await params
+  console.log(`[ValidatePage] Loading id=${id}`)
   
   // Only show the demo selector for seeded IDs (C001-C008)
   const isDemoContract = id.startsWith('C00') && id.length <= 4
   const allInvoices = isDemoContract ? await getDemoInvoiceList(id) : []
-  const defaultInvoice = allInvoices.length > 0 ? (allInvoices[1] ?? allInvoices[0]) : null
+  const defaultInvoice = allInvoices.length > 0 ? allInvoices[0] : null
   const { invoice = defaultInvoice } = await searchParams
 
   let contract: any = null
@@ -47,12 +48,16 @@ export default async function ValidatePage({
   if (!contract) {
     contract = await getDemoContractParameters(id)
     displayName = id === 'C001' ? 'Wind Farm Alpha LTSA' : id
+    console.log(`[ValidatePage] Demo fallback for ${id}: ${contract ? 'FOUND' : 'NOT FOUND'}`)
   }
 
   // Load invoice if provided
   const invData = invoice ? await getDemoInvoice(invoice, id) : null
   
-  if (!contract) return notFound()
+  if (!contract) {
+    console.error(`[ValidatePage] Contract ${id} not found, triggering 404`)
+    return notFound()
+  }
 
   const genMonthly = await getDemoGenerationData(id)
   let generation: GenerationData | undefined
@@ -73,38 +78,17 @@ export default async function ValidatePage({
 
   return (
     <div className="max-w-[1200px] mx-auto py-10 px-6 space-y-10 pb-24">
-      {/* Invoice Selector */}
-      <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide">
-        {allInvoices.map(inv => {
-          const isActive = invoice === inv
-          const dotColor = INV_DOT[inv] ?? 'bg-white/30'
-          return (
-            <Link
-              key={inv}
-              href={`/contracts/${id}/validate?invoice=${inv}`}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold whitespace-nowrap transition-all shadow-sm border ${
-                isActive
-                  ? 'bg-[--color-wolvio-orange] text-white border-[--color-wolvio-orange]'
-                  : 'bg-[--color-wolvio-surface] text-[--color-wolvio-light] border-[--color-wolvio-slate] hover:bg-[--color-wolvio-navy]'
-              }`}
-            >
-              <div className={`w-2.5 h-2.5 rounded-full ${dotColor} ${isActive ? 'ring-2 ring-white/30' : 'ring-1 ring-black/20'}`} />
-              {inv}
-            </Link>
-          )
-        })}
-      </div>
-
       <ValidationView
         contract={contract}
         initialInvoice={invData}
         initialGeneration={generation}
         contractId={id}
         contractDisplayName={displayName}
+        allInvoices={allInvoices}
       />
 
       <div className="pt-20 pb-12 text-center">
-        <p className="italic text-[--color-wolvio-mid] text-xl font-medium tracking-wide">
+        <p className="italic text-slate-500 text-xl font-medium tracking-wide">
           &quot;Today — how would your team catch this?&quot;
         </p>
       </div>
