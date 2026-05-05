@@ -4,6 +4,8 @@ import { mockStore } from '@/lib/db/mock-store'
 
 const logger = createLogger('api/contracts/[id]')
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   _request: Request,
   ctx: { params: Promise<{ id: string }> }

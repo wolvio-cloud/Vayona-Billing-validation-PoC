@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { DropZone } from './DropZone'
 import { ExtractionAnimation } from './ExtractionAnimation'
@@ -39,6 +39,7 @@ export function UploadFlow() {
         const msg = body.error || body.detail || `Extraction failed (HTTP ${extractRes.status})`
         throw new Error(msg)
       }
+      
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Upload failed. Please try again.'
       console.error('[UploadFlow] Error:', err)
@@ -49,6 +50,7 @@ export function UploadFlow() {
 
   const handleComplete = () => {
     if (contractId) {
+      router.refresh()
       router.push(`/contracts/${contractId}`)
     }
   }

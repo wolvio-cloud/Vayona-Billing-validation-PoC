@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ContractParameters } from '@/lib/schemas/contract'
 import { ParameterField } from './ParameterField'
@@ -14,7 +14,8 @@ import {
   AlertCircle,
   TrendingUp,
   Cpu,
-  BarChart3
+  BarChart3,
+  Loader2
 } from 'lucide-react'
 
 import { QuickFixModal } from './QuickFixModal'
@@ -23,12 +24,39 @@ interface ContractDetailClientProps {
   initialContract: ContractParameters
   contractId: string
   displayName: string
+  extractionStatus?: string
 }
 
-export function ContractDetailClient({ initialContract, contractId, displayName }: ContractDetailClientProps) {
+export function ContractDetailClient({ initialContract, contractId, displayName, extractionStatus }: ContractDetailClientProps) {
   const [contract, setContract] = useState(initialContract)
   const [showQuickFix, setShowQuickFix] = useState(false)
+  const [isExtracting, setIsExtracting] = useState(extractionStatus === 'pending' || extractionStatus === 'processing')
   const router = useRouter()
+
+  useEffect(() => {
+    if (!isExtracting) return
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/contracts/${contractId}?t=${Date.now()}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.parameters && Object.keys(data.parameters).length > 2) {
+            setContract(data.parameters)
+          }
+          if (data.extraction_status === 'completed' || data.extraction_status === 'failed') {
+            setIsExtracting(false)
+            router.refresh()
+            clearInterval(interval)
+          }
+        }
+      } catch (err) {
+        console.error('Polling error', err)
+      }
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [isExtracting, contractId, router])
 
   const handleManualValue = (key: string, val: any) => {
     setContract(prev => ({
@@ -141,6 +169,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               sourceClause={contract.base_annual_fee?.source_clause || ''} 
               confidence={contract.base_annual_fee?.confidence}
               onManualValue={(v) => handleManualValue('base_annual_fee', parseFloat(v))}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="Base Monthly Fee" 
@@ -150,6 +179,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               sourceClause={contract.base_monthly_fee?.source_clause || ''} 
               confidence={contract.base_monthly_fee?.confidence}
               onManualValue={(v) => handleManualValue('base_monthly_fee', parseFloat(v))}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="Variable Rate (per kWh)" 
@@ -159,6 +189,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               sourceClause={contract.variable_component?.source_clause || ''} 
               confidence={contract.variable_component?.confidence}
               onManualValue={(v) => handleManualValue('variable_component', { ...contract.variable_component?.value, rate_per_kwh: parseFloat(v) })}
+              isLoading={isExtracting}
             />
           </div>
         </section>
@@ -183,6 +214,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.escalation?.page_number || 12} 
               sourceClause={contract.escalation?.source_clause || ''} 
               confidence={contract.escalation?.confidence}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="Escalation Cap (p.a.)" 
@@ -191,6 +223,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.escalation?.page_number || 12} 
               sourceClause={contract.escalation?.source_clause || ''} 
               confidence={contract.escalation?.confidence}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="Effective Date" 
@@ -199,6 +232,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.escalation?.page_number || 12} 
               sourceClause={contract.escalation?.source_clause || ''} 
               confidence={contract.escalation?.confidence}
+              isLoading={isExtracting}
             />
           </div>
         </section>
@@ -223,6 +257,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.availability_guarantee_pct?.page_number || 35} 
               sourceClause={contract.availability_guarantee_pct?.source_clause || ''} 
               confidence={contract.availability_guarantee_pct?.confidence}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="LD Rate (per PP)" 
@@ -231,6 +266,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.ld_rate_per_pp?.page_number || 36} 
               sourceClause={contract.ld_rate_per_pp?.source_clause || ''} 
               confidence={contract.ld_rate_per_pp?.confidence}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="Bonus Threshold" 
@@ -239,6 +275,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.bonus_threshold_pct?.page_number || 38} 
               sourceClause={contract.bonus_threshold_pct?.source_clause || ''} 
               confidence={contract.bonus_threshold_pct?.confidence}
+              isLoading={isExtracting}
             />
           </div>
         </section>
@@ -263,6 +300,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.payment_terms_days?.page_number || 15} 
               sourceClause={contract.payment_terms_days?.source_clause || ''} 
               confidence={contract.payment_terms_days?.confidence}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="Late Payment Interest" 
@@ -271,6 +309,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.late_payment_interest?.page_number || 16} 
               sourceClause={contract.late_payment_interest?.source_clause || ''} 
               confidence={contract.late_payment_interest?.confidence}
+              isLoading={isExtracting}
             />
             <ParameterField 
               label="Renewal Notice" 
@@ -279,6 +318,7 @@ export function ContractDetailClient({ initialContract, contractId, displayName 
               pageNumber={contract.renewal_notice_months?.page_number || 3} 
               sourceClause={contract.renewal_notice_months?.source_clause || ''} 
               confidence={contract.renewal_notice_months?.confidence}
+              isLoading={isExtracting}
             />
           </div>
         </section>

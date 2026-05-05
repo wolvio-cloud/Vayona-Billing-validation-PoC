@@ -11,9 +11,10 @@ interface ParameterFieldProps {
   sourceClause: string
   confidence?: 'high' | 'medium' | 'low' | 'manual_input'
   onManualValue?: (val: string) => void
+  isLoading?: boolean
 }
 
-export function ParameterField({ label, value, clauseReference, pageNumber, sourceClause, confidence, onManualValue }: ParameterFieldProps) {
+export function ParameterField({ label, value, clauseReference, pageNumber, sourceClause, confidence, onManualValue, isLoading }: ParameterFieldProps) {
   const [expanded, setExpanded] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [tempValue, setTempValue] = useState(value || '')
@@ -21,6 +22,7 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
   const isNotFound = !value || value === 'NOT FOUND'
 
   const confidenceColor = 
+    isLoading ? 'bg-slate-200 animate-pulse' :
     confidence === 'high' ? 'bg-green-500' : 
     confidence === 'low' ? 'bg-red-500' : 
     confidence === 'manual_input' ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]' :
@@ -44,12 +46,18 @@ export function ParameterField({ label, value, clauseReference, pageNumber, sour
             <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</h4>
             <div className="flex items-center gap-2">
               <div className={`w-1.5 h-1.5 rounded-full ${confidenceColor}`} />
-              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{confidence}</span>
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                {isLoading ? 'Processing' : confidence}
+              </span>
             </div>
           </div>
           
           <div className="py-2">
-            {isEditing ? (
+            {isLoading ? (
+              <div className="flex items-center gap-3 animate-pulse">
+                <div className="h-8 bg-slate-100 rounded w-24"></div>
+              </div>
+            ) : isEditing ? (
               <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
                 <input 
                   autoFocus

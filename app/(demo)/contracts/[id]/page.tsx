@@ -24,10 +24,15 @@ export default async function ContractDetailPage({
     else if (id === 'C002') displayName = 'ReNew Power Mega-LTSA'
   }
 
+  let extractionStatus = 'completed'
+
   // If not found in demo data, check database / mockStore (for uploaded contracts)
   if (!contract) {
     try {
-      const [row] = await sql`SELECT parameters, display_name FROM contracts WHERE contract_id = ${id} LIMIT 1`
+      const [row] = await sql`SELECT parameters, display_name, extraction_status FROM contracts WHERE contract_id = ${id} LIMIT 1`
+      if (row) {
+        extractionStatus = row.extraction_status || 'completed'
+      }
       if (row?.parameters) {
         contract = row.parameters as unknown as ContractParameters
         displayName = row.display_name || displayName
@@ -36,6 +41,7 @@ export default async function ContractDetailPage({
         if (mockData?.parameters) {
           contract = mockData.parameters as unknown as ContractParameters
           displayName = mockData.display_name || displayName
+          extractionStatus = mockData.extraction_status || extractionStatus
         }
       }
     } catch {
@@ -43,8 +49,19 @@ export default async function ContractDetailPage({
       if (mockData?.parameters) {
         contract = mockData.parameters as unknown as ContractParameters
         displayName = mockData.display_name || displayName
+        extractionStatus = mockData.extraction_status || extractionStatus
       }
     }
+  }
+
+  // Double check mock store if extraction status is still considered pending or missing
+  if (extractionStatus === 'completed') {
+    try {
+      const mockData = (await import('@/lib/db/mock-store')).mockStore.get(id)
+      if (mockData && mockData.extraction_status) {
+        extractionStatus = mockData.extraction_status
+      }
+    } catch (err) {}
   }
 
   if (!contract) return notFound()
@@ -60,6 +77,7 @@ export default async function ContractDetailPage({
         initialContract={contract} 
         contractId={id} 
         displayName={displayName}
+        extractionStatus={extractionStatus}
       />
     </div>
   )
