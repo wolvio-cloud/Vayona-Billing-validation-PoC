@@ -27,7 +27,7 @@ export async function POST(
 
   let contract: any
   try {
-    const rows = await sql`SELECT * FROM contracts WHERE contract_id = ${id} LIMIT 1`
+    const rows = await sql`SELECT * FROM contracts WHERE contract_id::text = ${id} LIMIT 1`
     contract = rows[0]
   } catch {
     contract = mockStore.get(id)
@@ -37,18 +37,21 @@ export async function POST(
 
   const updateDB = async (data: any) => {
     try {
-      const keys = Object.keys(data)
-      if (keys.length === 0) return
-      
-      // Update specific columns
-      if (data.parameters) {
-        await sql`UPDATE contracts SET parameters = ${JSON.stringify(data.parameters)} WHERE contract_id = ${id}`
-      }
-      if (data.extraction_status) {
-        await sql`UPDATE contracts SET extraction_status = ${data.extraction_status} WHERE contract_id = ${id}`
-      }
-      if (data.extraction_error) {
-        await sql`UPDATE contracts SET extraction_error = ${data.extraction_error} WHERE contract_id = ${id}`
+      if (process.env.DATABASE_URL) {
+        const keys = Object.keys(data)
+        if (keys.length === 0) return
+        
+        if (data.parameters) {
+          await sql`UPDATE contracts SET parameters = ${JSON.stringify(data.parameters)} WHERE contract_id = ${id}`
+        }
+        if (data.extraction_status) {
+          await sql`UPDATE contracts SET extraction_status = ${data.extraction_status} WHERE contract_id = ${id}`
+        }
+        if (data.extraction_error) {
+          await sql`UPDATE contracts SET extraction_error = ${data.extraction_error} WHERE contract_id = ${id}`
+        }
+      } else {
+        mockStore.set(id, { ...mockStore.get(id), ...data })
       }
     }
     catch (err) { 
@@ -63,11 +66,19 @@ export async function POST(
     if (eta) payload.stage_eta = eta
     
     try {
-      // Use a raw update for speed
-      await sql`UPDATE contracts SET parameters = jsonb_set(COALESCE(parameters, '{}'::jsonb), '{current_step}', ${JSON.stringify(step)}) WHERE contract_id = ${id}`
+      if (process.env.DATABASE_URL) {
+        await sql`UPDATE contracts SET parameters = jsonb_set(COALESCE(parameters, '{}'::jsonb), '{current_step}', ${JSON.stringify(step)}) WHERE contract_id = ${id}`
+      } else {
+        const existing = mockStore.get(id)?.parameters || {}
+        mockStore.set(id, { 
+          ...mockStore.get(id), 
+          parameters: { ...existing, ...payload },
+          stage_index: stageIndex // Save stage_index directly for polling
+        })
+      }
     } catch {
       const existing = mockStore.get(id)?.parameters || {}
-      mockStore.set(id, { ...mockStore.get(id), parameters: { ...existing, ...payload } })
+      mockStore.set(id, { ...mockStore.get(id), parameters: { ...existing, ...payload }, stage_index: stageIndex })
     }
   }
 
@@ -92,49 +103,60 @@ export async function POST(
   }
 
   // ── LIVE INTAKE ──
-  try {
-    const text = contract.raw_text || ''
-    
-    await updateProgress('Scanning document structure...', 1)
-    await new Promise(r => setTimeout(r, 1000))
-    
-    await updateProgress('Detecting clause boundaries...', 2)
-    await new Promise(r => setTimeout(r, 1000))
+  // We use an async IIFE to run extraction in the background to avoid Heroku 30s timeout
+  const runBackgroundExtraction = async () => {
+    try {
+      const text = contract.raw_text || ''
+      const screenshots = contract.parameters?._screenshots || []
+      
+      await updateProgress('Scanning document structure...', 1)
+      await new Promise(r => setTimeout(r, 1000))
+      
+      await updateProgress('Detecting clause boundaries...', 2)
+      await new Promise(r => setTimeout(r, 1000))
 
-    await updateProgress('Extracting commercial parameters...', 3)
-    const result = await callClaude({
-      systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT,
-      userMessage: `Extract parameters from this contract text:\n\n${text}`
-    })
+      await updateProgress('Extracting commercial parameters...', 3)
+      const result = await callClaude({
+        systemPrompt: CONTRACT_EXTRACTION_SYSTEM_PROMPT,
+        userMessage: `Extract parameters from this contract text. I have also attached images of the first few pages for reference:\n\n${text}`,
+        images: screenshots
+      })
 
-    await updateProgress('Validating against schema...', 4)
-    const sanitized = sanitizeExtractedData(safeParseJSON(result))
-    const validated = ContractParametersSchema.safeParse(sanitized)
+      await updateProgress('Validating against schema...', 4)
+      const sanitized = sanitizeExtractedData(safeParseJSON(result))
+      const validated = ContractParametersSchema.safeParse(sanitized)
 
-    await updateProgress('Scoring confidence levels...', 5)
-    const confidence = scoreConfidence(sanitized)
+      await updateProgress('Scoring confidence levels...', 5)
+      const confidence = scoreConfidence(sanitized)
 
-    await updateProgress('Building Digital Twin...', 6)
-    
-    const finalStatus = validated.success ? 'completed' : 'partial'
-    const paramCount = Object.values(sanitized).filter((v: any) => v && typeof v === 'object' && 'value' in v && v.value !== null).length
+      await updateProgress('Building Digital Twin...', 6)
+      
+      const finalStatus = validated.success ? 'completed' : 'partial'
+      const paramCount = Object.values(sanitized).filter((v: any) => v && typeof v === 'object' && 'value' in v && v.value !== null).length
 
-    await updateDB({
-      parameters: { ...sanitized, _extraction_meta: { confidence, page_count: contract.page_count } },
-      extraction_status: finalStatus
-    })
+      await updateDB({
+        parameters: { 
+          ...sanitized, 
+          _extraction_meta: { confidence, page_count: contract.page_count || contract.parameters?.page_count } 
+        },
+        extraction_status: finalStatus
+      })
 
-    await updateProgress(`Complete — ${paramCount} parameters extracted`, 7)
-
-    return Response.json({
-      contract_id: id,
-      status: finalStatus,
-      parameter_count: paramCount
-    })
-
-  } catch (err: any) {
-    logger.error('Extraction failed', err)
-    await updateDB({ extraction_status: 'failed', extraction_error: err.message })
-    return Response.json({ error: 'Extraction taking longer than expected. You can enter values manually while we continue.', status: 'partial' }, { status: 206 })
+      await updateProgress(`Complete — ${paramCount} parameters extracted`, 7)
+    } catch (err: any) {
+      logger.error('Background extraction failed', err)
+      await updateDB({ extraction_status: 'failed', extraction_error: err.message })
+      await updateProgress('Extraction failed', 0)
+    }
   }
+
+  // Kick off background task
+  runBackgroundExtraction()
+
+  // Return immediately to avoid timeout
+  return Response.json({ 
+    contract_id: id, 
+    status: 'processing',
+    message: 'Extraction started in background'
+  }, { status: 202 })
 }
